@@ -1,0 +1,47 @@
+# IDE and OS specific files
+
+# Windows
+Thumbs.db
+*.DS_Store
+
+# Editor specific
+# (adjust based on your editor)
+.idea/
+.vscode/
+.sublime*
+
+# Temporary files
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+env/
+*.tmp
+*.rej
+
+# Logs
+*.log
+
+# Compiled source code
+*.class
+*.jar
+
+# System wide ignore list
+**/.gitignore
+
+# Dependency management files
+node_modules/
+package-lock.json
+
+# Specific test framework or linters output
+**/__pycache__/
+.pytest_cache/
+**/.eslintcache
+
+# Virtual environment directory
+.venv/
+
+# User specific
+bin/
+lib/
