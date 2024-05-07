@@ -1,6 +1,7 @@
 package winter.controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -10,13 +11,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class FrontController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doGet(req, resp);
+        processRequest(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doPost(req, resp);
+        processRequest(req, resp);
+    }
+
+    private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String requestURL = req.getRequestURL().toString();
+
+        PrintWriter out = resp.getWriter();
+        out.println("Request URL: " + requestURL);
     }
 }
