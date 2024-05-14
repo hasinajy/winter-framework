@@ -35,6 +35,19 @@ public class FrontController extends HttpServlet {
 
     PrintWriter out = resp.getWriter();
     out.println("Request URL: " + requestURL);
+
+    ServletContext servletContext = getServletContext();
+    try {
+      scanControllers(servletContext);
+    } catch (URISyntaxException uri_e) {
+      out.println(uri_e.getMessage());
+    } catch (IOException io_e) {
+      out.println(io_e.getMessage());
+    } catch (ClassNotFoundException cnf_e) {
+      out.println(cnf_e.getMessage());
+    } catch (Exception e) {
+      out.println(e.getMessage());
+    }
   }
 
   private void scanControllers(ServletContext servletContext)
@@ -51,6 +64,8 @@ public class FrontController extends HttpServlet {
       URL resource = resources.nextElement();
       scanControllers(resource, controllersPackage);
     }
+
+    this.isScanned = true;
   }
 
   private void scanControllers(URL directory, String packageName)
