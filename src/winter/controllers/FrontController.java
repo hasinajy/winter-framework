@@ -1,8 +1,6 @@
 package winter.controllers;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -15,6 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import winter.annotations.Controller;
+import winter.utils.DirectoryUtil;
 
 public class FrontController extends HttpServlet {
   private boolean isScanned = false;
@@ -83,7 +82,7 @@ public class FrontController extends HttpServlet {
       packageName += ".";
     }
 
-    for (String fileName : listFiles(directory)) {
+    for (String fileName : DirectoryUtil.listFiles(directory)) {
       if (fileName.endsWith(".class")) {
         String className = packageName + fileName.substring(0, fileName.length() - 6);
         Class<?> clazz = Class.forName(className);
@@ -92,17 +91,5 @@ public class FrontController extends HttpServlet {
         }
       }
     }
-  }
-
-  private static ArrayList<String> listFiles(URL directory) throws IOException {
-    ArrayList<String> fileNames = new ArrayList<>();
-    try (var in = directory.openStream();
-        var reader = new BufferedReader(new InputStreamReader(in))) {
-      String line;
-      while ((line = reader.readLine()) != null) {
-        fileNames.add(line);
-      }
-    }
-    return fileNames;
   }
 }
