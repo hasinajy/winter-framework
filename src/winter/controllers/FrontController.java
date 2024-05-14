@@ -39,6 +39,12 @@ public class FrontController extends HttpServlet {
     ServletContext servletContext = getServletContext();
     try {
       scanControllers(servletContext);
+
+      out.println("List of annotated controllers:" + "<br/>");
+
+      for (String string : controllers) {
+        out.println("- " + string + "<br/>");
+      }
     } catch (URISyntaxException uri_e) {
       out.println(uri_e.getMessage());
     } catch (IOException io_e) {
