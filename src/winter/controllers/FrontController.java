@@ -34,7 +34,7 @@ public class FrontController extends HttpServlet {
     String requestURL = req.getRequestURL().toString();
 
     PrintWriter out = resp.getWriter();
-    out.println("Request URL: " + requestURL);
+    out.println("Request URL: " + requestURL + "<br/>");
 
     ServletContext servletContext = getServletContext();
     try {
