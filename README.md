@@ -24,9 +24,43 @@ The project currently does not have a pre-configured build system. To manually b
 
 The script will create a JAR file named `winter.jar`. Add the file to your project's libraries and it will be ready to use for your web application.
 
+**How to Use**
+
+Add the xml below to the web application `web.xml`:
+* **FrontController** is a mapping to the controller that handles every URL
+* **ControllersPackage** is a mapping to the path where the developper places all classes that are annotated with `@Controller`
+```XML
+    <!-- Front controller mapping -->
+    <servlet>
+        <servlet-name>FrontController</servlet-name>
+        <servlet-class>winter.controllers.FrontController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>FrontController</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- Map the path to the package to scan for controllers -->
+    <context-param>
+        <param-name>ControllersPackage</param-name>
+        <param-value>com.controllers</param-value>
+    </context-param>
+```
+Every class that the developer wants to be scanned as controller should be annotated as `@Controller`
+```java
+import winter.annotations.Controller;
+
+@Controller
+public class ExampleController {
+    // Code goes here ...
+}
+```
+
 **Current Functionality:**
 
-* The `FrontController` class (located in `src/winter/controllers/FrontController.java`) captures the user's requested URL and prints it in the browser.
+* The `FrontController` class (located in `src/winter/controllers/FrontController.java`) captures the user's requested URL and prints it in the browser. The `FrontController` also prints a list of all declared controllers by the developer.
+* The `@Controller` annotation is used to annotate all classes that the developer wants to be scanned as a controller.
 
 **Future Work:**
 
