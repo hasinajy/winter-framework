@@ -88,19 +88,21 @@ public class FrontController extends HttpServlet {
       if (fileName.endsWith(".class")) {
         String className = packageName + fileName.substring(0, fileName.length() - 6);
         Class<?> clazz = Class.forName(className);
+        
         if (clazz.isAnnotationPresent(Controller.class)) {
           this.controllers.add(className);
         }
       } else {
-        // Check for directories using URI
         URL potentialSubDirURL = new URL(directory.toString() + "/" + fileName);
+
         try {
           URI subDirURI = potentialSubDirURL.toURI();
-          // Directory will have a scheme and path, while a file might only have path
+          
           if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
-            scanControllers(potentialSubDirURL, packageName + fileName + "."); // Update package name for subdir
+            scanControllers(potentialSubDirURL, packageName + fileName + ".");
           }
         } catch (URISyntaxException e) {
+          throw e;
         }
       }
     }
