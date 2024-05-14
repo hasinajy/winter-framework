@@ -18,7 +18,7 @@ import winter.annotations.Controller;
 
 public class FrontController extends HttpServlet {
   private boolean isScanned = false;
-  private ArrayList<String> controllers = null;
+  private ArrayList<String> controllers = new ArrayList<>();
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
