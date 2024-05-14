@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,5 +29,8 @@ public class FrontController extends HttpServlet {
 
         PrintWriter out = resp.getWriter();
         out.println("Request URL: " + requestURL);
+    }
+
+    private void scanControllers(ServletContext servletContext) {
     }
 }
