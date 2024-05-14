@@ -68,5 +68,16 @@ public class FrontController extends HttpServlet {
             }
         }
     }
+
+  private static ArrayList<String> listFiles(URL directory) throws IOException {
+    ArrayList<String> fileNames = new ArrayList<>();
+    try (var in = directory.openStream();
+        var reader = new BufferedReader(new InputStreamReader(in))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        fileNames.add(line);
+      }
     }
+    return fileNames;
+  }
 }
