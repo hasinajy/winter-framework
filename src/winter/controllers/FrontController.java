@@ -39,6 +39,11 @@ public class FrontController extends HttpServlet {
     ServletContext servletContext = getServletContext();
     try {
       scanControllers(servletContext);
+
+      out.println("<b>List of annotated controllers</b>:");
+      for (String controllerName: controllers) {
+        out.println("- " + controllerName);
+      }
     } catch (URISyntaxException uri_e) {
       out.println("URI_E");
       out.println(uri_e.getMessage());
@@ -74,14 +79,14 @@ public class FrontController extends HttpServlet {
 
   private void scanControllers(URL directory, String packageName)
       throws URISyntaxException, IOException, ClassNotFoundException {
-    if (!directory.toURI().toString().endsWith("/")) {
+    if (!packageName.endsWith(".")) {
       packageName += ".";
     }
 
     for (String fileName : listFiles(directory)) {
       if (fileName.endsWith(".class")) {
         String className = packageName + fileName.substring(0, fileName.length() - 6);
-        Class<?> clazz = Class.forName("controllers.TestController");
+        Class<?> clazz = Class.forName(className);
         if (clazz.isAnnotationPresent(Controller.class)) {
           this.controllers.add(className);
         }
