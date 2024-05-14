@@ -2,7 +2,10 @@ package winter.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -31,6 +34,19 @@ public class FrontController extends HttpServlet {
         out.println("Request URL: " + requestURL);
     }
 
-    private void scanControllers(ServletContext servletContext) {
+    private void scanControllers(ServletContext servletContext) throws URISyntaxException, IOException, ClassNotFoundException {
+        if (isScanned) {
+            return;
+        }
+
+        String controllersPackage = servletContext.getInitParameter("ControllersPackage");
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Enumeration<URL> resources = classLoader.getResources(controllersPackage.replace(".", "/"));
+
+        while(resources.hasMoreElements()) {
+          URL resource = resources.nextElement();
+          scanControllers(resource, controllersPackage);
+        }
+    }
     }
 }
