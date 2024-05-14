@@ -81,7 +81,7 @@ public class FrontController extends HttpServlet {
     for (String fileName : listFiles(directory)) {
       if (fileName.endsWith(".class")) {
         String className = packageName + fileName.substring(0, fileName.length() - 6);
-        Class<?> clazz = Class.forName(className);
+        Class<?> clazz = Class.forName("controllers.TestController");
         if (clazz.isAnnotationPresent(Controller.class)) {
           this.controllers.add(className);
         }
