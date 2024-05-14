@@ -2,6 +2,7 @@ package winter.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class FrontController extends HttpServlet {
       scanControllers(servletContext);
 
       out.println("<br/><br/>" + "<b>List of annotated controllers</b>:");
-      for (String controllerName: controllers) {
+      for (String controllerName : controllers) {
         out.println("<br/>" + "- " + controllerName);
       }
     } catch (URISyntaxException uri_e) {
@@ -76,6 +77,7 @@ public class FrontController extends HttpServlet {
     this.isScanned = true;
   }
 
+  @SuppressWarnings("deprecation")
   private void scanControllers(URL directory, String packageName)
       throws URISyntaxException, IOException, ClassNotFoundException {
     if (!packageName.endsWith(".")) {
@@ -88,6 +90,17 @@ public class FrontController extends HttpServlet {
         Class<?> clazz = Class.forName(className);
         if (clazz.isAnnotationPresent(Controller.class)) {
           this.controllers.add(className);
+        }
+      } else {
+        // Check for directories using URI
+        URL potentialSubDirURL = new URL(directory.toString() + "/" + fileName);
+        try {
+          URI subDirURI = potentialSubDirURL.toURI();
+          // Directory will have a scheme and path, while a file might only have path
+          if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
+            scanControllers(potentialSubDirURL, packageName + fileName + "."); // Update package name for subdir
+          }
+        } catch (URISyntaxException e) {
         }
       }
     }
