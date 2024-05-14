@@ -40,9 +40,9 @@ public class FrontController extends HttpServlet {
     try {
       scanControllers(servletContext);
 
-      out.println("<b>List of annotated controllers</b>:");
+      out.println("<br/><br/>" + "<b>List of annotated controllers</b>:");
       for (String controllerName: controllers) {
-        out.println("- " + controllerName);
+        out.println("<br/>" + "- " + controllerName);
       }
     } catch (URISyntaxException uri_e) {
       out.println("URI_E");
