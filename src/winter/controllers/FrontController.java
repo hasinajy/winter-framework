@@ -34,16 +34,16 @@ public class FrontController extends HttpServlet {
     String requestURL = req.getRequestURL().toString();
 
     PrintWriter out = resp.getWriter();
-    out.println("Request URL: " + requestURL + "<br/>");
+    out.println("<b>Request URL</b>: " + requestURL);
 
     ServletContext servletContext = getServletContext();
     try {
       scanControllers(servletContext);
 
-      out.println("List of annotated controllers:" + "<br/>");
+      out.println("<b>List of annotated controllers:</b>");
 
       for (String string : controllers) {
-        out.println("- " + string + "<br/>");
+        out.println("- " + string);
       }
     } catch (URISyntaxException uri_e) {
       out.println(uri_e.getMessage());
