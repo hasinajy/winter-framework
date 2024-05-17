@@ -2,22 +2,26 @@ package winter.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import winter.annotations.Controller;
+
+import winter.annotations.*;
+import winter.data.Mapping;
 import winter.utils.DirectoryUtil;
 
 public class FrontController extends HttpServlet {
-  private ArrayList<String> controllers = new ArrayList<>();
+  private HashMap<String, Mapping> URLMappings = new HashMap<>();
 
   @Override
   public void init() throws ServletException {
@@ -71,7 +75,16 @@ public class FrontController extends HttpServlet {
         Class<?> clazz = Class.forName(className);
 
         if (clazz.isAnnotationPresent(Controller.class)) {
-          this.controllers.add(className);
+          Method[] methods = clazz.getMethods();
+
+          for (Method method: methods) {
+            if (method.isAnnotationPresent(GetMapping.class)) {
+              String sURL = method.getAnnotation(GetMapping.class).value();
+              String sMethod = method.getName();
+
+              this.URLMappings.put(sURL, new Mapping(className, sMethod));
+            }
+          }
         }
       } else {
         URL potentialSubDirURL = new URL(directory.toString() + "/" + fileName);
