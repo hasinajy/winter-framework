@@ -56,11 +56,24 @@ public class ExampleController {
     // Code goes here ...
 }
 ```
+Every method that the developer wants to be mapped to a URL should be annotated as `@GetMapping("mapping")`
+```java
+import winter.annotations.Controller;
+
+@Controller
+public class ExampleController {
+    @GetMapping("test-mapping")
+    public void exampleMethod() {
+        // Code goes here ...
+    }
+}
+```
 
 **Current Functionality:**
 
-* The `FrontController` class (located in `src/winter/controllers/FrontController.java`) captures the user's requested URL and prints it in the browser. The `FrontController` also prints a list of all declared controllers by the developer.
+* The `FrontController` class (located in `src/winter/controllers/FrontController.java`) captures the user's requested URL and prints it in the browser. The `FrontController` also shows the details of the controller associated with the URL.
 * The `@Controller` annotation is used to annotate all classes that the developer wants to be scanned as a controller.
+* The `@GetMapping` annotation is used to annotate all methods that the developer wants to be mapped to a URL.
 
 **Future Work:**
 
