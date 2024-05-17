@@ -20,6 +20,16 @@ public class FrontController extends HttpServlet {
   private ArrayList<String> controllers = new ArrayList<>();
 
   @Override
+  public void init() throws ServletException {
+    ServletContext servletContext = getServletContext();
+
+    try {
+      scanControllers(servletContext);
+    } catch (Exception e) {
+    }
+  }
+
+  @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     processRequest(req, resp);
   }
@@ -34,36 +44,10 @@ public class FrontController extends HttpServlet {
 
     PrintWriter out = resp.getWriter();
     out.println("<b>Request URL</b>: " + requestURL);
-
-    ServletContext servletContext = getServletContext();
-    try {
-      scanControllers(servletContext);
-
-      out.println("<br/><br/>" + "<b>List of annotated controllers</b>:");
-      for (String controllerName : controllers) {
-        out.println("<br/>" + "- " + controllerName);
-      }
-    } catch (URISyntaxException uri_e) {
-      out.println("URI_E");
-      out.println(uri_e.getMessage());
-    } catch (IOException io_e) {
-      out.println("IO_E");
-      out.println(io_e.getMessage());
-    } catch (ClassNotFoundException cnf_e) {
-      out.println("CNF_E");
-      out.println(cnf_e.getMessage());
-    } catch (Exception e) {
-      out.println("G_E");
-      out.println(e.getMessage());
-    }
   }
 
   private void scanControllers(ServletContext servletContext)
       throws URISyntaxException, IOException, ClassNotFoundException {
-    if (isScanned) {
-      return;
-    }
-
     String controllersPackage = servletContext.getInitParameter("ControllersPackage");
     ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     Enumeration<URL> resources = classLoader.getResources(controllersPackage.replace(".", "/"));
@@ -72,8 +56,6 @@ public class FrontController extends HttpServlet {
       URL resource = resources.nextElement();
       scanControllers(resource, controllersPackage);
     }
-
-    this.isScanned = true;
   }
 
   @SuppressWarnings("deprecation")
