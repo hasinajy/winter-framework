@@ -17,7 +17,6 @@ import winter.annotations.Controller;
 import winter.utils.DirectoryUtil;
 
 public class FrontController extends HttpServlet {
-  private boolean isScanned = false;
   private ArrayList<String> controllers = new ArrayList<>();
 
   @Override
