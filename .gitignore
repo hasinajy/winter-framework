@@ -45,3 +45,4 @@ package-lock.json
 # User specific
 bin/
 lib/
+test/
