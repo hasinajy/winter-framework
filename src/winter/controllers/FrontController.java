@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -30,6 +29,7 @@ public class FrontController extends HttpServlet {
     try {
       scanControllers(servletContext);
     } catch (Exception e) {
+      System.err.println(e.getMessage());
     }
   }
 
@@ -45,9 +45,20 @@ public class FrontController extends HttpServlet {
 
   private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     String requestURL = req.getRequestURL().toString();
+    String[] splitRequest = requestURL.split("/");
+    String targetURL = splitRequest[splitRequest.length - 1];
 
     PrintWriter out = resp.getWriter();
     out.println("<b>Request URL</b>: " + requestURL);
+    
+    try {
+      out.println("<br/><br/><b>Target Controller:</b>");
+      out.println("<br/>- <b>Target Mapping:</b> " + targetURL);
+      out.println("<br/>- <b>Controller:</b> " + this.URLMappings.get(targetURL).getClassName());
+      out.println("<br/>- <b>Method:</b> " + this.URLMappings.get(targetURL).getMethodName());
+    } catch (Exception e) {
+      out.println("<br/>>>> Mapping not found.");
+    }
   }
 
   private void scanControllers(ServletContext servletContext)
