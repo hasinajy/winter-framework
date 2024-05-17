@@ -69,7 +69,7 @@ public class FrontController extends HttpServlet {
       if (fileName.endsWith(".class")) {
         String className = packageName + fileName.substring(0, fileName.length() - 6);
         Class<?> clazz = Class.forName(className);
-        
+
         if (clazz.isAnnotationPresent(Controller.class)) {
           this.controllers.add(className);
         }
@@ -78,7 +78,7 @@ public class FrontController extends HttpServlet {
 
         try {
           URI subDirURI = potentialSubDirURL.toURI();
-          
+
           if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
             scanControllers(potentialSubDirURL, packageName + fileName + ".");
           }
