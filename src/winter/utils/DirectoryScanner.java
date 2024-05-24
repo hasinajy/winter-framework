@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class DirectoryUtil {
+public class DirectoryScanner {
     public static ArrayList<String> listFiles(URL directory) throws IOException {
         ArrayList<String> fileNames = new ArrayList<>();
         try (var in = directory.openStream();
