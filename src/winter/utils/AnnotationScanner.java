@@ -37,7 +37,7 @@ public class AnnotationScanner {
             packageName += ".";
         }
 
-        for (String fileName : DirectoryUtil.listFiles(directory)) {
+        for (String fileName : DirectoryScanner.listFiles(directory)) {
             if (fileName.endsWith(".class")) {
                 String className = packageName + fileName.substring(0, fileName.length() - 6);
                 Class<?> clazz = Class.forName(className);
