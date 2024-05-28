@@ -1,19 +1,19 @@
 ## Spring Clone - Winter Project
 
-This project is a work-in-progress clone of the Spring MVC framework written in Java. This is not a full-clone of the Spring framework. Only the key features will be implemented for educational purposes.
+This project is a work-in-progress clone of the Spring MVC framework written in Java. It's not a full replica, but focuses on implementing key features for educational purposes.
 
-However, contributions are welcomed if anyone wants to add a specific feature to the project. Please refer to the section `Contributing` to know more about contributions.
+We welcome contributions! If you'd like to add a specific feature, please refer to the `Contributing` section for details.
 
 **Directory Structure:**
 
-* **src/**: Contains the source code for the project.
+* **src/**: Contains the project's source code.
 * **packaging/**: Houses scripts for converting the project into a JAR file for deployment.
     * **package.sh**: Shell script for Linux/macOS users.
     * **package.bat**: Batch script for Windows users.
 
 **Requirements**
 
-The project uses the Jakarta EE APIs (formerly javax.ee). Make sure to have Jakarta EE 10 (or the required version) installed.
+The project uses the Jakarta EE APIs (formerly javax.ee). Ensure you have Jakarta EE 10 (or the required version) installed.
 
 **Building and Running the Project:**
 
@@ -28,9 +28,9 @@ The script will create a JAR file named `winter.jar`. Add the file to your proje
 
 **How to Use**
 
-Add the xml below to the web application `web.xml`:
-* **FrontController** is a mapping to the controller that handles every URL
-* **ControllersPackage** is a mapping to the path where the developper places all classes that are annotated with `@Controller`
+Add the following XML configuration to your web application's `web.xml` file:
+* **FrontController:** This maps to the controller handling every URL.
+* **ControllersPackage:** This specifies the path where developer-created controller classes with the `@Controller` annotation reside.
 ```XML
     <!-- Front controller mapping -->
     <servlet>
@@ -73,17 +73,17 @@ public class ExampleController {
 
 **Current Functionality:**
 
-* The `FrontController` class (located in `src/winter/controllers/FrontController.java`) captures the user's requested URL and prints it in the browser. The `FrontController` also shows the details of the controller associated with the URL.
+* The `FrontController` class (located in `src/winter/controllers/FrontController.java`) captures the user's requested URL and displayes it in the browser. It also shows the details of the associated controller for that URL.
 * The `@Controller` annotation is used to annotate all classes that the developer wants to be scanned as a controller.
-* The `@GetMapping` annotation is used to annotate all methods that the developer wants to be mapped to a URL.
+* The `@GetMapping` annotation is used to map methods to specific URLs.
 
 **Future Work:**
 
-This project is currently under development and only implements a basic feature. More functionalities and functionalities specific to replicating Spring's capabilities will be added in the future.
+This project is currently under development and only implements a basic feature. More functionalities replicating Spring's capabilities will be added in the future.
 
 **Contributing:**
 
-Contributions are welcome! Feel free to contribute to this project by:
+We welcome your contributions! Here's how you can help:
 
 * Implementing additional features based on the Spring framework.
 * Improving the existing code.
