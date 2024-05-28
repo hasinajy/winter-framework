@@ -5,11 +5,11 @@ import java.io.PrintWriter;
 public class Printer {
 
     /* ------------------------- Project related methods ------------------------ */
-    public void printRequestInfo(PrintWriter out, String requestURL) {
+    public static void printRequestInfo(PrintWriter out, String requestURL) {
         Printer.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
     }
 
-    public void printTargetControllerInfo(PrintWriter out, String targetURL, String className, String methodName,
+    public static void printTargetControllerInfo(PrintWriter out, String targetURL, String className, String methodName,
             String returnValue) {
         Printer.printList(out, "Controller Information",
                 new String[] { "Target Mapping", "Controller", "Method", "Returned Value" },
