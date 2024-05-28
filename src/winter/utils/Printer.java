@@ -9,6 +9,13 @@ public class Printer {
         Printer.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
     }
 
+    public void printTargetControllerInfo(PrintWriter out, String targetURL, String className, String methodName,
+            String returnValue) {
+        Printer.printList(out, "Controller Information",
+                new String[] { "Target Mapping", "Controller", "Method", "Returned Value" },
+                new String[] { targetURL, className, methodName, returnValue });
+    }
+
     /* --------------------------- Generalized methods -------------------------- */
     public static void printList(PrintWriter out, String title, String[] labels, String[] values)
             throws IllegalArgumentException {
