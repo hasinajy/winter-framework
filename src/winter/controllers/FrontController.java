@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import winter.data.Mapping;
 import winter.utils.AnnotationScanner;
 import winter.utils.Printer;
+import winter.utils.ReflectionUtil;
+import winter.utils.URLUtil;
 
 public class FrontController extends HttpServlet {
 
@@ -42,25 +44,27 @@ public class FrontController extends HttpServlet {
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestURL = req.getRequestURL().toString();
-        String[] splitRequest = requestURL.split("/");
-        String targetURL = splitRequest[splitRequest.length - 1];
+        String targetURL = URLUtil.extractTargetURL(requestURL);
 
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();
-        Printer.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
+
+        // Print request URL information
+        Printer.printRequestInfo(out, requestURL);
 
         try {
-            String className = this.URLMappings.get(targetURL).getClassName();
-            String methodName = this.URLMappings.get(targetURL).getMethodName();
-            Class<?> clazz = Class.forName(className);
-            Method method = clazz.getDeclaredMethod(methodName, new Class<?>[] {});
+            String className = URLMappings.get(targetURL).getClassName();
+            String methodName = URLMappings.get(targetURL).getMethodName();
+            Object result = ReflectionUtil.invokeControllerMethod(className, methodName, new Class<?>[] {});
 
-            Printer.printList(out, "Target Controller",
-                    new String[] { "Target Mapping", "Controller", "Method", "Returned Value" },
-                    new String[] { targetURL, className, methodName,
-                            method.invoke(clazz.getDeclaredConstructor().newInstance()).toString() });
+            Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
+        } catch (MappingNotFoundException e) {
+            Printer.printError(out, "Mapping not found for '" + targetURL + "'.", false);
         } catch (Exception e) {
-            Printer.printError(out, "Mapping not found for " + "'" + targetURL + "'.", false);
+            Printer.printError(out, e.getMessage(), true);
+            e.printStackTrace(out);
+        } finally {
+            out.close();
         }
     }
 
