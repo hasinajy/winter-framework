@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class DirectoryScanner {
+
     public static ArrayList<String> listFiles(URL directory) throws IOException {
         ArrayList<String> fileNames = new ArrayList<>();
         try (var in = directory.openStream();
@@ -18,4 +19,5 @@ public class DirectoryScanner {
         }
         return fileNames;
     }
+
 }

@@ -9,4 +9,4 @@ import java.lang.annotation.ElementType;
 @Target(ElementType.METHOD)
 public @interface GetMapping {
     String value() default "";
-  }
+}
