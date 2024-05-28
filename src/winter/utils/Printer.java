@@ -4,6 +4,12 @@ import java.io.PrintWriter;
 
 public class Printer {
 
+    /* ------------------------- Project related methods ------------------------ */
+    public void printRequestInfo(PrintWriter out, String requestURL) {
+        Printer.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
+    }
+
+    /* --------------------------- Generalized methods -------------------------- */
     public static void printList(PrintWriter out, String title, String[] labels, String[] values)
             throws IllegalArgumentException {
         if (out == null || labels == null || values == null || labels.length != values.length) {
