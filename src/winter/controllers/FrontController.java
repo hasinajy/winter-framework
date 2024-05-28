@@ -2,7 +2,6 @@ package winter.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
@@ -60,12 +59,8 @@ public class FrontController extends HttpServlet {
           new String[] { "Target Mapping", "Controller", "Method", "Returned Value" },
           new String[] { targetURL, className, methodName,
               method.invoke(clazz.getDeclaredConstructor().newInstance()).toString() });
-    } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException
-        | InvocationTargetException e) {
-      e.printStackTrace(out);
     } catch (Exception e) {
-      out.println("<br/>>>> Mapping not found.");
-      e.printStackTrace(out);
+      Printer.printError(out, "Mapping not found for " + "'" + targetURL + "'.", false);
     }
   }
 

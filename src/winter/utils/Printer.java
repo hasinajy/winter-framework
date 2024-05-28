@@ -24,6 +24,15 @@ public class Printer {
         out.println("</ul>"); // End the unordered list
     }
 
+    public static void printError(PrintWriter out, String errMsg, boolean isException) {
+        if (isException) {
+            out.print(makePre(errMsg));
+            return;
+        }
+
+        out.print("<p>" + ">>>> " + errMsg + "</p>");
+    }
+
     private static String makeHeading(int level, String text) throws IllegalArgumentException {
         if (level <= 0 || level >= 7 || text == null) {
             throw new IllegalArgumentException("Invalid heading level or text");
@@ -51,4 +60,7 @@ public class Printer {
         return "<b>" + text + "</b>";
     }
 
+    private static String makePre(String text) {
+        return "<pre>" + text + "</pre>";
+    }
 }
