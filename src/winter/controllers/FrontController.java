@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import winter.data.Mapping;
 import winter.utils.AnnotationScanner;
+import winter.utils.Printer;
 
 public class FrontController extends HttpServlet {
 
@@ -45,23 +46,20 @@ public class FrontController extends HttpServlet {
     String[] splitRequest = requestURL.split("/");
     String targetURL = splitRequest[splitRequest.length - 1];
 
+    resp.setContentType("text/html");
     PrintWriter out = resp.getWriter();
-    out.println("<b>Request URL</b>: " + requestURL);
+    Printer.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
 
     try {
       String className = this.URLMappings.get(targetURL).getClassName();
       String methodName = this.URLMappings.get(targetURL).getMethodName();
-
-      out.println("<br/><br/><b>Target Controller:</b>");
-      out.println("<br/>- <b>Target Mapping:</b> " + targetURL);
-      out.println("<br/>- <b>Controller:</b> " + className);
-      out.println("<br/>- <b>Method:</b> " + methodName);
-
       Class<?> clazz = Class.forName(className);
       Method method = clazz.getDeclaredMethod(methodName, new Class<?>[] {});
 
-      out.println("<br/>- <b>Returned value:</b> "
-      + method.invoke(clazz.getDeclaredConstructor().newInstance()).toString());
+      Printer.printList(out, "Target Controller",
+          new String[] { "Target Mapping", "Controller", "Method", "Returned Value" },
+          new String[] { targetURL, className, methodName,
+              method.invoke(clazz.getDeclaredConstructor().newInstance()).toString() });
     } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException
         | InvocationTargetException e) {
       e.printStackTrace(out);
