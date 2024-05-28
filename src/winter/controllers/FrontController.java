@@ -2,7 +2,6 @@ package winter.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import jakarta.servlet.ServletContext;
@@ -12,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import winter.data.Mapping;
+import winter.exceptions.MappingNotFoundException;
 import winter.utils.AnnotationScanner;
 import winter.utils.Printer;
 import winter.utils.ReflectionUtil;
@@ -53,8 +53,13 @@ public class FrontController extends HttpServlet {
         Printer.printRequestInfo(out, requestURL);
 
         try {
-            String className = URLMappings.get(targetURL).getClassName();
-            String methodName = URLMappings.get(targetURL).getMethodName();
+            Mapping mapping = URLMappings.get(targetURL);
+
+            if (mapping == null)
+                throw new MappingNotFoundException();
+
+            String className = mapping.getClassName();
+            String methodName = mapping.getMethodName();
             Object result = ReflectionUtil.invokeControllerMethod(className, methodName, new Class<?>[] {});
 
             Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
@@ -62,7 +67,6 @@ public class FrontController extends HttpServlet {
             Printer.printError(out, "Mapping not found for '" + targetURL + "'.", false);
         } catch (Exception e) {
             Printer.printError(out, e.getMessage(), true);
-            e.printStackTrace(out);
         } finally {
             out.close();
         }
