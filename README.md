@@ -1,6 +1,8 @@
 ## Spring Clone - Winter Project
 
-This project is a work-in-progress clone of the Spring framework written in Java. It currently implements a basic FrontController that captures and prints the user's requested URL.
+This project is a work-in-progress clone of the Spring MVC framework written in Java. This is not a full-clone of the Spring framework. Only the key features will be implemented for educational purposes.
+
+However, contributions are welcomed if anyone wants to add a specific feature to the project. Please refer to the section `Contributing` to know more about contributions.
 
 **Directory Structure:**
 
