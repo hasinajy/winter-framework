@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -68,6 +67,7 @@ public class FrontController extends HttpServlet {
                 Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
             } else if (result instanceof ModelView) {
                 ModelView modelView = (ModelView) result;
+                modelView.setRequestAttributes(req);
                 req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
             }
 
