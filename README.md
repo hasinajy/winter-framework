@@ -1,4 +1,4 @@
-## Spring Clone - Winter Project
+## Spring MVC Clone - Winter Project
 
 This project is a work-in-progress clone of the Spring MVC framework written in Java. It's not a full replica, but focuses on implementing key features for educational purposes.
 
@@ -71,11 +71,14 @@ public class ExampleController {
 }
 ```
 
-**Current Functionality:**
+**Current Functionalities:**
 
-* The `FrontController` class (located in `src/winter/controllers/FrontController.java`) captures the user's requested URL and displayes it in the browser. It also shows the details of the associated controller for that URL.
-* The `@Controller` annotation is used to annotate all classes that the developer wants to be scanned as a controller.
-* The `@GetMapping` annotation is used to map methods to specific URLs.
+* The `FrontController` class (located in `src/winter/controllers/FrontController.java`) intercepts incoming URLs, identifies the requested one, and displays it in the browser. It also provides details about the associated controller for that specific URL.
+* When the invoked method within a controller returns a `ModelView` object, the `FrontController` forwards the request to the corresponding JSP page.
+* The `@Controller` annotation is used to annotate all classes that are wanted to be scanned as a controller.
+* The `@GetMapping` annotation is used to map controller methods to specific URLs, allowing for handling GET requests.
+* The `Mapping` data structure stores information about a URL and its associated controller.
+* The `ModelView` data structure holds information about the target JSP and any attributes (data) that need to be passed along to it for rendering.
 
 **Future Work:**
 
