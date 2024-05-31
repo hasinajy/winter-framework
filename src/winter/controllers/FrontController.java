@@ -70,7 +70,6 @@ public class FrontController extends HttpServlet {
                 modelView.setRequestAttributes(req);
                 req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
             }
-
         } catch (MappingNotFoundException e) {
             Printer.printError(out, "Mapping not found for '" + targetURL + "'.", false);
         } catch (Exception e) {
