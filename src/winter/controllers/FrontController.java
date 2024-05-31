@@ -67,8 +67,7 @@ public class FrontController extends HttpServlet {
                 Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
             } else if (result instanceof ModelView) {
                 ModelView modelView = (ModelView) result;
-                out.println("Jsp URL: " + modelView.getJspUrl());
-                out.println("Data hashmap: " + modelView.getData().toString());
+                req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
             }
 
         } catch (MappingNotFoundException e) {
