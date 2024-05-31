@@ -66,9 +66,8 @@ public class FrontController extends HttpServlet {
             if (result instanceof String) {
                 Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
             } else if (result instanceof ModelView) {
-                out.println("ModelView object detected.");
-            } else {
-                out.println("Object other than String.");
+                ModelView modelView = (ModelView) result;
+                out.println("Jsp URL: " + modelView.getJspUrl());
             }
 
         } catch (MappingNotFoundException e) {
