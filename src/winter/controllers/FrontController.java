@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import winter.data.Mapping;
+import winter.data.ModelView;
 import winter.exceptions.MappingNotFoundException;
 import winter.utils.AnnotationScanner;
 import winter.utils.Printer;
@@ -64,6 +65,8 @@ public class FrontController extends HttpServlet {
 
             if (result instanceof String) {
                 Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
+            } else if (result instanceof ModelView) {
+                out.println("ModelView object detected.");
             } else {
                 out.println("Object other than String.");
             }
