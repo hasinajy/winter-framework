@@ -32,4 +32,9 @@ public class ModelView {
         this.data = data;
     }
 
+    // Class methods
+    public void addObject(String sAttribute, Object data) {
+        this.getData().put(sAttribute, data);
+    }
+
 }
