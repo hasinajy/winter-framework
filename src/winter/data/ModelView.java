@@ -1,6 +1,9 @@
 package winter.data;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class ModelView {
 
@@ -35,6 +38,12 @@ public class ModelView {
     // Class methods
     public void addObject(String sAttribute, Object data) {
         this.getData().put(sAttribute, data);
+    }
+
+    public void setRequestAttributes(HttpServletRequest req) {
+        for (Entry<String, Object> entry : this.getData().entrySet()) {
+            req.setAttribute(entry.getKey(), entry.getValue());
+        }
     }
 
 }
