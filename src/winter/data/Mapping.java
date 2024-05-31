@@ -1,6 +1,7 @@
 package winter.data;
 
 public class Mapping {
+    
     private String sClass;
     private String sMethod;
 
@@ -26,4 +27,5 @@ public class Mapping {
     public void setMethodName(String sMethod) {
         this.sMethod = sMethod;
     }
+
 }
