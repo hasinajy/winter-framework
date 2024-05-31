@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import winter.data.Mapping;
+import winter.data.ModelView;
 import winter.exceptions.MappingNotFoundException;
 import winter.utils.AnnotationScanner;
 import winter.utils.Printer;
@@ -62,7 +64,13 @@ public class FrontController extends HttpServlet {
             String methodName = mapping.getMethodName();
             Object result = ReflectionUtil.invokeControllerMethod(className, methodName, new Class<?>[] {});
 
-            Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
+            if (result instanceof String) {
+                Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
+            } else if (result instanceof ModelView) {
+                ModelView modelView = (ModelView) result;
+                req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
+            }
+
         } catch (MappingNotFoundException e) {
             Printer.printError(out, "Mapping not found for '" + targetURL + "'.", false);
         } catch (Exception e) {
