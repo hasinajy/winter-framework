@@ -12,9 +12,11 @@ public class ModelView {
 
     // Constructors
     public ModelView() {
+        this.setData(new HashMap<String, Object>());
     }
 
     public ModelView(String jspUrl) {
+        this();
         this.setJspUrl(jspUrl);
     }
 
