@@ -1,7 +1,6 @@
 package winter.exceptions;
 
 public class InvalidReturnTypeException extends Exception {
-    
     public InvalidReturnTypeException() {
         super();
     }
@@ -9,5 +8,4 @@ public class InvalidReturnTypeException extends Exception {
     public InvalidReturnTypeException(String msg) {
         super(msg);
     }
-
 }

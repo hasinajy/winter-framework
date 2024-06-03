@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class ModelView {
-
     private String jspUrl;
     private HashMap<String, Object> data;
 
@@ -47,5 +46,4 @@ public class ModelView {
             req.setAttribute(entry.getKey(), entry.getValue());
         }
     }
-
 }

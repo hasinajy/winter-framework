@@ -1,7 +1,6 @@
 package winter.exceptions;
 
 public class MappingNotFoundException extends Exception {
-
     public MappingNotFoundException() {
         super();
     }
@@ -9,5 +8,4 @@ public class MappingNotFoundException extends Exception {
     public MappingNotFoundException(String message) {
         super(message);
     }
-
 }

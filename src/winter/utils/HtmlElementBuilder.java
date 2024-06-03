@@ -3,7 +3,6 @@ package winter.utils;
 import java.io.PrintWriter;
 
 public class HtmlElementBuilder extends Utility {
-
     /* ------------------------- Project related methods ------------------------ */
     public static void printRequestInfo(PrintWriter out, String requestURL) {
         HtmlElementBuilder.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
@@ -91,5 +90,4 @@ public class HtmlElementBuilder extends Utility {
     private static String makePre(String text) {
         return "<pre>" + text + "</pre>";
     }
-
 }
