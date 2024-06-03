@@ -15,7 +15,7 @@ import winter.data.ModelView;
 import winter.exceptions.InvalidReturnTypeException;
 import winter.exceptions.MappingNotFoundException;
 import winter.utils.AnnotationScanner;
-import winter.utils.Printer;
+import winter.utils.HtmlElementBuilder;
 import winter.utils.ReflectionUtil;
 import winter.utils.URLUtil;
 
@@ -52,7 +52,7 @@ public class FrontController extends HttpServlet {
         PrintWriter out = resp.getWriter();
 
         // Print request URL information
-        Printer.printRequestInfo(out, requestURL);
+        HtmlElementBuilder.printRequestInfo(out, requestURL);
 
         try {
             Mapping mapping = URLMappings.get(targetURL);
@@ -65,7 +65,7 @@ public class FrontController extends HttpServlet {
             Object result = ReflectionUtil.invokeControllerMethod(className, methodName, new Class<?>[] {});
 
             if (result instanceof String) {
-                Printer.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
+                HtmlElementBuilder.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
             } else if (result instanceof ModelView) {
                 ModelView modelView = (ModelView) result;
                 modelView.setRequestAttributes(req);
@@ -74,9 +74,9 @@ public class FrontController extends HttpServlet {
                 throw new InvalidReturnTypeException("Return type should be either String or ModelView.");
             }
         } catch (MappingNotFoundException e) {
-            Printer.printError(out, "Mapping not found for '" + targetURL + "'.");
+            HtmlElementBuilder.printError(out, "Mapping not found for '" + targetURL + "'.");
         } catch (Exception e) {
-            Printer.printError(out, e);
+            HtmlElementBuilder.printError(out, e);
         } finally {
             out.close();
         }
