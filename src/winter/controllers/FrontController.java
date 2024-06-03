@@ -3,6 +3,9 @@ package winter.controllers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -21,16 +24,22 @@ import winter.utils.UrlUtil;
 
 public class FrontController extends HttpServlet {
 
-    private HashMap<String, Mapping> URLMappings = new HashMap<>();
+    private final Map<String, Mapping> urlMappings = new HashMap<>();
+    private static Logger logger = Logger.getLogger(FrontController.class.getName());
+
+    // Getters & Setters
+    private Map<String, Mapping> getUrlMappings() {
+        return this.urlMappings;
+    }
 
     @Override
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
 
         try {
-            this.URLMappings = AnnotationScanner.scanControllers(servletContext);
+            AnnotationScanner.scanControllers(servletContext, this.getUrlMappings());
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            logger.log(Level.SEVERE, "An error occurred during initialization", e);
         }
     }
 
@@ -55,7 +64,7 @@ public class FrontController extends HttpServlet {
         HtmlElementBuilder.printRequestInfo(out, requestURL);
 
         try {
-            Mapping mapping = URLMappings.get(targetURL);
+            Mapping mapping = urlMappings.get(targetURL);
 
             if (mapping == null)
                 throw new MappingNotFoundException();

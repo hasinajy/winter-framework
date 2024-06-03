@@ -6,7 +6,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.servlet.ServletContext;
@@ -15,13 +14,11 @@ import winter.annotations.*;
 
 public class AnnotationScanner extends Utility {
 
-    public static Map<String, Mapping> scanControllers(ServletContext servletContext)
+    public static Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)
             throws URISyntaxException, IOException, ClassNotFoundException {
         String controllersPackage = servletContext.getInitParameter("ControllersPackage");
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Enumeration<URL> resources = classLoader.getResources(controllersPackage.replace(".", "/"));
-
-        Map<String, Mapping> urlMappings = new HashMap<>();
 
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
