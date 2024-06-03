@@ -45,12 +45,24 @@ public class FrontController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        processRequest(req, resp);
+        try {
+            processRequest(req, resp);
+        } catch (ServletException e) {
+            handleException(e, resp, "Servlet error occurred while processing GET request");
+        } catch (IOException e) {
+            handleException(e, resp, "I/O error occurred while processing GET request");
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        processRequest(req, resp);
+        try {
+            processRequest(req, resp);
+        } catch (ServletException e) {
+            handleException(e, resp, "Servlet error occurred while processing POST request");
+        } catch (IOException e) {
+            handleException(e, resp, "I/O error occurred while processing POST request");
+        }
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -80,14 +92,24 @@ public class FrontController extends HttpServlet {
                 modelView.setRequestAttributes(req);
                 req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
             } else {
-                throw new InvalidReturnTypeException("Return type should be either String or ModelView.");
+                throw new InvalidReturnTypeException("Return type should be either String or ModelView");
             }
         } catch (MappingNotFoundException e) {
-            HtmlElementBuilder.printError(out, "Mapping not found for '" + targetURL + "'.");
+            HtmlElementBuilder.printError(out, "Mapping not found for '" + targetURL + "'");
         } catch (Exception e) {
             HtmlElementBuilder.printError(out, e);
         } finally {
             out.close();
+        }
+    }
+
+    private void handleException(Exception e, HttpServletResponse resp, String message) {
+        logger.log(Level.SEVERE, message, e);
+
+        try {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+        } catch (IOException ioException) {
+            logger.log(Level.SEVERE, "Error sending error response to client", ioException);
         }
     }
 
