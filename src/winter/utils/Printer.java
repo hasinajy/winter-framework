@@ -38,7 +38,7 @@ public class Printer {
     }
 
     public static void printError(PrintWriter out, String errMsg) {
-        out.print("<p>" + ">>>> " + errMsg + "</p>");
+        out.print(makeParagraph(makeBold(">>>> ") + errMsg));
     }
 
     public static void printError(PrintWriter out, Exception e) {
