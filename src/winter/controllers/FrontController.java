@@ -74,9 +74,9 @@ public class FrontController extends HttpServlet {
                 throw new InvalidReturnTypeException("Return type should be either String or ModelView.");
             }
         } catch (MappingNotFoundException e) {
-            Printer.printError(out, "Mapping not found for '" + targetURL + "'.", false);
+            Printer.printError(out, "Mapping not found for '" + targetURL + "'.");
         } catch (Exception e) {
-            Printer.printError(out, e.getMessage(), true);
+            Printer.printError(out, e);
         } finally {
             out.close();
         }

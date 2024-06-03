@@ -37,13 +37,13 @@ public class Printer {
         out.println("</ul>"); // End the unordered list
     }
 
-    public static void printError(PrintWriter out, String errMsg, boolean isException) {
-        if (isException) {
-            out.print(makePre(errMsg));
-            return;
-        }
-
+    public static void printError(PrintWriter out, String errMsg) {
         out.print("<p>" + ">>>> " + errMsg + "</p>");
+    }
+
+    public static void printError(PrintWriter out, Exception e) {
+        printError(out, "Stack trace:");
+        e.printStackTrace(out);
     }
 
     private static String makeHeading(int level, String text) throws IllegalArgumentException {
@@ -71,10 +71,6 @@ public class Printer {
 
     private static String makeBold(String text) {
         return "<b>" + text + "</b>";
-    }
-
-    private static String makePre(String text) {
-        return "<pre>" + text + "</pre>";
     }
 
 }
