@@ -2,16 +2,15 @@ package winter.utils;
 
 import java.io.PrintWriter;
 
-public class Printer {
-
+public class HtmlElementBuilder extends Utility {
     /* ------------------------- Project related methods ------------------------ */
     public static void printRequestInfo(PrintWriter out, String requestURL) {
-        Printer.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
+        HtmlElementBuilder.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
     }
 
     public static void printTargetControllerInfo(PrintWriter out, String targetURL, String className, String methodName,
             String returnValue) {
-        Printer.printList(out, "Controller Information",
+        HtmlElementBuilder.printList(out, "Controller Information",
                 new String[] { "Target Mapping", "Controller", "Method", "Returned Value" },
                 new String[] { targetURL, className, methodName, returnValue });
     }
@@ -91,5 +90,4 @@ public class Printer {
     private static String makePre(String text) {
         return "<pre>" + text + "</pre>";
     }
-
 }

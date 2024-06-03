@@ -1,18 +1,18 @@
 package winter.data;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 public class ModelView {
-
     private String jspUrl;
-    private HashMap<String, Object> data;
+    private Map<String, Object> data;
 
     // Constructors
     public ModelView() {
-        this.setData(new HashMap<String, Object>());
+        this.setData(new HashMap<>());
     }
 
     public ModelView(String jspUrl) {
@@ -29,11 +29,11 @@ public class ModelView {
         this.jspUrl = jspUrl;
     }
 
-    public HashMap<String, Object> getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
-    public void setData(HashMap<String, Object> data) {
+    public void setData(Map<String, Object> data) {
         this.data = data;
     }
 
@@ -47,5 +47,4 @@ public class ModelView {
             req.setAttribute(entry.getKey(), entry.getValue());
         }
     }
-
 }
