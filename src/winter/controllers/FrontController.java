@@ -65,13 +65,12 @@ public class FrontController extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String requestURL = req.getRequestURL().toString();
-        String targetURL = UrlUtil.extractTargetURL(requestURL);
+        String targetURL = UrlUtil.extractTargetURL(req);
 
         resp.setContentType("text/html");
 
         try (PrintWriter out = resp.getWriter()) {
-            HtmlElementBuilder.printRequestInfo(out, requestURL);
+            HtmlElementBuilder.printRequestInfo(out, req.getRequestURL().toString());
 
             try {
                 handleRequest(out, req, resp, targetURL);
