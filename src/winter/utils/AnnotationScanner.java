@@ -13,7 +13,6 @@ import winter.data.Mapping;
 import winter.annotations.*;
 
 public class AnnotationScanner extends Utility {
-
     public static Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)
             throws URISyntaxException, IOException, ClassNotFoundException {
         String controllersPackage = servletContext.getInitParameter("ControllersPackage");
@@ -27,8 +26,7 @@ public class AnnotationScanner extends Utility {
 
         return urlMappings;
     }
-
-    @SuppressWarnings("deprecation")
+    
     private static void scanControllers(URL directory, String packageName, Map<String, Mapping> urlMappings)
             throws URISyntaxException, IOException, ClassNotFoundException {
         if (!packageName.endsWith(".")) {
@@ -37,30 +35,46 @@ public class AnnotationScanner extends Utility {
 
         for (String fileName : DirectoryScanner.listFiles(directory)) {
             if (fileName.endsWith(".class")) {
-                String className = packageName + fileName.substring(0, fileName.length() - 6);
-                Class<?> clazz = Class.forName(className);
-
-                if (clazz.isAnnotationPresent(Controller.class)) {
-                    Method[] methods = clazz.getMethods();
-
-                    for (Method method : methods) {
-                        if (method.isAnnotationPresent(GetMapping.class)) {
-                            String sURL = method.getAnnotation(GetMapping.class).value();
-                            String sMethod = method.getName();
-
-                            urlMappings.put(sURL, new Mapping(className, sMethod));
-                        }
-                    }
-                }
+                processClassFile(packageName, fileName, urlMappings);
             } else {
-                URL potentialSubDirURL = new URL(directory.toString() + "/" + fileName);
-                URI subDirURI = potentialSubDirURL.toURI();
-
-                if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
-                    scanControllers(potentialSubDirURL, packageName + fileName + ".", urlMappings);
-                }
+                processSubdirectory(directory, packageName, fileName, urlMappings);
             }
         }
     }
 
+    private static void processClassFile(String packageName, String fileName,
+            Map<String, Mapping> urlMappings)
+            throws ClassNotFoundException {
+        String className = packageName + fileName.substring(0, fileName.length() - 6);
+        Class<?> clazz = Class.forName(className);
+
+        if (clazz.isAnnotationPresent(Controller.class)) {
+            processControllerMethods(clazz, urlMappings);
+        }
+    }
+
+    private static void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings) {
+        Method[] methods = clazz.getMethods();
+
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(GetMapping.class)) {
+                String sURL = method.getAnnotation(GetMapping.class).value();
+                String sMethod = method.getName();
+
+                urlMappings.put(sURL, new Mapping(clazz.getName(), sMethod));
+            }
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void processSubdirectory(URL directory, String packageName, String subdirectoryName,
+            Map<String, Mapping> urlMappings)
+            throws URISyntaxException, IOException, ClassNotFoundException {
+        URL potentialSubDirURL = new URL(directory.toString() + "/" + subdirectoryName);
+        URI subDirURI = potentialSubDirURL.toURI();
+
+        if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
+            scanControllers(potentialSubDirURL, packageName + subdirectoryName + ".", urlMappings);
+        }
+    }
 }
