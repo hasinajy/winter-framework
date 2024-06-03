@@ -73,4 +73,8 @@ public class Printer {
         return "<b>" + text + "</b>";
     }
 
+    private static String makePre(String text) {
+        return "<pre>" + text + "</pre>";
+    }
+
 }
