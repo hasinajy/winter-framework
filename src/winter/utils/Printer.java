@@ -42,6 +42,20 @@ public class Printer {
     }
 
     public static void printError(PrintWriter out, Exception e) {
+        printError(out, makeBold("EXCEPTION LOG"));
+
+        StringBuilder stringBuilder = new StringBuilder();
+        StackTraceElement[] stackTraceElements = e.getStackTrace();
+
+        stringBuilder.append(e.toString());
+
+        for (StackTraceElement stackTraceElement: stackTraceElements) {
+            stringBuilder.append("\n\tat ");
+            stringBuilder.append(stackTraceElement.toString());
+        }
+
+        out.print(makePre(stringBuilder.toString()));
+    }
 
     private static String makeParagraph(String text) {
         return "<p>" + text + "</p>";
