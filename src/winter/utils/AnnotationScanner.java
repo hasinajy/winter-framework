@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.servlet.ServletContext;
 import winter.data.Mapping;
@@ -14,24 +15,24 @@ import winter.annotations.*;
 
 public class AnnotationScanner extends Utility {
 
-    public static HashMap<String, Mapping> scanControllers(ServletContext servletContext)
+    public static Map<String, Mapping> scanControllers(ServletContext servletContext)
             throws URISyntaxException, IOException, ClassNotFoundException {
         String controllersPackage = servletContext.getInitParameter("ControllersPackage");
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Enumeration<URL> resources = classLoader.getResources(controllersPackage.replace(".", "/"));
 
-        HashMap<String, Mapping> URLMappings = new HashMap<>();
+        Map<String, Mapping> urlMappings = new HashMap<>();
 
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
-            scanControllers(resource, controllersPackage, URLMappings);
+            scanControllers(resource, controllersPackage, urlMappings);
         }
 
-        return URLMappings;
+        return urlMappings;
     }
 
     @SuppressWarnings("deprecation")
-    private static void scanControllers(URL directory, String packageName, HashMap<String, Mapping> URLMappings)
+    private static void scanControllers(URL directory, String packageName, Map<String, Mapping> urlMappings)
             throws URISyntaxException, IOException, ClassNotFoundException {
         if (!packageName.endsWith(".")) {
             packageName += ".";
@@ -50,21 +51,16 @@ public class AnnotationScanner extends Utility {
                             String sURL = method.getAnnotation(GetMapping.class).value();
                             String sMethod = method.getName();
 
-                            URLMappings.put(sURL, new Mapping(className, sMethod));
+                            urlMappings.put(sURL, new Mapping(className, sMethod));
                         }
                     }
                 }
             } else {
                 URL potentialSubDirURL = new URL(directory.toString() + "/" + fileName);
+                URI subDirURI = potentialSubDirURL.toURI();
 
-                try {
-                    URI subDirURI = potentialSubDirURL.toURI();
-
-                    if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
-                        scanControllers(potentialSubDirURL, packageName + fileName + ".", URLMappings);
-                    }
-                } catch (URISyntaxException e) {
-                    throw e;
+                if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
+                    scanControllers(potentialSubDirURL, packageName + fileName + ".", urlMappings);
                 }
             }
         }
