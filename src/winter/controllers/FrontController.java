@@ -23,7 +23,6 @@ import winter.utils.ReflectionUtil;
 import winter.utils.UrlUtil;
 
 public class FrontController extends HttpServlet {
-
     private final Map<String, Mapping> urlMappings = new HashMap<>();
     private static Logger logger = Logger.getLogger(FrontController.class.getName());
 
@@ -48,9 +47,9 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp);
         } catch (ServletException e) {
-            handleException(e, resp, "Servlet error occurred while processing GET request");
+            handleException(e, Level.SEVERE, resp, "Servlet error occurred while processing GET request");
         } catch (IOException e) {
-            handleException(e, resp, "I/O error occurred while processing GET request");
+            handleException(e, Level.SEVERE, resp, "I/O error occurred while processing GET request");
         }
     }
 
@@ -59,9 +58,9 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp);
         } catch (ServletException e) {
-            handleException(e, resp, "Servlet error occurred while processing POST request");
+            handleException(e, Level.SEVERE, resp, "Servlet error occurred while processing POST request");
         } catch (IOException e) {
-            handleException(e, resp, "I/O error occurred while processing POST request");
+            handleException(e, Level.SEVERE, resp, "I/O error occurred while processing POST request");
         }
     }
 
@@ -70,47 +69,53 @@ public class FrontController extends HttpServlet {
         String targetURL = UrlUtil.extractTargetURL(requestURL);
 
         resp.setContentType("text/html");
-        PrintWriter out = resp.getWriter();
 
-        // Print request URL information
-        HtmlElementBuilder.printRequestInfo(out, requestURL);
+        try (PrintWriter out = resp.getWriter()) {
+            HtmlElementBuilder.printRequestInfo(out, requestURL);
 
-        try {
-            Mapping mapping = urlMappings.get(targetURL);
-
-            if (mapping == null)
-                throw new MappingNotFoundException();
-
-            String className = mapping.getClassName();
-            String methodName = mapping.getMethodName();
-            Object result = ReflectionUtil.invokeControllerMethod(className, methodName, new Class<?>[] {});
-
-            if (result instanceof String) {
-                HtmlElementBuilder.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
-            } else if (result instanceof ModelView) {
-                ModelView modelView = (ModelView) result;
-                modelView.setRequestAttributes(req);
-                req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
-            } else {
-                throw new InvalidReturnTypeException("Return type should be either String or ModelView");
+            try {
+                handleRequest(out, req, resp, targetURL);
+            } catch (MappingNotFoundException | InvalidReturnTypeException e) {
+                handleException(e, Level.WARNING, resp, e.getMessage());
+            } catch (ReflectiveOperationException e) {
+                handleException(e, Level.SEVERE, resp, "An error occurred while processing the requested URL");
+            } catch (Exception e) {
+                handleException(e, Level.SEVERE, resp, "An unexpected error occurred");
             }
-        } catch (MappingNotFoundException e) {
-            HtmlElementBuilder.printError(out, "Mapping not found for '" + targetURL + "'");
-        } catch (Exception e) {
-            HtmlElementBuilder.printError(out, e);
-        } finally {
-            out.close();
         }
     }
 
-    private void handleException(Exception e, HttpServletResponse resp, String message) {
-        logger.log(Level.SEVERE, message, e);
+    private void handleRequest(PrintWriter out, HttpServletRequest req, HttpServletResponse resp, String targetURL)
+            throws MappingNotFoundException, ReflectiveOperationException, InvalidReturnTypeException, ServletException,
+            IOException {
+        Mapping mapping = urlMappings.get(targetURL);
 
-        try {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+        if (mapping == null) {
+            throw new MappingNotFoundException("Mapping not found for '" + targetURL + "'");
+        }
+
+        String className = mapping.getClassName();
+        String methodName = mapping.getMethodName();
+        Object result = ReflectionUtil.invokeControllerMethod(className, methodName, new Class<?>[] {});
+
+        if (result instanceof String) {
+            HtmlElementBuilder.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
+        } else if (result instanceof ModelView) {
+            ModelView modelView = (ModelView) result;
+            modelView.setRequestAttributes(req);
+            req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
+        } else {
+            throw new InvalidReturnTypeException("Return type should be either String or ModelView");
+        }
+    }
+
+    private void handleException(Exception e, Level level, HttpServletResponse resp, String message) {
+        logger.log(level, e.getMessage(), e);
+
+        try (PrintWriter out = resp.getWriter()) {
+            HtmlElementBuilder.printError(out, message);
         } catch (IOException ioException) {
             logger.log(Level.SEVERE, "Error sending error response to client", ioException);
         }
     }
-
 }
