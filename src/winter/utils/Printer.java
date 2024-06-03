@@ -42,8 +42,9 @@ public class Printer {
     }
 
     public static void printError(PrintWriter out, Exception e) {
-        printError(out, "Stack trace:");
-        e.printStackTrace(out);
+
+    private static String makeParagraph(String text) {
+        return "<p>" + text + "</p>";
     }
 
     private static String makeHeading(int level, String text) throws IllegalArgumentException {
