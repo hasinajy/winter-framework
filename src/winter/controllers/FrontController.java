@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import winter.data.Mapping;
 import winter.data.ModelView;
+import winter.exceptions.InvalidReturnTypeException;
 import winter.exceptions.MappingNotFoundException;
 import winter.utils.AnnotationScanner;
 import winter.utils.Printer;
@@ -69,6 +70,8 @@ public class FrontController extends HttpServlet {
                 ModelView modelView = (ModelView) result;
                 modelView.setRequestAttributes(req);
                 req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
+            } else {
+                throw new InvalidReturnTypeException();
             }
         } catch (MappingNotFoundException e) {
             Printer.printError(out, "Mapping not found for '" + targetURL + "'.", false);
