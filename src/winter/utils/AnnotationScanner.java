@@ -12,7 +12,7 @@ import jakarta.servlet.ServletContext;
 import winter.data.Mapping;
 import winter.annotations.*;
 
-public class AnnotationScanner {
+public class AnnotationScanner extends Utility {
 
     public static HashMap<String, Mapping> scanControllers(ServletContext servletContext)
             throws URISyntaxException, IOException, ClassNotFoundException {

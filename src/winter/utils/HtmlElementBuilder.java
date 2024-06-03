@@ -2,7 +2,7 @@ package winter.utils;
 
 import java.io.PrintWriter;
 
-public class HtmlElementBuilder {
+public class HtmlElementBuilder extends Utility {
 
     /* ------------------------- Project related methods ------------------------ */
     public static void printRequestInfo(PrintWriter out, String requestURL) {
