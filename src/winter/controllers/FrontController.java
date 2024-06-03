@@ -71,7 +71,7 @@ public class FrontController extends HttpServlet {
                 modelView.setRequestAttributes(req);
                 req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
             } else {
-                throw new InvalidReturnTypeException();
+                throw new InvalidReturnTypeException("Return type should be either String or ModelView.");
             }
         } catch (MappingNotFoundException e) {
             Printer.printError(out, "Mapping not found for '" + targetURL + "'.", false);
