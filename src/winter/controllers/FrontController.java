@@ -17,7 +17,7 @@ import winter.exceptions.MappingNotFoundException;
 import winter.utils.AnnotationScanner;
 import winter.utils.HtmlElementBuilder;
 import winter.utils.ReflectionUtil;
-import winter.utils.URLUtil;
+import winter.utils.UrlUtil;
 
 public class FrontController extends HttpServlet {
 
@@ -46,7 +46,7 @@ public class FrontController extends HttpServlet {
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String requestURL = req.getRequestURL().toString();
-        String targetURL = URLUtil.extractTargetURL(requestURL);
+        String targetURL = UrlUtil.extractTargetURL(requestURL);
 
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();

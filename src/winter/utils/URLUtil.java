@@ -1,6 +1,6 @@
 package winter.utils;
 
-public class URLUtil {
+public class UrlUtil {
 
     public static String extractTargetURL(String requestURL) {
         String[] splitRequest = requestURL.split("/");
