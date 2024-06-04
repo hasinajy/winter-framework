@@ -2,16 +2,15 @@ package winter.utils;
 
 import java.io.PrintWriter;
 
-public class Printer {
-
+public class HtmlElementBuilder extends Utility {
     /* ------------------------- Project related methods ------------------------ */
     public static void printRequestInfo(PrintWriter out, String requestURL) {
-        Printer.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
+        HtmlElementBuilder.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
     }
 
     public static void printTargetControllerInfo(PrintWriter out, String targetURL, String className, String methodName,
             String returnValue) {
-        Printer.printList(out, "Controller Information",
+        HtmlElementBuilder.printList(out, "Controller Information",
                 new String[] { "Target Mapping", "Controller", "Method", "Returned Value" },
                 new String[] { targetURL, className, methodName, returnValue });
     }
@@ -37,13 +36,28 @@ public class Printer {
         out.println("</ul>"); // End the unordered list
     }
 
-    public static void printError(PrintWriter out, String errMsg, boolean isException) {
-        if (isException) {
-            out.print(makePre(errMsg));
-            return;
+    public static void printError(PrintWriter out, String errMsg) {
+        out.print(makeParagraph(makeBold(">>>> ") + errMsg));
+    }
+
+    public static void printError(PrintWriter out, Exception e) {
+        printError(out, makeBold("EXCEPTION LOG"));
+
+        StringBuilder stringBuilder = new StringBuilder();
+        StackTraceElement[] stackTraceElements = e.getStackTrace();
+
+        stringBuilder.append(e.toString());
+
+        for (StackTraceElement stackTraceElement: stackTraceElements) {
+            stringBuilder.append("\n\tat ");
+            stringBuilder.append(stackTraceElement.toString());
         }
 
-        out.print("<p>" + ">>>> " + errMsg + "</p>");
+        out.print(makePre(stringBuilder.toString()));
+    }
+
+    private static String makeParagraph(String text) {
+        return "<p>" + text + "</p>";
     }
 
     private static String makeHeading(int level, String text) throws IllegalArgumentException {
@@ -76,5 +90,4 @@ public class Printer {
     private static String makePre(String text) {
         return "<pre>" + text + "</pre>";
     }
-
 }
