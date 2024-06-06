@@ -2,7 +2,9 @@ package winter.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import winter.data.Mapping;
 import winter.data.ModelView;
+import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidReturnTypeException;
 import winter.exceptions.MappingNotFoundException;
 import winter.utils.AnnotationScanner;
@@ -24,11 +27,16 @@ import winter.utils.UrlUtil;
 
 public class FrontController extends HttpServlet {
     private final Map<String, Mapping> urlMappings = new HashMap<>();
+    private final List<Exception> initExceptions = new ArrayList<>();
     private static Logger logger = Logger.getLogger(FrontController.class.getName());
 
     // Getters & Setters
     private Map<String, Mapping> getUrlMappings() {
         return this.urlMappings;
+    }
+
+    private List<Exception> getInitExceptions() {
+        return this.initExceptions;
     }
 
     @Override
@@ -37,6 +45,8 @@ public class FrontController extends HttpServlet {
 
         try {
             AnnotationScanner.scanControllers(servletContext, this.getUrlMappings());
+        } catch (DuplicateMappingException e) {
+            this.getInitExceptions().add(e);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "An error occurred during initialization", e);
         }
@@ -80,6 +90,14 @@ public class FrontController extends HttpServlet {
                 handleException(e, Level.SEVERE, resp, "An error occurred while processing the requested URL");
             } catch (Exception e) {
                 handleException(e, Level.SEVERE, resp, "An unexpected error occurred");
+            }
+        }
+    }
+
+    private void handleInitExceptions(HttpServletResponse resp) {
+        for (Exception e: this.getInitExceptions()) {
+            if (e instanceof DuplicateMappingException) {
+                handleException(e, Level.SEVERE, resp, e.getMessage());
             }
         }
     }
