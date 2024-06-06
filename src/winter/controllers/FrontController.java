@@ -48,7 +48,7 @@ public class FrontController extends HttpServlet {
         } catch (DuplicateMappingException e) {
             this.getInitExceptions().add(e);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "An error occurred during initialization", e);
+            this.getInitExceptions().add(new Exception("An error occurred during initialization", e));
         }
     }
 
@@ -57,9 +57,9 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp);
         } catch (ServletException e) {
-            handleException(e, Level.SEVERE, resp, "Servlet error occurred while processing GET request");
+            handleException(new ServletException("Servlet error occurred while processing GET request", e), Level.SEVERE, resp);
         } catch (IOException e) {
-            handleException(e, Level.SEVERE, resp, "I/O error occurred while processing GET request");
+            handleException(new IOException("I/O error occurred while processing GET request", e), Level.SEVERE, resp);
         }
     }
 
@@ -68,9 +68,9 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp);
         } catch (ServletException e) {
-            handleException(e, Level.SEVERE, resp, "Servlet error occurred while processing POST request");
+            handleException(new ServletException("Servlet error occurred while processing POST request", e), Level.SEVERE, resp);
         } catch (IOException e) {
-            handleException(e, Level.SEVERE, resp, "I/O error occurred while processing POST request");
+            handleException(new IOException("I/O error occurred while processing POST request", e), Level.SEVERE, resp);
         }
     }
 
@@ -79,26 +79,28 @@ public class FrontController extends HttpServlet {
 
         String targetURL = UrlUtil.extractTargetURL(req);
         resp.setContentType("text/html");
-        
+
         try (PrintWriter out = resp.getWriter()) {
             HtmlElementBuilder.printRequestInfo(out, req.getRequestURL().toString());
 
             try {
                 handleRequest(out, req, resp, targetURL);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
-                handleException(e, Level.WARNING, resp, e.getMessage());
+                handleException(e, Level.WARNING, resp);
             } catch (ReflectiveOperationException e) {
-                handleException(e, Level.SEVERE, resp, "An error occurred while processing the requested URL");
+                handleException(
+                        new ReflectiveOperationException("An error occurred while processing the requested URL", e),
+                        Level.SEVERE, resp);
             } catch (Exception e) {
-                handleException(e, Level.SEVERE, resp, "An unexpected error occurred");
+                handleException(new Exception("An unexpected error occurred", e), Level.SEVERE, resp);
             }
         }
     }
 
     private void handleInitExceptions(HttpServletResponse resp) {
-        for (Exception e: this.getInitExceptions()) {
+        for (Exception e : this.getInitExceptions()) {
             if (e instanceof DuplicateMappingException) {
-                handleException(e, Level.SEVERE, resp, e.getMessage());
+                handleException(e, Level.SEVERE, resp);
             }
         }
     }
@@ -109,7 +111,7 @@ public class FrontController extends HttpServlet {
         Mapping mapping = urlMappings.get(targetURL);
 
         if (mapping == null) {
-            throw new MappingNotFoundException("Mapping not found for '" + targetURL + "'");
+            throw new MappingNotFoundException("Resource not found for URL: " + targetURL);
         }
 
         String className = mapping.getClassName();
@@ -123,15 +125,19 @@ public class FrontController extends HttpServlet {
             modelView.setRequestAttributes(req);
             req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
         } else {
-            throw new InvalidReturnTypeException("Return type should be either String or ModelView");
+            throw new InvalidReturnTypeException("Controller return type should be either String or ModelView");
         }
     }
 
-    private void handleException(Exception e, Level level, HttpServletResponse resp, String message) {
+    private void handleException(Exception e, Level level, HttpServletResponse resp) {
         logger.log(level, e.getMessage(), e);
 
         try (PrintWriter out = resp.getWriter()) {
-            HtmlElementBuilder.printError(out, message);
+            if (e instanceof MappingNotFoundException) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, e.getMessage());
+            } else {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            }
         } catch (IOException ioException) {
             logger.log(Level.SEVERE, "Error sending error response to client", ioException);
         }
