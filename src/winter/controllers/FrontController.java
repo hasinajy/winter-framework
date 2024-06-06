@@ -18,8 +18,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import winter.data.Mapping;
 import winter.data.ModelView;
 import winter.exceptions.DuplicateMappingException;
+import winter.exceptions.InvalidPackageNameException;
 import winter.exceptions.InvalidReturnTypeException;
 import winter.exceptions.MappingNotFoundException;
+import winter.exceptions.PackageProviderNotFoundException;
 import winter.utils.AnnotationScanner;
 import winter.utils.HtmlElementBuilder;
 import winter.utils.ReflectionUtil;
@@ -45,7 +47,7 @@ public class FrontController extends HttpServlet {
 
         try {
             AnnotationScanner.scanControllers(servletContext, this.getUrlMappings());
-        } catch (DuplicateMappingException e) {
+        } catch (PackageProviderNotFoundException | InvalidPackageNameException | DuplicateMappingException e) {
             this.getInitExceptions().add(e);
         } catch (Exception e) {
             this.getInitExceptions().add(new Exception("An error occurred during initialization", e));
@@ -57,7 +59,8 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp);
         } catch (ServletException e) {
-            handleException(new ServletException("Servlet error occurred while processing GET request", e), Level.SEVERE, resp);
+            handleException(new ServletException("Servlet error occurred while processing GET request", e),
+                    Level.SEVERE, resp);
         } catch (IOException e) {
             handleException(new IOException("I/O error occurred while processing GET request", e), Level.SEVERE, resp);
         }
@@ -68,7 +71,8 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp);
         } catch (ServletException e) {
-            handleException(new ServletException("Servlet error occurred while processing POST request", e), Level.SEVERE, resp);
+            handleException(new ServletException("Servlet error occurred while processing POST request", e),
+                    Level.SEVERE, resp);
         } catch (IOException e) {
             handleException(new IOException("I/O error occurred while processing POST request", e), Level.SEVERE, resp);
         }
@@ -76,6 +80,11 @@ public class FrontController extends HttpServlet {
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         handleInitExceptions(resp);
+
+        // Stop the method execution if an error occurred during initialization
+        if (!this.getInitExceptions().isEmpty()) {
+            return;
+        }
 
         String targetURL = UrlUtil.extractTargetURL(req);
         resp.setContentType("text/html");
@@ -99,9 +108,7 @@ public class FrontController extends HttpServlet {
 
     private void handleInitExceptions(HttpServletResponse resp) {
         for (Exception e : this.getInitExceptions()) {
-            if (e instanceof DuplicateMappingException) {
-                handleException(e, Level.SEVERE, resp);
-            }
+            handleException(e, Level.SEVERE, resp);
         }
     }
 
