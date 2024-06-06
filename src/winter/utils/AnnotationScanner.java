@@ -10,6 +10,7 @@ import java.util.Map;
 
 import jakarta.servlet.ServletContext;
 import winter.data.Mapping;
+import winter.exceptions.DuplicateMappingException;
 import winter.annotations.*;
 
 public class AnnotationScanner extends Utility {
@@ -26,7 +27,7 @@ public class AnnotationScanner extends Utility {
 
         return urlMappings;
     }
-    
+
     private static void scanControllers(URL directory, String packageName, Map<String, Mapping> urlMappings)
             throws URISyntaxException, IOException, ClassNotFoundException {
         if (!packageName.endsWith(".")) {
@@ -53,7 +54,8 @@ public class AnnotationScanner extends Utility {
         }
     }
 
-    private static void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings) {
+    private static void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings)
+            throws DuplicateMappingException {
         Method[] methods = clazz.getMethods();
 
         for (Method method : methods) {
@@ -61,7 +63,9 @@ public class AnnotationScanner extends Utility {
                 String sURL = method.getAnnotation(GetMapping.class).value();
                 String sMethod = method.getName();
 
-                urlMappings.put(sURL, new Mapping(clazz.getName(), sMethod));
+                if (urlMappings.putIfAbsent(sURL, new Mapping(clazz.getName(), sMethod)) != null) {
+                    throw new DuplicateMappingException("Duplicate mapping found for URL: " + sURL);
+                }
             }
         }
     }
