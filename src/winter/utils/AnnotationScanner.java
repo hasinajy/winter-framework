@@ -17,6 +17,11 @@ public class AnnotationScanner extends Utility {
     public static Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)
             throws URISyntaxException, IOException, ClassNotFoundException {
         String controllersPackage = servletContext.getInitParameter("ControllersPackage");
+
+        if (controllersPackage == null) {
+            throw new PackageProviderNotFoundException();
+        }
+
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Enumeration<URL> resources = classLoader.getResources(controllersPackage.replace(".", "/"));
 
