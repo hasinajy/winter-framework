@@ -91,7 +91,7 @@ public class FrontController extends HttpServlet {
             HtmlElementBuilder.printRequestInfo(out, req.getRequestURL().toString());
 
             try {
-                handleRequest(out, req, resp, targetURL);
+                handleRequest(req, resp, targetURL, out);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
                 ExceptionHandler.handleException(e, Level.WARNING, resp);
             } catch (ReflectiveOperationException e) {
@@ -104,7 +104,7 @@ public class FrontController extends HttpServlet {
         }
     }
 
-    private void handleRequest(PrintWriter out, HttpServletRequest req, HttpServletResponse resp, String targetURL)
+    private void handleRequest(HttpServletRequest req, HttpServletResponse resp, String targetURL, PrintWriter out)
             throws MappingNotFoundException, ReflectiveOperationException, InvalidReturnTypeException, ServletException,
             IOException {
         Mapping mapping = urlMappings.get(targetURL);
