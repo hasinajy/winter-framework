@@ -11,15 +11,22 @@ import java.util.Map;
 import jakarta.servlet.ServletContext;
 import winter.data.Mapping;
 import winter.exceptions.DuplicateMappingException;
+import winter.exceptions.InvalidPackageNameException;
+import winter.exceptions.PackageProviderNotFoundException;
 import winter.annotations.*;
 
 public class AnnotationScanner extends Utility {
     public static Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)
-            throws URISyntaxException, IOException, ClassNotFoundException {
+            throws PackageProviderNotFoundException, InvalidPackageNameException, URISyntaxException, IOException,
+            ClassNotFoundException {
         String controllersPackage = servletContext.getInitParameter("ControllersPackage");
 
         if (controllersPackage == null) {
-            throw new PackageProviderNotFoundException();
+            throw new PackageProviderNotFoundException("No package provider was found in the configuration file");
+        }
+
+        if (!PackageNameValidator.isValidPackageName(controllersPackage)) {
+            throw new InvalidPackageNameException("Invalid provided package name in the configuration file");
         }
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
