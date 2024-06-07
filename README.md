@@ -75,6 +75,12 @@ public class ExampleController {
 
 * The `FrontController` class (located in `src/winter/controllers/FrontController.java`) intercepts incoming URLs, identifies the requested one, and displays it in the browser. It also provides details about the associated controller for that specific URL.
 * When the invoked method within a controller returns a `ModelView` object, the `FrontController` forwards the request to the corresponding JSP page.
+* `Error 500` is sent to the client when one of the following issues occurs:
+  * Package provider not found in the configuration file.
+  * Provided package name is invalid.
+  * Multiple methods have the same `@GetMapping` value.
+  * Mapped method return value is neither `String` nor `ModelView`.
+* `Error 404` is sent to the client when the requested URL doesn't match any `@GetMapping`.
 * The `@Controller` annotation is used to annotate all classes that are wanted to be scanned as a controller.
 * The `@GetMapping` annotation is used to map controller methods to specific URLs, allowing for handling GET requests.
 * The `Mapping` data structure stores information about a URL and its associated controller.
