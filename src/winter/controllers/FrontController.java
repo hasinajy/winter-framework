@@ -117,7 +117,7 @@ public class FrontController extends HttpServlet {
 
         String className = mapping.getClassName();
         String methodName = mapping.getMethodName();
-        Object result = ReflectionUtil.invokeControllerMethod(className, methodName, new Class<?>[] {});
+        Object result = ReflectionUtil.invokeControllerMethod(className, methodName, req);
 
         if (result instanceof String) {
             HtmlElementBuilder.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
