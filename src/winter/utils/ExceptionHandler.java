@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import winter.exceptions.MappingNotFoundException;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,9 +26,9 @@ public class ExceptionHandler extends Utility {
         }
     }
 
-    public static void handleInitExceptions(HttpServletResponse resp, List<Exception> initExceptions) {
-        for (Exception e : initExceptions) {
-            handleException(e, Level.SEVERE, resp);
+    public static void handleInitException(HttpServletResponse resp, Exception initException) {
+        if (initException != null) {
+            handleException(initException, Level.SEVERE, resp);
         }
     }
 }
