@@ -2,12 +2,15 @@ package winter.utils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import jakarta.servlet.http.HttpServletRequest;
+import winter.data.Mapping;
 
 public class ReflectionUtil extends Utility {
-    public static Object invokeControllerMethod(String className, String methodName, HttpServletRequest req)
+    public static Object invokeControllerMethod(Mapping mapping, HttpServletRequest req)
             throws ReflectiveOperationException {
+        String className = mapping.getClassName();
+        String methodName = mapping.getMethodName();
+        
         try {
             Class<?> clazz = Class.forName(className);
             Method method = clazz.getDeclaredMethod(methodName);
