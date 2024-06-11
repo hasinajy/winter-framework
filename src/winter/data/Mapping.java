@@ -3,7 +3,7 @@ package winter.data;
 public class Mapping {
     private String sClass;
     private String sMethod;
-    private Class<?>[] methodParamTypes = null;
+    private Class<?>[] methodParamTypes = new Class<?>[0];
 
     // Constructors
     public Mapping(String sClass, String sMethod) {
