@@ -2,9 +2,7 @@ package winter.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import jakarta.servlet.ServletContext;
@@ -28,17 +26,21 @@ import winter.utils.UrlUtil;
 
 public class FrontController extends HttpServlet {
     private final Map<String, Mapping> urlMappings = new HashMap<>();
-    private final List<Exception> initExceptions = new ArrayList<>();
+    private static Exception initException = null;
 
     // Getters & Setters
     private Map<String, Mapping> getUrlMappings() {
         return this.urlMappings;
     }
 
-    private List<Exception> getInitExceptions() {
-        return this.initExceptions;
+    private Exception getInitException() {
+        return FrontController.initException;
     }
 
+    private static void setInitException(Exception e) {
+        FrontController.initException = e;
+    }
+    
     @Override
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
@@ -46,9 +48,9 @@ public class FrontController extends HttpServlet {
         try {
             AnnotationScanner.scanControllers(servletContext, this.getUrlMappings());
         } catch (PackageProviderNotFoundException | InvalidPackageNameException | DuplicateMappingException e) {
-            this.getInitExceptions().add(e);
+            FrontController.setInitException(e);
         } catch (Exception e) {
-            this.getInitExceptions().add(new Exception("An error occurred during initialization", e));
+            FrontController.setInitException(new Exception("An error occurred during initialization", e));
         }
     }
 
@@ -77,10 +79,10 @@ public class FrontController extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ExceptionHandler.handleInitExceptions(resp, this.getInitExceptions());
+        ExceptionHandler.handleInitException(resp, this.getInitException());
 
         // Stop the method execution if an error occurred during initialization
-        if (!this.getInitExceptions().isEmpty()) {
+        if (this.getInitException() != null) {
             return;
         }
 
@@ -115,7 +117,7 @@ public class FrontController extends HttpServlet {
 
         String className = mapping.getClassName();
         String methodName = mapping.getMethodName();
-        Object result = ReflectionUtil.invokeControllerMethod(className, methodName, new Class<?>[] {});
+        Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
 
         if (result instanceof String) {
             HtmlElementBuilder.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());

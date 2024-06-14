@@ -68,6 +68,12 @@ public class ExampleController {
     public void exampleMethod() {
         // Code goes here ...
     }
+
+    // If the method has arguments
+    @GetMapping("test-mapping")
+    public void exampleMethod(@RequestParam(name = "name") String name, ...) {
+        // Code goes here...
+    }
 }
 ```
 
@@ -85,6 +91,7 @@ public class ExampleController {
 * The `@GetMapping` annotation is used to map controller methods to specific URLs, allowing for handling GET requests.
 * The `Mapping` data structure stores information about a URL and its associated controller.
 * The `ModelView` data structure holds information about the target JSP and any attributes (data) that need to be passed along to it for rendering.
+* The `@RequestParam(name = "value")` annotation is used to annotate parameters to be mapped to a form attribute.
 
 **Future Work:**
 
