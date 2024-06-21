@@ -79,7 +79,7 @@ public class ReflectionUtil extends Utility {
         List<String> attributeNames = new ArrayList<>();
 
         for (String paramName : objParamNames) {
-            attributeNames.add(paramName.split(".")[1]);
+            attributeNames.add(paramName.split("\\.")[1]);
         }
 
         return attributeNames.toArray(new String[0]);
