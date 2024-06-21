@@ -1,6 +1,5 @@
 package winter.utils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -20,45 +19,56 @@ public class ReflectionUtil extends Utility {
         try {
             Class<?> clazz = Class.forName(className);
             Method method = clazz.getDeclaredMethod(methodName, mapping.getMethodParamTypes());
-            List<Object> args = new ArrayList<>();
-            Parameter[] methodParams = method.getParameters();
-
-            for (Parameter param : methodParams) {
-                String objName = null;
-
-                if (param.isAnnotationPresent(RequestParam.class)) {
-                    objName = param.getAnnotation(RequestParam.class).name();
-                } else {
-                    // TODO: Use library to get parameter name or use `-parameter` during
-                    // compilation
-                    objName = param.getName();
-                }
-
-                Class<?> argClass = param.getType();
-                Object arg = argClass.getDeclaredConstructor().newInstance();
-
-                String[] objParamNames = getObjectParameters(objName, req.getParameterNames());
-                String[] objAttrNames = getAttributeNames(objParamNames);
-                String[] attrValues = getAttributeValues(objParamNames, req);
-
-                setObjectAttributes(argClass, arg, objAttrNames, attrValues);
-                args.add(argClass.cast(arg));
-            }
-
-            return method.invoke(clazz.getDeclaredConstructor().newInstance(), args.toArray());
+            Object[] args = initializeMethodArguments(method.getParameters(), req);
+            return method.invoke(clazz.getDeclaredConstructor().newInstance(), args);
         } catch (ClassNotFoundException e) {
             String message = "Class not found: " + className;
             throw new ReflectiveOperationException(message, e);
         } catch (NoSuchMethodException e) {
             String message = "Method not found: " + methodName;
             throw new ReflectiveOperationException(message, e);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ReflectiveOperationException | NumberFormatException e) {
             String message = "Error invoking method: " + methodName;
             throw new ReflectiveOperationException(message, e);
         }
     }
 
-    private static void setObjectAttributes(Class<?> classType, Object instance, String[] attrNames, String[] attrValues)
+    private static Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
+            throws ReflectiveOperationException {
+        List<Object> args = new ArrayList<>();
+
+        for (Parameter param : methodParams) {
+            String paramName = getParameterName(param);
+            Class<?> paramType = param.getType();
+            Object paramValue = createParameterInstance(paramType, paramName, req);
+            args.add(paramValue);
+        }
+
+        return args.toArray();
+    }
+
+    private static String getParameterName(Parameter param) {
+        if (param.isAnnotationPresent(RequestParam.class)) {
+            return param.getAnnotation(RequestParam.class).name();
+        } else {
+            // TODO: Use library to get parameter name or use `-parameter` during
+            // compilation
+            return param.getName();
+        }
+    }
+
+    private static Object createParameterInstance(Class<?> paramType, String paramName, HttpServletRequest req)
+            throws ReflectiveOperationException {
+        Object paramValue = paramType.getDeclaredConstructor().newInstance();
+        String[] paramNames = getObjectParameters(paramName, req.getParameterNames());
+        String[] attrNames = getAttributeNames(paramNames);
+        String[] attrValues = getAttributeValues(paramNames, req);
+        setObjectAttributes(paramType, paramValue, attrNames, attrValues);
+        return paramValue;
+    }
+
+    private static void setObjectAttributes(Class<?> classType, Object instance, String[] attrNames,
+            String[] attrValues)
             throws ReflectiveOperationException {
         for (int i = 0; i < attrNames.length; i++) {
             String attrName = attrNames[i];
