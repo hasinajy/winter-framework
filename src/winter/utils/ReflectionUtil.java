@@ -37,11 +37,11 @@ public class ReflectionUtil extends Utility {
                 Class<?> argClass = param.getType();
                 Object arg = argClass.getDeclaredConstructor().newInstance();
 
-                String[] objParamNames = getObjParamNames(objName, req.getParameterNames());
-                String[] objAttrNames = getObjAttrNames(objParamNames);
-                String[] attrValues = getAttrValues(objParamNames, req);
+                String[] objParamNames = getObjectParameters(objName, req.getParameterNames());
+                String[] objAttrNames = getAttributeNames(objParamNames);
+                String[] attrValues = getAttributeValues(objParamNames, req);
 
-                setAttrValues(argClass, arg, objAttrNames, attrValues);
+                setObjectAttributes(argClass, arg, objAttrNames, attrValues);
                 args.add(argClass.cast(arg));
             }
 
@@ -58,45 +58,44 @@ public class ReflectionUtil extends Utility {
         }
     }
 
-    private static void setAttrValues(Class<?> classType, Object instance, String[] attrNames, String[] attrValues)
+    private static void setObjectAttributes(Class<?> classType, Object instance, String[] attrNames, String[] attrValues)
             throws ReflectiveOperationException {
         for (int i = 0; i < attrNames.length; i++) {
             String attrName = attrNames[i];
             String attrValue = attrValues[i];
-            String setterName = "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
+            String setterName = getSetterName(attrName);
 
             try {
                 Class<?> clazz = classType.getDeclaredField(attrName).getType();
                 Method setter = classType.getDeclaredMethod(setterName, clazz);
-
-                if (clazz == int.class) {
-                    int value = (attrValue == null) ? 0 : Integer.parseInt(attrValue);
-                    setter.invoke(instance, value);
-                } else if (clazz == double.class) {
-                    double value = (attrValue == null) ? 0 : Double.parseDouble(attrValue);
-                    setter.invoke(instance, value);
-                } else if (clazz == float.class) {
-                    float value = (attrValue == null) ? 0 : Float.parseFloat(attrValue);
-                    setter.invoke(instance, value);
-                } else {
-                    setter.invoke(instance, clazz.cast(attrValue));
-                }
-            } catch (NoSuchFieldException e) {
-                String message = "Field not found: " + attrName;
-                throw new ReflectiveOperationException(message, e);
-            } catch (NoSuchMethodException e) {
-                String message = "Method not found: " + setterName;
-                throw new ReflectiveOperationException(message, e);
-            } catch (SecurityException
-                    | IllegalAccessException
-                    | IllegalArgumentException | InvocationTargetException e) {
-                String message = "Error invoking method: " + setterName;
+                Object value = convertAttributeValue(attrValue, clazz);
+                setter.invoke(instance, value);
+            } catch (ReflectiveOperationException | NumberFormatException e) {
+                String message = "Error setting attribute: " + attrName;
                 throw new ReflectiveOperationException(message, e);
             }
         }
     }
 
-    private static String[] getAttrValues(String[] paramNames, HttpServletRequest req) {
+    private static Object convertAttributeValue(String attrValue, Class<?> clazz) {
+        if (attrValue == null) {
+            return null;
+        } else if (clazz == int.class || clazz == Integer.class) {
+            return Integer.parseInt(attrValue);
+        } else if (clazz == double.class || clazz == Double.class) {
+            return Double.parseDouble(attrValue);
+        } else if (clazz == float.class || clazz == Float.class) {
+            return Float.parseFloat(attrValue);
+        } else {
+            return attrValue;
+        }
+    }
+
+    private static String getSetterName(String attrName) {
+        return "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
+    }
+
+    private static String[] getAttributeValues(String[] paramNames, HttpServletRequest req) {
         List<String> attributeValues = new ArrayList<>();
 
         for (String paramName : paramNames) {
@@ -106,7 +105,7 @@ public class ReflectionUtil extends Utility {
         return attributeValues.toArray(new String[0]);
     }
 
-    private static String[] getObjAttrNames(String[] objParamNames) {
+    private static String[] getAttributeNames(String[] objParamNames) {
         List<String> attributeNames = new ArrayList<>();
 
         for (String paramName : objParamNames) {
@@ -116,7 +115,7 @@ public class ReflectionUtil extends Utility {
         return attributeNames.toArray(new String[0]);
     }
 
-    private static String[] getObjParamNames(String objName, Enumeration<String> paramNames) {
+    private static String[] getObjectParameters(String objName, Enumeration<String> paramNames) {
         List<String> objParamNames = new ArrayList<>();
 
         while (paramNames.hasMoreElements()) {
