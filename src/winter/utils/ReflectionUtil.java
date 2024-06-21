@@ -29,7 +29,8 @@ public class ReflectionUtil extends Utility {
                 if (param.isAnnotationPresent(RequestParam.class)) {
                     objName = param.getAnnotation(RequestParam.class).name();
                 } else {
-                    // TODO: Use library to get parameter name or use `-parameter` during compilation
+                    // TODO: Use library to get parameter name or use `-parameter` during
+                    // compilation
                     objName = param.getName();
                 }
 
@@ -58,19 +59,39 @@ public class ReflectionUtil extends Utility {
     }
 
     private static void setAttrValues(Class<?> classType, Object instance, String[] attrNames, String[] attrValues)
-            throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException {
+            throws ReflectiveOperationException {
         for (int i = 0; i < attrNames.length; i++) {
             String attrName = attrNames[i];
             String attrValue = attrValues[i];
             String setterName = "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
 
             try {
-                Method setter = classType.getDeclaredMethod(setterName, String.class);
-                setter.invoke(instance, attrValue);
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException
+                Class<?> clazz = classType.getDeclaredField(attrName).getType();
+                Method setter = classType.getDeclaredMethod(setterName, clazz);
+
+                if (clazz == int.class) {
+                    int value = (attrValue == null) ? 0 : Integer.parseInt(attrValue);
+                    setter.invoke(instance, value);
+                } else if (clazz == double.class) {
+                    double value = (attrValue == null) ? 0 : Double.parseDouble(attrValue);
+                    setter.invoke(instance, value);
+                } else if (clazz == float.class) {
+                    float value = (attrValue == null) ? 0 : Float.parseFloat(attrValue);
+                    setter.invoke(instance, value);
+                } else {
+                    setter.invoke(instance, clazz.cast(attrValue));
+                }
+            } catch (NoSuchFieldException e) {
+                String message = "Field not found: " + attrName;
+                throw new ReflectiveOperationException(message, e);
+            } catch (NoSuchMethodException e) {
+                String message = "Method not found: " + setterName;
+                throw new ReflectiveOperationException(message, e);
+            } catch (SecurityException
+                    | IllegalAccessException
                     | IllegalArgumentException | InvocationTargetException e) {
-                e.printStackTrace();
+                String message = "Error invoking method: " + setterName;
+                throw new ReflectiveOperationException(message, e);
             }
         }
     }
