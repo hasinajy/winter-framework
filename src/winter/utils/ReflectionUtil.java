@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,5 +45,19 @@ public class ReflectionUtil extends Utility {
             String message = "Error invoking method: " + methodName;
             throw new ReflectiveOperationException(message, e);
         }
+    }
+
+    private static String[] getObjParamNames(String objName, Enumeration<String> paramNames) {
+        List<String> objParamNames = new ArrayList<>();
+
+        while (paramNames.hasMoreElements()) {
+            String paramName = paramNames.nextElement();
+
+            if (paramName.matches(objName + ".*")) {
+                objParamNames.add(paramName);
+            }
+        }
+
+        return objParamNames.toArray(new String[0]);
     }
 }
