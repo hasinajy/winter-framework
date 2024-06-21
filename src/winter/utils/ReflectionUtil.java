@@ -47,6 +47,24 @@ public class ReflectionUtil extends Utility {
         }
     }
 
+    private static void setAttrValues(Class<?> classType, Object instance, String[] attrNames, String[] attrValues)
+            throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException {
+        for (int i = 0; i < attrNames.length; i++) {
+            String attrName = attrNames[i];
+            String attrValue = attrValues[i];
+            String setterName = "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
+
+            try {
+                Method setter = classType.getDeclaredMethod(setterName, String.class);
+                setter.invoke(instance, attrValue);
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private static String[] getAttrValues(String[] paramNames, HttpServletRequest req) {
         List<String> attributeValues = new ArrayList<>();
 
