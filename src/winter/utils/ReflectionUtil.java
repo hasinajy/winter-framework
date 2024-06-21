@@ -24,14 +24,24 @@ public class ReflectionUtil extends Utility {
             Parameter[] methodParams = method.getParameters();
 
             for (Parameter param : methodParams) {
-                String reqValue = null;
+                String objName = null;
 
                 if (param.isAnnotationPresent(RequestParam.class)) {
-                    String reqParamValue = param.getAnnotation(RequestParam.class).name();
-                    reqValue = req.getParameter(reqParamValue);
+                    objName = param.getAnnotation(RequestParam.class).name();
+                } else {
+                    // TODO: Use library to get parameter name or use `-parameter` during compilation
+                    objName = param.getName();
                 }
 
-                args.add(reqValue);
+                Class<?> argClass = param.getType();
+                Object arg = argClass.getDeclaredConstructor().newInstance();
+
+                String[] objParamNames = getObjParamNames(objName, req.getParameterNames());
+                String[] objAttrNames = getObjAttrNames(objParamNames);
+                String[] attrValues = getAttrValues(objParamNames, req);
+
+                setAttrValues(argClass, arg, objAttrNames, attrValues);
+                args.add(argClass.cast(arg));
             }
 
             return method.invoke(clazz.getDeclaredConstructor().newInstance(), args.toArray());
