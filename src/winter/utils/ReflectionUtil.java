@@ -47,6 +47,16 @@ public class ReflectionUtil extends Utility {
         }
     }
 
+    private static String[] getAttrValues(String[] paramNames, HttpServletRequest req) {
+        List<String> attributeValues = new ArrayList<>();
+
+        for (String paramName : paramNames) {
+            attributeValues.add(req.getParameter(paramName));
+        }
+
+        return attributeValues.toArray(new String[0]);
+    }
+
     private static String[] getObjAttrNames(String[] objParamNames) {
         List<String> attributeNames = new ArrayList<>();
 
