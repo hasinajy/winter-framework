@@ -47,6 +47,16 @@ public class ReflectionUtil extends Utility {
         }
     }
 
+    private static String[] getObjAttrNames(String[] objParamNames) {
+        List<String> attributeNames = new ArrayList<>();
+
+        for (String paramName : objParamNames) {
+            attributeNames.add(paramName.split(".")[1]);
+        }
+
+        return attributeNames.toArray(new String[0]);
+    }
+
     private static String[] getObjParamNames(String objName, Enumeration<String> paramNames) {
         List<String> objParamNames = new ArrayList<>();
 
