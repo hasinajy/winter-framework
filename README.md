@@ -86,12 +86,14 @@ public class ExampleController {
   * Provided package name is invalid.
   * Multiple methods have the same `@GetMapping` value.
   * Mapped method return value is neither `String` nor `ModelView`.
+  * Critical error.
 * `Error 404` is sent to the client when the requested URL doesn't match any `@GetMapping`.
 * The `@Controller` annotation is used to annotate all classes that are wanted to be scanned as a controller.
 * The `@GetMapping` annotation is used to map controller methods to specific URLs, allowing for handling GET requests.
 * The `Mapping` data structure stores information about a URL and its associated controller.
 * The `ModelView` data structure holds information about the target JSP and any attributes (data) that need to be passed along to it for rendering.
 * The `@RequestParam(name = "value")` annotation is used to annotate parameters to be mapped to a form attribute.
+* If the parameter is an object, the form attribute value should match the pattern `objectName.attributeName` where objectName is the value of the `@RequestParam` annotation or the declared name of the parameter if no annotation is provided.
 
 **Future Work:**
 
