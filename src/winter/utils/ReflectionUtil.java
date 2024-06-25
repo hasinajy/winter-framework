@@ -9,10 +9,11 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import winter.annotations.RequestParam;
 import winter.data.Mapping;
+import winter.exceptions.AnnotationNotFoundException;
 
 public class ReflectionUtil extends Utility {
     public static Object invokeControllerMethod(Mapping mapping, HttpServletRequest req)
-            throws ReflectiveOperationException {
+            throws AnnotationNotFoundException, ReflectiveOperationException {
         String className = mapping.getClassName();
         String methodName = mapping.getMethodName();
 
@@ -27,6 +28,8 @@ public class ReflectionUtil extends Utility {
         } catch (NoSuchMethodException e) {
             String message = "Method not found: " + methodName;
             throw new ReflectiveOperationException(message, e);
+        } catch (AnnotationNotFoundException e) {
+            throw e;
         } catch (ReflectiveOperationException | NumberFormatException e) {
             String message = "Error invoking method: " + methodName;
             throw new ReflectiveOperationException(message, e);
@@ -34,7 +37,7 @@ public class ReflectionUtil extends Utility {
     }
 
     private static Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
-            throws ReflectiveOperationException {
+            throws AnnotationNotFoundException, ReflectiveOperationException {
         List<Object> args = new ArrayList<>();
 
         for (Parameter param : methodParams) {
@@ -47,13 +50,12 @@ public class ReflectionUtil extends Utility {
         return args.toArray();
     }
 
-    private static String getParameterName(Parameter param) {
+    private static String getParameterName(Parameter param) throws AnnotationNotFoundException {
         if (param.isAnnotationPresent(RequestParam.class)) {
             return param.getAnnotation(RequestParam.class).name();
         } else {
-            // TODO: Use library to get parameter name or use `-parameter` during
-            // compilation
-            return param.getName();
+            throw new AnnotationNotFoundException(
+                    "ETU002539: @RequestMapping annotation not found for " + param.getName());
         }
     }
 
