@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import winter.data.Mapping;
 import winter.data.ModelView;
+import winter.exceptions.AnnotationNotFoundException;
 import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidPackageNameException;
 import winter.exceptions.InvalidReturnTypeException;
@@ -40,7 +42,7 @@ public class FrontController extends HttpServlet {
     private static void setInitException(Exception e) {
         FrontController.initException = e;
     }
-    
+
     @Override
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
@@ -59,10 +61,12 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp);
         } catch (ServletException e) {
-            ExceptionHandler.handleException(new ServletException("Servlet error occurred while processing GET request", e),
+            ExceptionHandler.handleException(
+                    new ServletException("Servlet error occurred while processing GET request", e),
                     Level.SEVERE, resp);
         } catch (IOException e) {
-            ExceptionHandler.handleException(new IOException("I/O error occurred while processing GET request", e), Level.SEVERE, resp);
+            ExceptionHandler.handleException(new IOException("I/O error occurred while processing GET request", e),
+                    Level.SEVERE, resp);
         }
     }
 
@@ -71,10 +75,12 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp);
         } catch (ServletException e) {
-            ExceptionHandler.handleException(new ServletException("Servlet error occurred while processing POST request", e),
+            ExceptionHandler.handleException(
+                    new ServletException("Servlet error occurred while processing POST request", e),
                     Level.SEVERE, resp);
         } catch (IOException e) {
-            ExceptionHandler.handleException(new IOException("I/O error occurred while processing POST request", e), Level.SEVERE, resp);
+            ExceptionHandler.handleException(new IOException("I/O error occurred while processing POST request", e),
+                    Level.SEVERE, resp);
         }
     }
 
@@ -100,6 +106,8 @@ public class FrontController extends HttpServlet {
                 ExceptionHandler.handleException(
                         new ReflectiveOperationException("An error occurred while processing the requested URL", e),
                         Level.SEVERE, resp);
+            } catch (AnnotationNotFoundException e) {
+                ExceptionHandler.handleException(e, Level.SEVERE, resp);
             } catch (Exception e) {
                 ExceptionHandler.handleException(new Exception("An unexpected error occurred", e), Level.SEVERE, resp);
             }
@@ -107,7 +115,8 @@ public class FrontController extends HttpServlet {
     }
 
     private void handleRequest(HttpServletRequest req, HttpServletResponse resp, String targetURL, PrintWriter out)
-            throws MappingNotFoundException, ReflectiveOperationException, InvalidReturnTypeException, ServletException,
+            throws MappingNotFoundException, AnnotationNotFoundException, ReflectiveOperationException,
+            InvalidReturnTypeException, ServletException,
             IOException {
         Mapping mapping = urlMappings.get(targetURL);
 
