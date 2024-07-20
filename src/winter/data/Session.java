@@ -26,4 +26,8 @@ public class Session {
     public void add(String key, Object value) {
         this.getHttpSession().setAttribute(key, value);
     }
+
+    public void delete(String key) {
+        this.getHttpSession().removeAttribute(key);
+    }
 }
