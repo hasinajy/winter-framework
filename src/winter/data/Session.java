@@ -30,4 +30,8 @@ public class Session {
     public void delete(String key) {
         this.getHttpSession().removeAttribute(key);
     }
+
+    public void update(String key, Object value) {
+        add(key, value);
+    }
 }
