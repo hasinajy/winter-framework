@@ -6,7 +6,8 @@ public class Session {
     private HttpSession httpSession;
 
     /* ------------------------------ Constructors ------------------------------ */
-    public Session() {}
+    public Session() {
+    }
 
     public Session(HttpSession httpSession) {
         this.setHttpSession(httpSession);
@@ -19,5 +20,10 @@ public class Session {
 
     public void setHttpSession(HttpSession httpSession) {
         this.httpSession = httpSession;
+    }
+
+    /* ----------------------------- Bridge methods ----------------------------- */
+    public void add(String key, Object value) {
+        this.getHttpSession().setAttribute(key, value);
     }
 }
