@@ -63,7 +63,13 @@ public class AnnotationScanner extends Utility {
 
         if (clazz.isAnnotationPresent(Controller.class)) {
             processControllerMethods(clazz, urlMappings);
+            injectSession(clazz);
         }
+    }
+
+    private static void injectSession(Class<?> clazz) {
+        // Check if the class has a Session attribute
+        // if true: call setter and inject session
     }
 
     private static void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings)
