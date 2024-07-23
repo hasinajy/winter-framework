@@ -34,4 +34,8 @@ public class Session {
     public void update(String key, Object value) {
         add(key, value);
     }
+
+    public Object get(String key) {
+        return this.getHttpSession().getAttribute(key);
+    }
 }
