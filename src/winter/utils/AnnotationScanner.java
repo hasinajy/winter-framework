@@ -65,27 +65,7 @@ public class AnnotationScanner extends Utility {
 
         if (clazz.isAnnotationPresent(Controller.class)) {
             processControllerMethods(clazz, urlMappings);
-            injectSession(clazz);
         }
-    }
-
-    private static void injectSession(Class<?> clazz) {
-        String sessionName = hasSession(clazz);
-
-        if (sessionName != null) {
-            String setterName = ReflectionUtil.getSetterName(sessionName);
-
-            try {
-                Method setterMethod = clazz.getMethod(setterName, HttpSession.class);
-                setterMethod.invoke(clazz.getDeclaredConstructor().newInstance(), null);
-                // TODO: Is Session static or not
-                // TODO: Which is faster: init injection or invoke injection
-            } catch (Exception e) {
-                // TODO: Handle exception if the setter method is not found
-            }
-        }
-
-        // if true: call setter and inject session
     }
 
     public static String hasSession(Class<?> clazz) {
@@ -94,7 +74,6 @@ public class AnnotationScanner extends Utility {
         for (Field attribute : attributes) {
             if (attribute.getType() == HttpSession.class) {
                 return attribute.getName();
-                
             }
         }
 
