@@ -103,7 +103,7 @@ public class ReflectionUtil extends Utility {
         }
     }
 
-    private static String getSetterName(String attrName) {
+    protected static String getSetterName(String attrName) {
         return "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
     }
 
