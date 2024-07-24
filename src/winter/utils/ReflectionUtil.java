@@ -1,5 +1,7 @@
 package winter.utils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -7,8 +9,10 @@ import java.util.Enumeration;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import winter.annotations.RequestParam;
 import winter.data.Mapping;
+import winter.data.Session;
 import winter.exceptions.AnnotationNotFoundException;
 
 public class ReflectionUtil extends Utility {
@@ -34,6 +38,18 @@ public class ReflectionUtil extends Utility {
             String message = "Error invoking method: " + methodName;
             throw new ReflectiveOperationException(message, e);
         }
+    }
+
+    private static String hasSession(Class<?> clazz) {
+        Field[] attributes = clazz.getDeclaredFields();
+
+        for (Field attribute : attributes) {
+            if (attribute.getType() == Session.class) {
+                return attribute.getName();
+            }
+        }
+
+        return null;
     }
 
     private static Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
