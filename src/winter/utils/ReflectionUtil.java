@@ -25,7 +25,13 @@ public class ReflectionUtil extends Utility {
             Class<?> clazz = Class.forName(className);
             Method method = clazz.getDeclaredMethod(methodName, mapping.getMethodParamTypes());
             Object[] args = initializeMethodArguments(method.getParameters(), req);
-            return method.invoke(clazz.getDeclaredConstructor().newInstance(), args);
+
+            // Inject session if it's defined
+            Object instanceObject = clazz.getDeclaredConstructor().newInstance();
+            injectSession(instanceObject, req.getSession());
+
+            // Invoke the controller method
+            return method.invoke(instanceObject, args);
         } catch (ClassNotFoundException e) {
             String message = "Class not found: " + className;
             throw new ReflectiveOperationException(message, e);
