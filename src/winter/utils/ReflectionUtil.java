@@ -40,6 +40,21 @@ public class ReflectionUtil extends Utility {
         }
     }
 
+    private static void injectSession(Object object, HttpSession httpSession)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException,
+            IllegalArgumentException, SecurityException {
+        Class<?> clazz = object.getClass();
+        String attrName = hasSession(clazz);
+
+        if (attrName != null) {
+            Method sessionSetterMethod = clazz.getDeclaredMethod(getSetterName(attrName), Session.class);
+
+            // Creates the framework session abstraction object
+            Session winterSession = new Session(httpSession);
+            sessionSetterMethod.invoke(object, winterSession);
+        }
+    }
+
     private static String hasSession(Class<?> clazz) {
         Field[] attributes = clazz.getDeclaredFields();
 
