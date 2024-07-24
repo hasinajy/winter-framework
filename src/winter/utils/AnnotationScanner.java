@@ -1,7 +1,6 @@
 package winter.utils;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,7 +9,6 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpSession;
 import winter.data.Mapping;
 import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidPackageNameException;
@@ -66,18 +64,6 @@ public class AnnotationScanner extends Utility {
         if (clazz.isAnnotationPresent(Controller.class)) {
             processControllerMethods(clazz, urlMappings);
         }
-    }
-
-    public static String hasSession(Class<?> clazz) {
-        Field[] attributes = clazz.getDeclaredFields();
-
-        for (Field attribute : attributes) {
-            if (attribute.getType() == HttpSession.class) {
-                return attribute.getName();
-            }
-        }
-
-        return null;
     }
 
     private static void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings)
