@@ -49,7 +49,7 @@ Add the following XML configuration to your web application's `web.xml` file:
         <param-value>com.controllers</param-value>
     </context-param>
 ```
-Every class that the developer wants to be scanned as controller should be annotated as `@Controller`
+Every class that the developer wants to be scanned as controller should be annotated as `@Controller`.
 ```java
 import winter.annotations.Controller;
 
@@ -58,7 +58,7 @@ public class ExampleController {
     // Code goes here ...
 }
 ```
-Every method that the developer wants to be mapped to a URL should be annotated as `@GetMapping("mapping")`
+Every method that the developer wants to be mapped to a URL should be annotated as `@GetMapping("mapping")`.
 ```java
 import winter.annotations.Controller;
 
@@ -73,6 +73,27 @@ public class ExampleController {
     @GetMapping("test-mapping")
     public void exampleMethod(@RequestParam(name = "name") String name, ...) {
         // Code goes here...
+    }
+}
+```
+To use the session object, an attribute of type `Session` has to be defined with its `setter method`.
+```java
+import winter.annotations.Controller;
+import winter.annotations.GetMapping;
+import winter.data.Session;
+
+@Controller
+public class ExampleController {
+    private Session mySession;
+
+    public void setMySession(Session session) {
+        this.mySession = session;
+    }
+
+    @GetMapping("/session-create")
+    public String createSession() {
+        this.getMySession().add("greetings", "Hello, World!");
+        return "Session 'greetings' was created.";
     }
 }
 ```
@@ -94,6 +115,7 @@ public class ExampleController {
 * The `ModelView` data structure holds information about the target JSP and any attributes (data) that need to be passed along to it for rendering.
 * The `@RequestParam(name = "value")` annotation is used to annotate parameters to be mapped to a form attribute.
 * If the parameter is an object, the form attribute value should match the pattern `objectName.attributeName` where objectName is the value of the `@RequestParam` annotation or the declared name of the parameter if no annotation is provided.
+* The `Session` data type allows the developer the use an abstraction of the `HttpSession`.
 
 **Future Work:**
 

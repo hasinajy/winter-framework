@@ -1,5 +1,7 @@
 package winter.utils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -7,8 +9,10 @@ import java.util.Enumeration;
 import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import winter.annotations.RequestParam;
 import winter.data.Mapping;
+import winter.data.Session;
 import winter.exceptions.AnnotationNotFoundException;
 
 public class ReflectionUtil extends Utility {
@@ -21,7 +25,13 @@ public class ReflectionUtil extends Utility {
             Class<?> clazz = Class.forName(className);
             Method method = clazz.getDeclaredMethod(methodName, mapping.getMethodParamTypes());
             Object[] args = initializeMethodArguments(method.getParameters(), req);
-            return method.invoke(clazz.getDeclaredConstructor().newInstance(), args);
+
+            // Inject session if it's defined
+            Object instanceObject = clazz.getDeclaredConstructor().newInstance();
+            injectSession(instanceObject, req.getSession());
+
+            // Invoke the controller method
+            return method.invoke(instanceObject, args);
         } catch (ClassNotFoundException e) {
             String message = "Class not found: " + className;
             throw new ReflectiveOperationException(message, e);
@@ -34,6 +44,33 @@ public class ReflectionUtil extends Utility {
             String message = "Error invoking method: " + methodName;
             throw new ReflectiveOperationException(message, e);
         }
+    }
+
+    private static void injectSession(Object object, HttpSession httpSession)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException,
+            IllegalArgumentException, SecurityException {
+        Class<?> clazz = object.getClass();
+        String attrName = hasSession(clazz);
+
+        if (attrName != null) {
+            Method sessionSetterMethod = clazz.getDeclaredMethod(getSetterName(attrName), Session.class);
+
+            // Creates the framework session abstraction object
+            Session winterSession = new Session(httpSession);
+            sessionSetterMethod.invoke(object, winterSession);
+        }
+    }
+
+    private static String hasSession(Class<?> clazz) {
+        Field[] attributes = clazz.getDeclaredFields();
+
+        for (Field attribute : attributes) {
+            if (attribute.getType() == Session.class) {
+                return attribute.getName();
+            }
+        }
+
+        return null;
     }
 
     private static Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
@@ -103,7 +140,7 @@ public class ReflectionUtil extends Utility {
         }
     }
 
-    private static String getSetterName(String attrName) {
+    protected static String getSetterName(String attrName) {
         return "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
     }
 
