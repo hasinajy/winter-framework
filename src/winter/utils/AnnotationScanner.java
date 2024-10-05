@@ -79,6 +79,8 @@ public class AnnotationScanner extends Utility {
                 Mapping mapping = new Mapping(clazz.getName(), sMethod, methodParamTypes);
                 mapping.setIsRest(method.isAnnotationPresent(Rest.class));
 
+                // TODO: Change RequestVerb of mapping based on the annotation
+
                 if (urlMappings.putIfAbsent(sURL, mapping) != null) {
                     throw new DuplicateMappingException("Duplicate mapping found for URL: " + sURL);
                 }
