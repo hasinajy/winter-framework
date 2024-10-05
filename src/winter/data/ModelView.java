@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.google.gson.Gson;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 public class ModelView {
@@ -31,6 +33,11 @@ public class ModelView {
 
     public Map<String, Object> getData() {
         return data;
+    }
+
+    public String getJsonData() {
+        Gson gson = new Gson();
+        return gson.toJson(this.getData());
     }
 
     public void setData(Map<String, Object> data) {
