@@ -123,6 +123,7 @@ public class FrontController extends HttpServlet {
         if (mapping == null) {
             throw new MappingNotFoundException("Resource not found for URL: " + targetURL);
         }
+
         Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
         Gson gson = new Gson();
 
@@ -132,7 +133,13 @@ public class FrontController extends HttpServlet {
         } else if (result instanceof ModelView) {
             ModelView modelView = (ModelView) result;
             modelView.setRequestAttributes(req);
-            req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
+
+            if (mapping.getIsRest()) {
+                resp.setContentType("application/json");
+                out.print(modelView.getJsonData());
+            } else {
+                req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
+            }
         } else {
             throw new InvalidReturnTypeException("Controller return type should be either String or ModelView");
         }
