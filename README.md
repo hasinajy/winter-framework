@@ -97,6 +97,18 @@ public class ExampleController {
     }
 }
 ```
+To make the method a REST API method, use the `@Rest` annotation on the method.
+```java
+import winter.annotations.Controller;
+
+@Controller
+public class ExampleController {
+    @Rest
+    @GetMapping("test-mapping")
+    public void exampleMethod() {
+        // Code goes here ...
+    }
+}
 
 **Current Functionalities:**
 
@@ -116,6 +128,8 @@ public class ExampleController {
 * The `@RequestParam(name = "value")` annotation is used to annotate parameters to be mapped to a form attribute.
 * If the parameter is an object, the form attribute value should match the pattern `objectName.attributeName` where objectName is the value of the `@RequestParam` annotation or the declared name of the parameter if no annotation is provided.
 * The `Session` data type allows the developer the use an abstraction of the `HttpSession`.
+* The `@Rest` annotation is used to annotate REST methods.
+* The `@GET`, `@POST` annotations define the access of the methods.
 
 **Future Work:**
 
