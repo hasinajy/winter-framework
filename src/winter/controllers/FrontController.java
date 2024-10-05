@@ -126,15 +126,21 @@ public class FrontController extends HttpServlet {
         Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
         Gson gson = new Gson();
 
-        if (result instanceof String) {
+        if (mapping.getIsRest()) {
             resp.setContentType("application/json");
-            out.print(gson.toJson(new JsonString(result.toString())));
+        }
+
+        if (result instanceof String) {
+            if (mapping.getIsRest()) {
+                out.print(gson.toJson(new JsonString(result.toString())));
+            } else {
+                out.print(result.toString());
+            }
         } else if (result instanceof ModelView) {
             ModelView modelView = (ModelView) result;
             modelView.setRequestAttributes(req);
 
             if (mapping.getIsRest()) {
-                resp.setContentType("application/json");
                 out.print(modelView.getJsonData());
             } else {
                 req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
