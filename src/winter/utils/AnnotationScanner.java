@@ -10,6 +10,7 @@ import java.util.Map;
 
 import jakarta.servlet.ServletContext;
 import winter.data.Mapping;
+import winter.data.RequestVerb;
 import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidPackageNameException;
 import winter.exceptions.PackageProviderNotFoundException;
@@ -79,7 +80,10 @@ public class AnnotationScanner extends Utility {
                 Mapping mapping = new Mapping(clazz.getName(), sMethod, methodParamTypes);
                 mapping.setIsRest(method.isAnnotationPresent(Rest.class));
 
-                // TODO: Change RequestVerb of mapping based on the annotation
+                // Change RequestVerb of mapping based on the annotation
+                if (method.isAnnotationPresent(POST.class)) {
+                    mapping.setRequestVerb(RequestVerb.POST);
+                }
 
                 if (urlMappings.putIfAbsent(sURL, mapping) != null) {
                     throw new DuplicateMappingException("Duplicate mapping found for URL: " + sURL);
