@@ -24,7 +24,6 @@ import winter.exceptions.MappingNotFoundException;
 import winter.exceptions.PackageProviderNotFoundException;
 import winter.utils.AnnotationScanner;
 import winter.utils.ExceptionHandler;
-import winter.utils.HtmlElementBuilder;
 import winter.utils.ReflectionUtil;
 import winter.utils.UrlUtil;
 
