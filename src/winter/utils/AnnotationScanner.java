@@ -76,7 +76,10 @@ public class AnnotationScanner extends Utility {
                 String sMethod = method.getName();
                 Class<?>[] methodParamTypes = method.getParameterTypes();
 
-                if (urlMappings.putIfAbsent(sURL, new Mapping(clazz.getName(), sMethod, methodParamTypes)) != null) {
+                Mapping mapping = new Mapping(clazz.getName(), sMethod, methodParamTypes);
+                mapping.setIsRest(method.isAnnotationPresent(Rest.class));
+
+                if (urlMappings.putIfAbsent(sURL, mapping) != null) {
                     throw new DuplicateMappingException("Duplicate mapping found for URL: " + sURL);
                 }
             }
