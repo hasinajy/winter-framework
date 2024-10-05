@@ -4,6 +4,7 @@ public class Mapping {
     private String sClass;
     private String sMethod;
     private Class<?>[] methodParamTypes = new Class<?>[0];
+    private boolean isRest = false;
 
     // Constructors
     public Mapping(String sClass, String sMethod) {
@@ -39,5 +40,13 @@ public class Mapping {
 
     public void setMethodParamTypes(Class<?>[] methodParamTypes) {
         this.methodParamTypes = methodParamTypes;
+    }
+
+    public boolean getIsRest() {
+        return this.isRest;
+    }
+
+    public void setIsRest(boolean isRest) {
+        this.isRest = isRest;
     }
 }
