@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.google.gson.Gson;
+
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import winter.data.JsonString;
 import winter.data.Mapping;
 import winter.data.ModelView;
 import winter.exceptions.AnnotationNotFoundException;
@@ -96,8 +98,6 @@ public class FrontController extends HttpServlet {
         resp.setContentType("text/html");
 
         try (PrintWriter out = resp.getWriter()) {
-            HtmlElementBuilder.printRequestInfo(out, req.getRequestURL().toString());
-
             try {
                 handleRequest(req, resp, targetURL, out);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
@@ -123,13 +123,12 @@ public class FrontController extends HttpServlet {
         if (mapping == null) {
             throw new MappingNotFoundException("Resource not found for URL: " + targetURL);
         }
-
-        String className = mapping.getClassName();
-        String methodName = mapping.getMethodName();
         Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
+        Gson gson = new Gson();
 
         if (result instanceof String) {
-            HtmlElementBuilder.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
+            resp.setContentType("application/json");
+            out.print(gson.toJson(new JsonString(result.toString())));
         } else if (result instanceof ModelView) {
             ModelView modelView = (ModelView) result;
             modelView.setRequestAttributes(req);
