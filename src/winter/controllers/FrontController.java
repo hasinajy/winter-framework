@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.google.gson.Gson;
+
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import winter.data.JsonString;
 import winter.data.Mapping;
 import winter.data.ModelView;
 import winter.exceptions.AnnotationNotFoundException;
@@ -22,7 +24,6 @@ import winter.exceptions.MappingNotFoundException;
 import winter.exceptions.PackageProviderNotFoundException;
 import winter.utils.AnnotationScanner;
 import winter.utils.ExceptionHandler;
-import winter.utils.HtmlElementBuilder;
 import winter.utils.ReflectionUtil;
 import winter.utils.UrlUtil;
 
@@ -96,8 +97,6 @@ public class FrontController extends HttpServlet {
         resp.setContentType("text/html");
 
         try (PrintWriter out = resp.getWriter()) {
-            HtmlElementBuilder.printRequestInfo(out, req.getRequestURL().toString());
-
             try {
                 handleRequest(req, resp, targetURL, out);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
@@ -124,16 +123,28 @@ public class FrontController extends HttpServlet {
             throw new MappingNotFoundException("Resource not found for URL: " + targetURL);
         }
 
-        String className = mapping.getClassName();
-        String methodName = mapping.getMethodName();
         Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
+        Gson gson = new Gson();
+
+        if (mapping.getIsRest()) {
+            resp.setContentType("application/json");
+        }
 
         if (result instanceof String) {
-            HtmlElementBuilder.printTargetControllerInfo(out, targetURL, className, methodName, result.toString());
+            if (mapping.getIsRest()) {
+                out.print(gson.toJson(new JsonString(result.toString())));
+            } else {
+                out.print(result.toString());
+            }
         } else if (result instanceof ModelView) {
             ModelView modelView = (ModelView) result;
             modelView.setRequestAttributes(req);
-            req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
+
+            if (mapping.getIsRest()) {
+                out.print(modelView.getJsonData());
+            } else {
+                req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
+            }
         } else {
             throw new InvalidReturnTypeException("Controller return type should be either String or ModelView");
         }
