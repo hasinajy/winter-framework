@@ -107,12 +107,12 @@ public class FrontController extends HttpServlet {
                 handleRequest(req, resp, targetURL, out, requestVerb);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
                 ExceptionHandler.handleException(e, Level.WARNING, resp);
+            } catch (IllegalAccessException | AnnotationNotFoundException e) {
+                ExceptionHandler.handleException(e, Level.SEVERE, resp);
             } catch (ReflectiveOperationException e) {
                 ExceptionHandler.handleException(
                         new ReflectiveOperationException("An error occurred while processing the requested URL", e),
                         Level.SEVERE, resp);
-            } catch (AnnotationNotFoundException e) {
-                ExceptionHandler.handleException(e, Level.SEVERE, resp);
             } catch (Exception e) {
                 ExceptionHandler.handleException(new Exception("An unexpected error occurred", e), Level.SEVERE, resp);
             }
@@ -121,7 +121,8 @@ public class FrontController extends HttpServlet {
 
     private void handleRequest(HttpServletRequest req, HttpServletResponse resp, String targetURL, PrintWriter out,
             RequestVerb requestVerb)
-            throws MappingNotFoundException, AnnotationNotFoundException, ReflectiveOperationException,
+            throws MappingNotFoundException, AnnotationNotFoundException,
+            ReflectiveOperationException,
             InvalidReturnTypeException, ServletException,
             IOException {
         Mapping mapping = urlMappings.get(targetURL);
@@ -130,7 +131,9 @@ public class FrontController extends HttpServlet {
             throw new MappingNotFoundException("Resource not found for URL: " + targetURL);
         }
 
-        // TODO: Throws IllegalAccessException if RequestVerb doesn't match
+        if (requestVerb != mapping.getRequestVerb()) {
+            throw new IllegalAccessException("Illegal access to the designated resource.");
+        }
 
         Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
         Gson gson = new Gson();
