@@ -5,6 +5,7 @@ public class Mapping {
     private String sMethod;
     private Class<?>[] methodParamTypes = new Class<?>[0];
     private boolean isRest = false;
+    private RequestVerb requestVerb = RequestVerb.GET;
 
     // Constructors
     public Mapping(String sClass, String sMethod) {
@@ -48,5 +49,13 @@ public class Mapping {
 
     public void setIsRest(boolean isRest) {
         this.isRest = isRest;
+    }
+
+    public RequestVerb getRequestVerb() {
+        return requestVerb;
+    }
+
+    public void setRequestVerb(RequestVerb requestVerb) {
+        this.requestVerb = requestVerb;
     }
 }
