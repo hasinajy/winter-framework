@@ -72,8 +72,8 @@ public class AnnotationScanner extends Utility {
         Method[] methods = clazz.getMethods();
 
         for (Method method : methods) {
-            if (method.isAnnotationPresent(GetMapping.class)) {
-                String sURL = method.getAnnotation(GetMapping.class).value();
+            if (method.isAnnotationPresent(UriMapping.class)) {
+                String sURL = method.getAnnotation(UriMapping.class).value();
                 String sMethod = method.getName();
                 Class<?>[] methodParamTypes = method.getParameterTypes();
 
