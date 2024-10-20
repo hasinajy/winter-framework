@@ -47,8 +47,8 @@ public class ReflectionUtil extends Utility {
     }
 
     private static void injectSession(Object object, HttpSession httpSession)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException,
-            IllegalArgumentException, SecurityException {
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IllegalArgumentException,
+            SecurityException {
         Class<?> clazz = object.getClass();
         String attrName = hasSession(clazz);
 
