@@ -1,6 +1,6 @@
 @echo off
 
-set test_dir="C:\Users\Hasina\Desktop\School\Mr Naina\Projects\Winter Framework\test-project\lib"
+set test_dir="C:\Users\Hasina\Desktop\School\Mr Naina\Projects\winter-framework\test-project\lib"
 
 rem Define the directory containing the class files
 set bin_dir="../bin"
