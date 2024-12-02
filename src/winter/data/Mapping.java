@@ -1,5 +1,6 @@
 package winter.data;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import winter.exceptions.DuplicateMappingException;
@@ -11,6 +12,7 @@ public class Mapping {
 
     /* ------------------------------ Constructors ------------------------------ */
     public Mapping() {
+        this.setMappingMethods(new HashSet<>());
     }
 
     public Mapping(String className, Set<MappingMethod> mappingMethods) {
