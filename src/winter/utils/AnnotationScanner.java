@@ -82,7 +82,7 @@ public class AnnotationScanner extends Utility {
                 mapping.addMethod(mappingMethod);
                 mapping = urlMappings.putIfAbsent(url, mapping);
 
-                if (urlMappings.putIfAbsent(url, mapping) != null) {
+                if (mapping != null) {
                     mapping.addMethod(mappingMethod);
                 }
             }
