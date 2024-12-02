@@ -37,6 +37,16 @@ public class Mapping {
     }
 
     /* --------------------------------- Methods -------------------------------- */
+    public boolean hasVerb(RequestVerb verb) {
+        for (MappingMethod mappingMethod : this.getMappingMethods()) {
+            if (mappingMethod.getVerb() == verb) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public MappingMethod getMethod(RequestVerb verb) throws InvalidRequestVerbException {
         for (MappingMethod mappingMethod : this.getMappingMethods()) {
             if (mappingMethod.getVerb() == verb) {
