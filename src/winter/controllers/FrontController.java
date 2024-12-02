@@ -15,11 +15,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import winter.data.JsonString;
 import winter.data.Mapping;
+import winter.data.MappingMethod;
 import winter.data.ModelView;
 import winter.data.RequestVerb;
 import winter.exceptions.AnnotationNotFoundException;
 import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidPackageNameException;
+import winter.exceptions.InvalidRequestVerbException;
 import winter.exceptions.InvalidReturnTypeException;
 import winter.exceptions.MappingNotFoundException;
 import winter.exceptions.PackageProviderNotFoundException;
@@ -107,7 +109,7 @@ public class FrontController extends HttpServlet {
                 handleRequest(req, resp, targetURL, out, requestVerb);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
                 ExceptionHandler.handleException(e, Level.WARNING, resp);
-            } catch (IllegalAccessException | AnnotationNotFoundException e) {
+            } catch (InvalidRequestVerbException | AnnotationNotFoundException e) {
                 ExceptionHandler.handleException(e, Level.SEVERE, resp);
             } catch (ReflectiveOperationException e) {
                 ExceptionHandler.handleException(
@@ -124,26 +126,24 @@ public class FrontController extends HttpServlet {
             throws MappingNotFoundException, AnnotationNotFoundException,
             ReflectiveOperationException,
             InvalidReturnTypeException, ServletException,
-            IOException {
+            IOException, InvalidRequestVerbException {
+
         Mapping mapping = urlMappings.get(targetURL);
 
         if (mapping == null) {
             throw new MappingNotFoundException("Resource not found for URL: " + targetURL);
         }
 
-        if (requestVerb != mapping.getRequestVerb()) {
-            throw new IllegalAccessException("Illegal access to the designated resource.");
-        }
-
+        MappingMethod mappingMethod = mapping.getMethod(requestVerb);
         Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
         Gson gson = new Gson();
 
-        if (mapping.getIsRest()) {
+        if (mappingMethod.isRest()) {
             resp.setContentType("application/json");
         }
 
         if (result instanceof String) {
-            if (mapping.getIsRest()) {
+            if (mappingMethod.isRest()) {
                 out.print(gson.toJson(new JsonString(result.toString())));
             } else {
                 out.print(result.toString());
@@ -152,7 +152,7 @@ public class FrontController extends HttpServlet {
             ModelView modelView = (ModelView) result;
             modelView.setRequestAttributes(req);
 
-            if (mapping.getIsRest()) {
+            if (mappingMethod.isRest()) {
                 out.print(modelView.getJsonData());
             } else {
                 req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
