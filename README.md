@@ -49,66 +49,6 @@ Add the following XML configuration to your web application's `web.xml` file:
         <param-value>com.controllers</param-value>
     </context-param>
 ```
-Every class that the developer wants to be scanned as controller should be annotated as `@Controller`.
-```java
-import winter.annotations.Controller;
-
-@Controller
-public class ExampleController {
-    // Code goes here ...
-}
-```
-Every method that the developer wants to be mapped to a URL should be annotated as `@GetMapping("mapping")`.
-```java
-import winter.annotations.Controller;
-
-@Controller
-public class ExampleController {
-    @GetMapping("test-mapping")
-    public void exampleMethod() {
-        // Code goes here ...
-    }
-
-    // If the method has arguments
-    @GetMapping("test-mapping")
-    public void exampleMethod(@RequestParam(name = "name") String name, ...) {
-        // Code goes here...
-    }
-}
-```
-To use the session object, an attribute of type `Session` has to be defined with its `setter method`.
-```java
-import winter.annotations.Controller;
-import winter.annotations.GetMapping;
-import winter.data.Session;
-
-@Controller
-public class ExampleController {
-    private Session mySession;
-
-    public void setMySession(Session session) {
-        this.mySession = session;
-    }
-
-    @GetMapping("/session-create")
-    public String createSession() {
-        this.getMySession().add("greetings", "Hello, World!");
-        return "Session 'greetings' was created.";
-    }
-}
-```
-To make the method a REST API method, use the `@Rest` annotation on the method.
-```java
-import winter.annotations.Controller;
-
-@Controller
-public class ExampleController {
-    @Rest
-    @GetMapping("test-mapping")
-    public void exampleMethod() {
-        // Code goes here ...
-    }
-}
 
 **Current Functionalities:**
 
