@@ -3,9 +3,9 @@ package winter.data;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-import winter.annotations.POST;
 import winter.annotations.Rest;
 import winter.annotations.UrlMapping;
+import winter.annotations.verbs.POST;
 
 public class MappingMethod {
 
