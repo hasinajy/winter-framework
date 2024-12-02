@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 import winter.annotations.Rest;
+import winter.annotations.UrlMapping;
 
 public class MappingMethod {
 
@@ -39,6 +40,10 @@ public class MappingMethod {
     /* --------------------------------- Methods -------------------------------- */
     public boolean isRest() {
         return this.getMethod().isAnnotationPresent(Rest.class);
+    }
+
+    public String getUrlMapping() {
+        return this.getMethod().getAnnotation(UrlMapping.class).value();
     }
 
     @Override
