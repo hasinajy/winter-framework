@@ -74,7 +74,7 @@ public class MappingMethod {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this);
+        return Objects.hash(this.getMethod(), this.getVerb());
     }
 
 }
