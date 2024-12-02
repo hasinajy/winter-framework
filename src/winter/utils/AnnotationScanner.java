@@ -14,7 +14,6 @@ import winter.data.MappingMethod;
 import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidPackageNameException;
 import winter.exceptions.PackageProviderNotFoundException;
-import winter.annotations.*;
 import winter.annotations.classes.Controller;
 import winter.annotations.methods.UrlMapping;
 
