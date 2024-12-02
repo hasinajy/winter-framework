@@ -140,7 +140,7 @@ public class FrontController extends HttpServlet {
             throw new InvalidRequestVerbException("Access denied for the specified URL");
         }
 
-        Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
+        Object result = ReflectionUtil.invokeControllerMethod(mapping.getClassName(), mappingMethod, req);
         Gson gson = new Gson();
 
         if (mappingMethod.isRest()) {
