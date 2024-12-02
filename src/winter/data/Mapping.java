@@ -2,6 +2,8 @@ package winter.data;
 
 import java.util.Set;
 
+import winter.exceptions.InvalidRequestVerbException;
+
 public class Mapping {
 
     private String className;
@@ -34,5 +36,14 @@ public class Mapping {
     }
 
     /* --------------------------------- Methods -------------------------------- */
+    public MappingMethod getMethod(RequestVerb verb) throws InvalidRequestVerbException {
+        for (MappingMethod mappingMethod : this.getMappingMethods()) {
+            if (mappingMethod.getVerb() == verb) {
+                return mappingMethod;
+            }
+        }
+
+        throw new InvalidRequestVerbException("Access denied for the specified URL");
+    }
 
 }
