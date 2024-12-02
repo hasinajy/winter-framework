@@ -11,19 +11,19 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import winter.annotations.RequestParam;
-import winter.data.Mapping;
+import winter.data.MappingMethod;
 import winter.data.Session;
 import winter.exceptions.AnnotationNotFoundException;
 
 public class ReflectionUtil extends Utility {
-    public static Object invokeControllerMethod(Mapping mapping, HttpServletRequest req)
+    public static Object invokeControllerMethod(String className, MappingMethod mappingMethod, HttpServletRequest req)
             throws AnnotationNotFoundException, ReflectiveOperationException {
-        String className = mapping.getClassName();
-        String methodName = mapping.getMethodName();
+
+        String methodName = mappingMethod.getMethod().getName();
 
         try {
             Class<?> clazz = Class.forName(className);
-            Method method = clazz.getDeclaredMethod(methodName, mapping.getMethodParamTypes());
+            Method method = mappingMethod.getMethod();
             Object[] args = initializeMethodArguments(method.getParameters(), req);
 
             // Inject session if it's defined
@@ -47,8 +47,8 @@ public class ReflectionUtil extends Utility {
     }
 
     private static void injectSession(Object object, HttpSession httpSession)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException,
-            IllegalArgumentException, SecurityException {
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IllegalArgumentException,
+            SecurityException {
         Class<?> clazz = object.getClass();
         String attrName = hasSession(clazz);
 

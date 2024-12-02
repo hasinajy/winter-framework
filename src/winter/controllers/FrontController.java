@@ -15,10 +15,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import winter.data.JsonString;
 import winter.data.Mapping;
+import winter.data.MappingMethod;
 import winter.data.ModelView;
+import winter.data.RequestVerb;
 import winter.exceptions.AnnotationNotFoundException;
 import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidPackageNameException;
+import winter.exceptions.InvalidRequestVerbException;
 import winter.exceptions.InvalidReturnTypeException;
 import winter.exceptions.MappingNotFoundException;
 import winter.exceptions.PackageProviderNotFoundException;
@@ -59,8 +62,10 @@ public class FrontController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        RequestVerb requestVerb = RequestVerb.GET;
+
         try {
-            processRequest(req, resp);
+            processRequest(req, resp, requestVerb);
         } catch (ServletException e) {
             ExceptionHandler.handleException(
                     new ServletException("Servlet error occurred while processing GET request", e),
@@ -73,8 +78,10 @@ public class FrontController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        RequestVerb requestVerb = RequestVerb.POST;
+
         try {
-            processRequest(req, resp);
+            processRequest(req, resp, requestVerb);
         } catch (ServletException e) {
             ExceptionHandler.handleException(
                     new ServletException("Servlet error occurred while processing POST request", e),
@@ -85,7 +92,8 @@ public class FrontController extends HttpServlet {
         }
     }
 
-    private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void processRequest(HttpServletRequest req, HttpServletResponse resp, RequestVerb requestVerb)
+            throws ServletException, IOException {
         ExceptionHandler.handleInitException(resp, this.getInitException());
 
         // Stop the method execution if an error occurred during initialization
@@ -98,40 +106,49 @@ public class FrontController extends HttpServlet {
 
         try (PrintWriter out = resp.getWriter()) {
             try {
-                handleRequest(req, resp, targetURL, out);
+                handleRequest(req, resp, targetURL, out, requestVerb);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
                 ExceptionHandler.handleException(e, Level.WARNING, resp);
+            } catch (InvalidRequestVerbException | AnnotationNotFoundException e) {
+                ExceptionHandler.handleException(e, Level.SEVERE, resp);
             } catch (ReflectiveOperationException e) {
                 ExceptionHandler.handleException(
                         new ReflectiveOperationException("An error occurred while processing the requested URL", e),
                         Level.SEVERE, resp);
-            } catch (AnnotationNotFoundException e) {
-                ExceptionHandler.handleException(e, Level.SEVERE, resp);
             } catch (Exception e) {
                 ExceptionHandler.handleException(new Exception("An unexpected error occurred", e), Level.SEVERE, resp);
             }
         }
     }
 
-    private void handleRequest(HttpServletRequest req, HttpServletResponse resp, String targetURL, PrintWriter out)
-            throws MappingNotFoundException, AnnotationNotFoundException, ReflectiveOperationException,
+    private void handleRequest(HttpServletRequest req, HttpServletResponse resp, String targetURL, PrintWriter out,
+            RequestVerb requestVerb)
+            throws MappingNotFoundException, AnnotationNotFoundException,
+            ReflectiveOperationException,
             InvalidReturnTypeException, ServletException,
-            IOException {
+            IOException, InvalidRequestVerbException {
+
         Mapping mapping = urlMappings.get(targetURL);
 
         if (mapping == null) {
             throw new MappingNotFoundException("Resource not found for URL: " + targetURL);
         }
 
-        Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
+        MappingMethod mappingMethod = mapping.getMethod(requestVerb);
+
+        if (mappingMethod == null) {
+            throw new InvalidRequestVerbException("Access denied for the specified URL");
+        }
+
+        Object result = ReflectionUtil.invokeControllerMethod(mapping.getClassName(), mappingMethod, req);
         Gson gson = new Gson();
 
-        if (mapping.getIsRest()) {
+        if (mappingMethod.isRest()) {
             resp.setContentType("application/json");
         }
 
         if (result instanceof String) {
-            if (mapping.getIsRest()) {
+            if (mappingMethod.isRest()) {
                 out.print(gson.toJson(new JsonString(result.toString())));
             } else {
                 out.print(result.toString());
@@ -140,7 +157,7 @@ public class FrontController extends HttpServlet {
             ModelView modelView = (ModelView) result;
             modelView.setRequestAttributes(req);
 
-            if (mapping.getIsRest()) {
+            if (mappingMethod.isRest()) {
                 out.print(modelView.getJsonData());
             } else {
                 req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);

@@ -1,52 +1,70 @@
 package winter.data;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import winter.exceptions.DuplicateMappingException;
+
 public class Mapping {
-    private String sClass;
-    private String sMethod;
-    private Class<?>[] methodParamTypes = new Class<?>[0];
-    private boolean isRest = false;
 
-    // Constructors
-    public Mapping(String sClass, String sMethod) {
-        this.setClassName(sClass);
-        this.setMethodName(sMethod);
+    private String className;
+    private Set<MappingMethod> mappingMethods;
+
+    /* ------------------------------ Constructors ------------------------------ */
+    public Mapping() {
+        this.setMappingMethods(new HashSet<>());
     }
 
-    public Mapping(String sClass, String sMethod, Class<?>[] methodParamTypes) {
-        this(sClass, sMethod);
-        this.setMethodParamTypes(methodParamTypes);
+    public Mapping(String className, Set<MappingMethod> mappingMethods) {
+        this.setClassName(className);
+        this.setMappingMethods(mappingMethods);
     }
 
-    // Getters & Setters
+    /* --------------------------- Getters and setters -------------------------- */
     public String getClassName() {
-        return this.sClass;
+        return className;
     }
 
-    public void setClassName(String sClass) {
-        this.sClass = sClass;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
-    public String getMethodName() {
-        return this.sMethod;
+    public Set<MappingMethod> getMappingMethods() {
+        return mappingMethods;
     }
 
-    public void setMethodName(String sMethod) {
-        this.sMethod = sMethod;
+    public void setMappingMethods(Set<MappingMethod> mappingMethods) {
+        this.mappingMethods = mappingMethods;
     }
 
-    public Class<?>[] getMethodParamTypes() {
-        return this.methodParamTypes;
+    /* --------------------------------- Methods -------------------------------- */
+    public boolean hasVerb(RequestVerb verb) {
+        for (MappingMethod mappingMethod : this.getMappingMethods()) {
+            if (mappingMethod.getVerb() == verb) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public void setMethodParamTypes(Class<?>[] methodParamTypes) {
-        this.methodParamTypes = methodParamTypes;
+    public MappingMethod getMethod(RequestVerb verb) {
+        for (MappingMethod mappingMethod : this.getMappingMethods()) {
+            if (mappingMethod.getVerb() == verb) {
+                return mappingMethod;
+            }
+        }
+
+        return null;
     }
 
-    public boolean getIsRest() {
-        return this.isRest;
+    public void addMethod(MappingMethod mappingMethod) throws DuplicateMappingException {
+        if (this.getMappingMethods().contains(mappingMethod)) {
+            throw new DuplicateMappingException(
+                    "Duplicate controller method for the URL '" + mappingMethod.getUrlMapping() + "'");
+        }
+
+        this.getMappingMethods().add(mappingMethod);
     }
 
-    public void setIsRest(boolean isRest) {
-        this.isRest = isRest;
-    }
 }

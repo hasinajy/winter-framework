@@ -10,6 +10,7 @@ import java.util.Map;
 
 import jakarta.servlet.ServletContext;
 import winter.data.Mapping;
+import winter.data.MappingMethod;
 import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidPackageNameException;
 import winter.exceptions.PackageProviderNotFoundException;
@@ -68,19 +69,21 @@ public class AnnotationScanner extends Utility {
 
     private static void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings)
             throws DuplicateMappingException {
+
         Method[] methods = clazz.getMethods();
 
         for (Method method : methods) {
-            if (method.isAnnotationPresent(GetMapping.class)) {
-                String sURL = method.getAnnotation(GetMapping.class).value();
-                String sMethod = method.getName();
-                Class<?>[] methodParamTypes = method.getParameterTypes();
+            if (method.isAnnotationPresent(UrlMapping.class)) {
+                String url = method.getAnnotation(UrlMapping.class).value();
+                MappingMethod mappingMethod = new MappingMethod(method);
 
-                Mapping mapping = new Mapping(clazz.getName(), sMethod, methodParamTypes);
-                mapping.setIsRest(method.isAnnotationPresent(Rest.class));
+                Mapping mapping = new Mapping();
+                mapping.setClassName(clazz.getName());
+                mapping.addMethod(mappingMethod);
+                mapping = urlMappings.putIfAbsent(url, mapping);
 
-                if (urlMappings.putIfAbsent(sURL, mapping) != null) {
-                    throw new DuplicateMappingException("Duplicate mapping found for URL: " + sURL);
+                if (mapping != null) {
+                    mapping.addMethod(mappingMethod);
                 }
             }
         }
