@@ -3,8 +3,8 @@ package winter.data;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-import winter.annotations.Rest;
-import winter.annotations.UrlMapping;
+import winter.annotations.methods.Rest;
+import winter.annotations.methods.UrlMapping;
 import winter.annotations.verbs.POST;
 
 public class MappingMethod {
