@@ -2,6 +2,7 @@ package winter.data;
 
 import java.util.Set;
 
+import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidRequestVerbException;
 
 public class Mapping {
@@ -44,6 +45,15 @@ public class Mapping {
         }
 
         throw new InvalidRequestVerbException("Access denied for the specified URL");
+    }
+
+    public void addMethod(MappingMethod mappingMethod) throws DuplicateMappingException {
+        if (this.getMappingMethods().contains(mappingMethod)) {
+            throw new DuplicateMappingException(
+                    "Duplicate controller method for the URL '" + mappingMethod.getUrlMapping() + "'");
+        }
+
+        this.getMappingMethods().add(mappingMethod);
     }
 
 }
