@@ -3,6 +3,7 @@ package winter.data;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+import winter.annotations.POST;
 import winter.annotations.Rest;
 import winter.annotations.UrlMapping;
 
@@ -13,6 +14,11 @@ public class MappingMethod {
 
     /* ------------------------------ Constructors ------------------------------ */
     public MappingMethod() {
+    }
+
+    public MappingMethod(Method method) {
+        this.setMethod(method);
+        this.setVerb();
     }
 
     public MappingMethod(Method method, RequestVerb verb) {
@@ -35,6 +41,15 @@ public class MappingMethod {
 
     public void setVerb(RequestVerb verb) {
         this.verb = verb;
+    }
+
+    private void setVerb() {
+        if (this.getMethod().isAnnotationPresent(POST.class)) {
+            this.setVerb(RequestVerb.POST);
+            return;
+        }
+
+        this.setVerb(RequestVerb.GET);
     }
 
     /* --------------------------------- Methods -------------------------------- */
