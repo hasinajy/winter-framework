@@ -135,6 +135,11 @@ public class FrontController extends HttpServlet {
         }
 
         MappingMethod mappingMethod = mapping.getMethod(requestVerb);
+
+        if (mappingMethod == null) {
+            throw new InvalidRequestVerbException("Access denied for the specified URL");
+        }
+
         Object result = ReflectionUtil.invokeControllerMethod(mapping, req);
         Gson gson = new Gson();
 

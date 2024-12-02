@@ -3,7 +3,6 @@ package winter.data;
 import java.util.Set;
 
 import winter.exceptions.DuplicateMappingException;
-import winter.exceptions.InvalidRequestVerbException;
 
 public class Mapping {
 
@@ -47,14 +46,14 @@ public class Mapping {
         return false;
     }
 
-    public MappingMethod getMethod(RequestVerb verb) throws InvalidRequestVerbException {
+    public MappingMethod getMethod(RequestVerb verb) {
         for (MappingMethod mappingMethod : this.getMappingMethods()) {
             if (mappingMethod.getVerb() == verb) {
                 return mappingMethod;
             }
         }
 
-        throw new InvalidRequestVerbException("Access denied for the specified URL");
+        return null;
     }
 
     public void addMethod(MappingMethod mappingMethod) throws DuplicateMappingException {
