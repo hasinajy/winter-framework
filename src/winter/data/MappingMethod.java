@@ -6,6 +6,7 @@ import java.util.Objects;
 import winter.annotations.methods.Rest;
 import winter.annotations.methods.UrlMapping;
 import winter.annotations.verbs.POST;
+import winter.data.enums.RequestVerb;
 
 public class MappingMethod {
 
