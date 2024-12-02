@@ -3,6 +3,8 @@ package winter.data;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+import winter.annotations.Rest;
+
 public class MappingMethod {
 
     private Method method;
@@ -35,6 +37,10 @@ public class MappingMethod {
     }
 
     /* --------------------------------- Methods -------------------------------- */
+    public boolean isRest() {
+        return this.getMethod().isAnnotationPresent(Rest.class);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof MappingMethod)) {
