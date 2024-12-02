@@ -1,4 +1,4 @@
-package winter.annotations;
+package winter.annotations.classes;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
