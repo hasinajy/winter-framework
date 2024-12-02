@@ -1,61 +1,38 @@
 package winter.data;
 
+import java.util.Set;
+
 public class Mapping {
-    private String sClass;
-    private String sMethod;
-    private Class<?>[] methodParamTypes = new Class<?>[0];
-    private boolean isRest = false;
-    private RequestVerb requestVerb = RequestVerb.GET;
 
-    // Constructors
-    public Mapping(String sClass, String sMethod) {
-        this.setClassName(sClass);
-        this.setMethodName(sMethod);
+    private String className;
+    private Set<MappingMethod> mappingMethods;
+
+    /* ------------------------------ Constructors ------------------------------ */
+    public Mapping() {
     }
 
-    public Mapping(String sClass, String sMethod, Class<?>[] methodParamTypes) {
-        this(sClass, sMethod);
-        this.setMethodParamTypes(methodParamTypes);
+    public Mapping(String className, Set<MappingMethod> mappingMethods) {
+        this.setClassName(className);
+        this.setMappingMethods(mappingMethods);
     }
 
-    // Getters & Setters
+    /* --------------------------- Getters and setters -------------------------- */
     public String getClassName() {
-        return this.sClass;
+        return className;
     }
 
-    public void setClassName(String sClass) {
-        this.sClass = sClass;
+    public void setClassName(String className) {
+        this.className = className;
     }
 
-    public String getMethodName() {
-        return this.sMethod;
+    public Set<MappingMethod> getMappingMethods() {
+        return mappingMethods;
     }
 
-    public void setMethodName(String sMethod) {
-        this.sMethod = sMethod;
+    public void setMappingMethods(Set<MappingMethod> mappingMethods) {
+        this.mappingMethods = mappingMethods;
     }
 
-    public Class<?>[] getMethodParamTypes() {
-        return this.methodParamTypes;
-    }
+    /* --------------------------------- Methods -------------------------------- */
 
-    public void setMethodParamTypes(Class<?>[] methodParamTypes) {
-        this.methodParamTypes = methodParamTypes;
-    }
-
-    public boolean getIsRest() {
-        return this.isRest;
-    }
-
-    public void setIsRest(boolean isRest) {
-        this.isRest = isRest;
-    }
-
-    public RequestVerb getRequestVerb() {
-        return requestVerb;
-    }
-
-    public void setRequestVerb(RequestVerb requestVerb) {
-        this.requestVerb = requestVerb;
-    }
 }
