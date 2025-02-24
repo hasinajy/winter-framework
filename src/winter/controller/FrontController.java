@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,6 +32,7 @@ import winter.util.ExceptionHandler;
 import winter.util.ReflectionUtil;
 import winter.util.UrlUtil;
 
+@MultipartConfig
 public class FrontController extends HttpServlet {
     private final Map<String, Mapping> urlMappings = new HashMap<>();
     private static Exception initException = null;

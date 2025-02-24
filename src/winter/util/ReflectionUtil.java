@@ -1,5 +1,6 @@
 package winter.util;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -8,16 +9,19 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 import winter.annotation.methodlevel.RequestParam;
+import winter.data.File;
 import winter.data.MappingMethod;
 import winter.data.Session;
 import winter.exception.AnnotationNotFoundException;
 
 public class ReflectionUtil extends Utility {
     public static Object invokeControllerMethod(String className, MappingMethod mappingMethod, HttpServletRequest req)
-            throws AnnotationNotFoundException, ReflectiveOperationException {
+            throws AnnotationNotFoundException, IOException, ReflectiveOperationException, ServletException {
 
         String methodName = mappingMethod.getMethod().getName();
 
@@ -74,13 +78,23 @@ public class ReflectionUtil extends Utility {
     }
 
     private static Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
-            throws AnnotationNotFoundException, ReflectiveOperationException {
+            throws AnnotationNotFoundException, IOException, ReflectiveOperationException, ServletException {
         List<Object> args = new ArrayList<>();
 
         for (Parameter param : methodParams) {
+            // FIXME: String is handled as object
+            // paramName is mandatory because compiled parameter names are random without
+            // additional configurations
             String paramName = getParameterName(param);
             Class<?> paramType = param.getType();
-            Object paramValue = createParameterInstance(paramType, paramName, req);
+            Object paramValue = null;
+
+            if (paramType == File.class) {
+                paramValue = new File(req.getPart(paramName));
+            } else {
+                paramValue = createParameterInstance(paramType, paramName, req);
+            }
+
             args.add(paramValue);
         }
 
