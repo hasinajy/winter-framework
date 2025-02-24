@@ -7,8 +7,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import winter.utils.Utility;
-
 public class DirectoryScanner extends Utility {
     public static List<String> listFiles(URL directory) throws IOException {
         List<String> fileNames = new ArrayList<>();
