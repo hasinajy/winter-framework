@@ -3,7 +3,7 @@ package winter.data;
 import java.util.HashSet;
 import java.util.Set;
 
-import winter.data.enums.RequestVerb;
+import winter.data.enumdata.RequestVerb;
 import winter.exception.DuplicateMappingException;
 
 public class Mapping {

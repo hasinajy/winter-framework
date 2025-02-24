@@ -17,7 +17,7 @@ import winter.data.JsonString;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
 import winter.data.ModelView;
-import winter.data.enums.RequestVerb;
+import winter.data.enumdata.RequestVerb;
 import winter.exception.AnnotationNotFoundException;
 import winter.exception.DuplicateMappingException;
 import winter.exception.InvalidPackageNameException;

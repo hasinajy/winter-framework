@@ -1,4 +1,4 @@
-package winter.data.enums;
+package winter.data.enumdata;
 
 public enum RequestVerb {
     GET,
