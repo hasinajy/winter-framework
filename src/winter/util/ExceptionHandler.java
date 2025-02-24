@@ -1,7 +1,8 @@
-package winter.utils;
+package winter.util;
 
 import jakarta.servlet.http.HttpServletResponse;
-import winter.exceptions.MappingNotFoundException;
+import winter.exception.MappingNotFoundException;
+import winter.util.ExceptionHandler;
 
 import java.io.IOException;
 import java.util.logging.Level;

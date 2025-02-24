@@ -1,4 +1,4 @@
-package winter.utils;
+package winter.util;
 
 import java.util.regex.Pattern;
 

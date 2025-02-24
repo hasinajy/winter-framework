@@ -1,11 +1,14 @@
-package winter.utils;
+package winter.util;
 
 import java.io.PrintWriter;
+
+import winter.util.HtmlElementBuilder;
 
 public class HtmlElementBuilder extends Utility {
     /* ------------------------- Project related methods ------------------------ */
     public static void printRequestInfo(PrintWriter out, String requestURL) {
-        HtmlElementBuilder.printList(out, "URL Information", new String[] { "Request URL" }, new String[] { requestURL });
+        HtmlElementBuilder.printList(out, "URL Information", new String[] { "Request URL" },
+                new String[] { requestURL });
     }
 
     public static void printTargetControllerInfo(PrintWriter out, String targetURL, String className, String methodName,
@@ -48,7 +51,7 @@ public class HtmlElementBuilder extends Utility {
 
         stringBuilder.append(e.toString());
 
-        for (StackTraceElement stackTraceElement: stackTraceElements) {
+        for (StackTraceElement stackTraceElement : stackTraceElements) {
             stringBuilder.append("\n\tat ");
             stringBuilder.append(stackTraceElement.toString());
         }

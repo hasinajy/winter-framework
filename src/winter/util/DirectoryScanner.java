@@ -1,4 +1,4 @@
-package winter.utils;
+package winter.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
