@@ -59,7 +59,7 @@ public class File {
 
         String actualFilename = (filename == null || filename.isEmpty()) ? FileUtil.generateTimestampFilename()
                 : filename;
-
+        this.setFilename(actualFilename);
         java.io.File file = new java.io.File(path, actualFilename);
 
         try (FileOutputStream fos = new FileOutputStream(file)) {
