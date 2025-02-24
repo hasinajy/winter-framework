@@ -19,7 +19,8 @@ public class File {
     }
 
     public File(Part part) throws IOException {
-        this.setFilename(Paths.get(part.getSubmittedFileName()).getFileName().toString());
+        this.setFilename(
+                FileUtil.generateTimestampFilename(Paths.get(part.getSubmittedFileName()).getFileName().toString()));
 
         try (InputStream fileContent = part.getInputStream();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
@@ -57,10 +58,7 @@ public class File {
             throw new FileSaveException("Bytes are invalid.");
         }
 
-        String actualFilename = (filename == null || filename.isEmpty()) ? FileUtil.generateTimestampFilename()
-                : filename;
-        this.setFilename(actualFilename);
-        java.io.File file = new java.io.File(path, actualFilename);
+        java.io.File file = new java.io.File(path, this.getFilename());
 
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(bytes);
