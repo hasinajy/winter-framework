@@ -10,7 +10,7 @@ import java.util.Map;
 
 import jakarta.servlet.ServletContext;
 import winter.annotation.classlevel.Controller;
-import winter.annotation.methods.UrlMapping;
+import winter.annotation.methodlevel.UrlMapping;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
 import winter.exception.DuplicateMappingException;

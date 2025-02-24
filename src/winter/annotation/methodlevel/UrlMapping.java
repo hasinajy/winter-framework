@@ -1,4 +1,4 @@
-package winter.annotation.methods;
+package winter.annotation.methodlevel;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
