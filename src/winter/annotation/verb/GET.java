@@ -1,4 +1,4 @@
-package winter.annotation.verbs;
+package winter.annotation.verb;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -7,5 +7,5 @@ import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface POST {
+public @interface GET {
 }
