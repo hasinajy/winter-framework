@@ -78,6 +78,7 @@ public class ReflectionUtil extends Utility {
         List<Object> args = new ArrayList<>();
 
         for (Parameter param : methodParams) {
+            // FIXME: String is handled as object
             String paramName = getParameterName(param);
             Class<?> paramType = param.getType();
             Object paramValue = createParameterInstance(paramType, paramName, req);
