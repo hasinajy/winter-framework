@@ -153,8 +153,7 @@ public class FrontController extends HttpServlet {
             } else {
                 out.print(result.toString());
             }
-        } else if (result instanceof ModelView) {
-            ModelView modelView = (ModelView) result;
+        } else if (result instanceof ModelView modelView) {
             modelView.setRequestAttributes(req);
 
             if (mappingMethod.isRest()) {
