@@ -1,4 +1,4 @@
-package winter.exceptions;
+package winter.exception;
 
 public class DuplicateMappingException extends RuntimeException {
     public DuplicateMappingException(String msg) {

@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpSession;
 import winter.annotations.methods.RequestParam;
 import winter.data.MappingMethod;
 import winter.data.Session;
-import winter.exceptions.AnnotationNotFoundException;
+import winter.exception.AnnotationNotFoundException;
 import winter.utils.Utility;
 
 public class ReflectionUtil extends Utility {

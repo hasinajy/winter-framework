@@ -1,4 +1,4 @@
-package winter.exceptions;
+package winter.exception;
 
 public class InvalidPackageNameException extends Exception {
     public InvalidPackageNameException(String msg) {

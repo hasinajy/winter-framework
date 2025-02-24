@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import winter.data.enums.RequestVerb;
-import winter.exceptions.DuplicateMappingException;
+import winter.exception.DuplicateMappingException;
 
 public class Mapping {
 
