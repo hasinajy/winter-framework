@@ -1,6 +1,7 @@
-package winter.utils;
+package winter.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import winter.utils.Utility;
 
 public class UrlUtil extends Utility {
     public static String extractTargetURL(HttpServletRequest req) {

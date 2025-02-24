@@ -25,10 +25,10 @@ import winter.exceptions.InvalidRequestVerbException;
 import winter.exceptions.InvalidReturnTypeException;
 import winter.exceptions.MappingNotFoundException;
 import winter.exceptions.PackageProviderNotFoundException;
-import winter.utils.AnnotationScanner;
-import winter.utils.ExceptionHandler;
-import winter.utils.ReflectionUtil;
-import winter.utils.UrlUtil;
+import winter.util.AnnotationScanner;
+import winter.util.ExceptionHandler;
+import winter.util.ReflectionUtil;
+import winter.util.UrlUtil;
 
 public class FrontController extends HttpServlet {
     private final Map<String, Mapping> urlMappings = new HashMap<>();

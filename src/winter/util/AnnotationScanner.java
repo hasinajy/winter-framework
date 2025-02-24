@@ -1,4 +1,4 @@
-package winter.utils;
+package winter.util;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -14,6 +14,9 @@ import winter.data.MappingMethod;
 import winter.exceptions.DuplicateMappingException;
 import winter.exceptions.InvalidPackageNameException;
 import winter.exceptions.PackageProviderNotFoundException;
+import winter.utils.DirectoryScanner;
+import winter.utils.PackageNameValidator;
+import winter.utils.Utility;
 import winter.annotations.classes.Controller;
 import winter.annotations.methods.UrlMapping;
 

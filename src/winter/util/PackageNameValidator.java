@@ -1,6 +1,8 @@
-package winter.utils;
+package winter.util;
 
 import java.util.regex.Pattern;
+
+import winter.utils.Utility;
 
 public class PackageNameValidator extends Utility {
     private static final String PACKAGE_NAME_REGEX = "^(\\w+)(\\.(\\w+))*$";

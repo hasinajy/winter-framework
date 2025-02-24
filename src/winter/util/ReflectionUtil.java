@@ -1,4 +1,4 @@
-package winter.utils;
+package winter.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +14,7 @@ import winter.annotations.methods.RequestParam;
 import winter.data.MappingMethod;
 import winter.data.Session;
 import winter.exceptions.AnnotationNotFoundException;
+import winter.utils.Utility;
 
 public class ReflectionUtil extends Utility {
     public static Object invokeControllerMethod(String className, MappingMethod mappingMethod, HttpServletRequest req)

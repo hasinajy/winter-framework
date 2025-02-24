@@ -1,4 +1,4 @@
-package winter.utils;
+package winter.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import winter.utils.Utility;
 
 public class DirectoryScanner extends Utility {
     public static List<String> listFiles(URL directory) throws IOException {
