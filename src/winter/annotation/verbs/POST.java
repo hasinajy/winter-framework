@@ -1,4 +1,4 @@
-package winter.annotations.methods;
+package winter.annotation.verbs;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -7,6 +7,5 @@ import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface UrlMapping {
-    String value() default "";
+public @interface POST {
 }

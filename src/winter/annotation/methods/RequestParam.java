@@ -1,4 +1,4 @@
-package winter.annotations.methods;
+package winter.annotation.methods;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Rest {
+@Target(ElementType.PARAMETER)
+public @interface RequestParam {
+    String name() default "";
 }

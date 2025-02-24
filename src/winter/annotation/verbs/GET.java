@@ -1,4 +1,4 @@
-package winter.annotations.verbs;
+package winter.annotation.verbs;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

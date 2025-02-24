@@ -9,6 +9,8 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import jakarta.servlet.ServletContext;
+import winter.annotation.classes.Controller;
+import winter.annotation.methods.UrlMapping;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
 import winter.exception.DuplicateMappingException;
@@ -17,8 +19,6 @@ import winter.exception.PackageProviderNotFoundException;
 import winter.utils.DirectoryScanner;
 import winter.utils.PackageNameValidator;
 import winter.utils.Utility;
-import winter.annotations.classes.Controller;
-import winter.annotations.methods.UrlMapping;
 
 public class AnnotationScanner extends Utility {
     public static Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)

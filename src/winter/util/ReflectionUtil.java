@@ -10,7 +10,7 @@ import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import winter.annotations.methods.RequestParam;
+import winter.annotation.methods.RequestParam;
 import winter.data.MappingMethod;
 import winter.data.Session;
 import winter.exception.AnnotationNotFoundException;
