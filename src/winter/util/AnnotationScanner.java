@@ -1,4 +1,4 @@
-package winter.utils;
+package winter.util;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -9,12 +9,13 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import jakarta.servlet.ServletContext;
+import winter.annotation.classlevel.Controller;
+import winter.annotation.methodlevel.UrlMapping;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
-import winter.exceptions.DuplicateMappingException;
-import winter.exceptions.InvalidPackageNameException;
-import winter.exceptions.PackageProviderNotFoundException;
-import winter.annotations.*;
+import winter.exception.DuplicateMappingException;
+import winter.exception.InvalidPackageNameException;
+import winter.exception.PackageProviderNotFoundException;
 
 public class AnnotationScanner extends Utility {
     public static Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)

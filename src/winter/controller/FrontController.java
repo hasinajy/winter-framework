@@ -1,4 +1,4 @@
-package winter.controllers;
+package winter.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,22 +13,23 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import winter.controller.FrontController;
 import winter.data.JsonString;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
 import winter.data.ModelView;
-import winter.data.RequestVerb;
-import winter.exceptions.AnnotationNotFoundException;
-import winter.exceptions.DuplicateMappingException;
-import winter.exceptions.InvalidPackageNameException;
-import winter.exceptions.InvalidRequestVerbException;
-import winter.exceptions.InvalidReturnTypeException;
-import winter.exceptions.MappingNotFoundException;
-import winter.exceptions.PackageProviderNotFoundException;
-import winter.utils.AnnotationScanner;
-import winter.utils.ExceptionHandler;
-import winter.utils.ReflectionUtil;
-import winter.utils.UrlUtil;
+import winter.data.enumdata.RequestVerb;
+import winter.exception.AnnotationNotFoundException;
+import winter.exception.DuplicateMappingException;
+import winter.exception.InvalidPackageNameException;
+import winter.exception.InvalidRequestVerbException;
+import winter.exception.InvalidReturnTypeException;
+import winter.exception.MappingNotFoundException;
+import winter.exception.PackageProviderNotFoundException;
+import winter.util.AnnotationScanner;
+import winter.util.ExceptionHandler;
+import winter.util.ReflectionUtil;
+import winter.util.UrlUtil;
 
 public class FrontController extends HttpServlet {
     private final Map<String, Mapping> urlMappings = new HashMap<>();
@@ -153,8 +154,7 @@ public class FrontController extends HttpServlet {
             } else {
                 out.print(result.toString());
             }
-        } else if (result instanceof ModelView) {
-            ModelView modelView = (ModelView) result;
+        } else if (result instanceof ModelView modelView) {
             modelView.setRequestAttributes(req);
 
             if (mappingMethod.isRest()) {
