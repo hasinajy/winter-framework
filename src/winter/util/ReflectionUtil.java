@@ -83,7 +83,7 @@ public class ReflectionUtil extends Utility {
         for (Parameter param : methodParams) {
             // @RequestParam is required as parameter names are positional without
             // additional configurations
-            String requestParamName = getRequestParamName(param);
+            String requestParamName = param.getAnnotation(RequestParam.class).name();
             Class<?> paramType = param.getType();
             Object paramValue = null;
 
@@ -104,16 +104,6 @@ public class ReflectionUtil extends Utility {
         }
 
         return args.toArray();
-    }
-
-    private static String getRequestParamName(Parameter param) throws AnnotationNotFoundException {
-        if (param.isAnnotationPresent(RequestParam.class)) {
-            return param.getAnnotation(RequestParam.class).name();
-        } else {
-            throw new AnnotationNotFoundException(
-                    "The annotation @RequestParam was not found on the controller method parameter: "
-                            + param.getName());
-        }
     }
 
     private static Object createObjectInstance(Class<?> objType, String requestParamName, HttpServletRequest req)

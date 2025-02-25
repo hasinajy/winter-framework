@@ -5,17 +5,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import winter.annotation.methodlevel.RequestParam;
+import winter.exception.AnnotationNotFoundException;
 
 public class FormData {
     private Map<String, String> values = new HashMap<>();
     private Map<String, String> errorMessages = new HashMap<>();
 
     /* ------------------------------ Constructors ------------------------------ */
-    public FormData() {
-    }
-
-    public FormData(Parameter[] requestParams) {
+    public FormData(Parameter[] requestParams) throws AnnotationNotFoundException {
         for (Parameter param : requestParams) {
+            if (!param.isAnnotationPresent(RequestParam.class)) {
+                throw new AnnotationNotFoundException(
+                        "The annotation @RequestParam was not found on the controller method parameter: "
+                                + param.getName());
+            }
+
             String key = param.getAnnotation(RequestParam.class).name();
             this.getValues().put(key, "");
             this.getErrorMessages().put(key, "");
