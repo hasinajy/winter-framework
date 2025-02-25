@@ -1,0 +1,57 @@
+package winter.data;
+
+import java.lang.reflect.Parameter;
+import java.util.HashMap;
+import java.util.Map;
+
+import winter.annotation.methodlevel.RequestParam;
+
+public class FormData {
+    private Map<String, String> values = new HashMap<>();
+    private Map<String, String> errorMessages = new HashMap<>();
+
+    /* ------------------------------ Constructors ------------------------------ */
+    public FormData() {
+    }
+
+    public FormData(Parameter[] requestParams) {
+        for (Parameter param : requestParams) {
+            String key = param.getAnnotation(RequestParam.class).name();
+            this.getValues().put(key, "");
+            this.getErrorMessages().put(key, "");
+        }
+    }
+
+    /* --------------------------- Getters and setters -------------------------- */
+    public Map<String, String> getValues() {
+        return values;
+    }
+
+    public void setValues(Map<String, String> values) {
+        this.values = values;
+    }
+
+    public Map<String, String> getErrorMessages() {
+        return errorMessages;
+    }
+
+    public void setErrorMessages(Map<String, String> errorMessages) {
+        this.errorMessages = errorMessages;
+    }
+
+    public String getValue(String key) {
+        return this.getValues().get(key);
+    }
+
+    public void setValue(String key, String value) {
+        this.getValues().put(key, value);
+    }
+
+    public String getErrorMessage(String key) {
+        return this.getErrorMessages().get(key);
+    }
+
+    public void setErrorMessage(String key, String value) {
+        this.getErrorMessages().put(key, value);
+    }
+}
