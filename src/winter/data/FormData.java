@@ -43,16 +43,18 @@ public class FormData {
         this.errorMessages = errorMessages;
     }
 
-    public String getValue(String key) {
-        return this.getValues().get(key);
+    public String getValue(String key, boolean formatNull) {
+        String value = this.getValues().get(key);
+        return (value == null && formatNull) ? "" : value;
     }
 
     public void setValue(String key, String value) {
         this.getValues().put(key, value);
     }
 
-    public String getErrorMessage(String key) {
-        return this.getErrorMessages().get(key);
+    public String getErrorMessage(String key, boolean formatNull) {
+        String errorMessage = this.getErrorMessages().get(key);
+        return (errorMessage == null && formatNull) ? "" : errorMessage;
     }
 
     public void setErrorMessage(String key, String value) {
