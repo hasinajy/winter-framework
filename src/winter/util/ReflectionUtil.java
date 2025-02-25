@@ -132,10 +132,10 @@ public class ReflectionUtil extends Utility {
             String setterName = getSetterName(attrName);
 
             try {
-                Class<?> clazz = objType.getDeclaredField(attrName).getType();
-                Method setter = objType.getDeclaredMethod(setterName, clazz);
-                Object value = convertAttributeValue(attrValue, clazz);
-                setter.invoke(instance, value);
+                Class<?> attrType = objType.getDeclaredField(attrName).getType();
+                Method attrSetterMethod = objType.getDeclaredMethod(setterName, attrType);
+                Object value = convertAttributeValue(attrValue, attrType);
+                attrSetterMethod.invoke(instance, value);
             } catch (ReflectiveOperationException | NumberFormatException e) {
                 String message = "Error setting attribute: " + attrName;
                 throw new ReflectiveOperationException(message, e);
