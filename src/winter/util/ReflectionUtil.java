@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 import jakarta.servlet.ServletException;
@@ -15,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import winter.annotation.methodlevel.RequestParam;
 import winter.data.File;
 import winter.data.MappingMethod;
+import winter.data.ObjectRequestParameter;
 import winter.data.Session;
 import winter.exception.AnnotationNotFoundException;
 
@@ -113,10 +113,12 @@ public class ReflectionUtil extends Utility {
     private static Object createObjectInstance(Class<?> objType, String requestParamName, HttpServletRequest req)
             throws ReflectiveOperationException {
         Object objectInstance = objType.getDeclaredConstructor().newInstance();
-        String[] objRequestParameters = getObjectRequestParameters(requestParamName, req);
-        String[] attrNames = getAttributeNames(objRequestParameters);
-        String[] attrValues = getAttributeValues(objRequestParameters, req);
-        setObjectAttributes(objType, objectInstance, attrNames, attrValues);
+        ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, requestParamName, req);
+        setObjectAttributes(
+                objRequestParameter.getObjType(),
+                objectInstance,
+                objRequestParameter.getAttrNames(),
+                objRequestParameter.getValues());
         return objectInstance;
     }
 
@@ -156,40 +158,5 @@ public class ReflectionUtil extends Utility {
 
     protected static String getSetterName(String attrName) {
         return "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
-    }
-
-    private static String[] getAttributeValues(String[] paramNames, HttpServletRequest req) {
-        List<String> attributeValues = new ArrayList<>();
-
-        for (String paramName : paramNames) {
-            attributeValues.add(req.getParameter(paramName));
-        }
-
-        return attributeValues.toArray(new String[0]);
-    }
-
-    private static String[] getAttributeNames(String[] objParamNames) {
-        List<String> attributeNames = new ArrayList<>();
-
-        for (String paramName : objParamNames) {
-            attributeNames.add(paramName.split("\\.")[1]);
-        }
-
-        return attributeNames.toArray(new String[0]);
-    }
-
-    private static String[] getObjectRequestParameters(String prefix, HttpServletRequest req) {
-        List<String> objParamNames = new ArrayList<>();
-        Enumeration<String> paramNames = req.getParameterNames();
-
-        while (paramNames.hasMoreElements()) {
-            String paramName = paramNames.nextElement();
-
-            if (paramName.matches(prefix + ".*")) {
-                objParamNames.add(paramName);
-            }
-        }
-
-        return objParamNames.toArray(new String[0]);
     }
 }
