@@ -105,7 +105,8 @@ public class ReflectionUtil extends Utility {
             return param.getAnnotation(RequestParam.class).name();
         } else {
             throw new AnnotationNotFoundException(
-                    "ETU002539: @RequestMapping annotation not found for " + param.getName());
+                    "The annotation @RequestParam was not found on the controller method parameter: "
+                            + param.getName());
         }
     }
 
