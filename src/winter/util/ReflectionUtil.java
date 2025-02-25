@@ -95,6 +95,11 @@ public class ReflectionUtil extends Utility {
                 paramValue = createObjectInstance(paramType, requestParamName, req);
             }
 
+            if (paramValue == null && param.getAnnotation(RequestParam.class).required()) {
+                req.setAttribute("hasError", true);
+                req.setAttribute("error." + requestParamName, "Field cannot be empty");
+            }
+
             args.add(paramValue);
         }
 
