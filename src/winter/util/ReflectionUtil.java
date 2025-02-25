@@ -113,9 +113,9 @@ public class ReflectionUtil extends Utility {
     private static Object createObjectInstance(Class<?> paramType, String requestParamName, HttpServletRequest req)
             throws ReflectiveOperationException {
         Object objectInstance = paramType.getDeclaredConstructor().newInstance();
-        String[] objRequestAttributes = getObjectParameters(requestParamName, req.getParameterNames());
-        String[] attrNames = getAttributeNames(objRequestAttributes);
-        String[] attrValues = getAttributeValues(objRequestAttributes, req);
+        String[] objRequestParameters = getObjectRequestParameters(requestParamName, req);
+        String[] attrNames = getAttributeNames(objRequestParameters);
+        String[] attrValues = getAttributeValues(objRequestParameters, req);
         setObjectAttributes(paramType, objectInstance, attrNames, attrValues);
         return objectInstance;
     }
@@ -178,13 +178,14 @@ public class ReflectionUtil extends Utility {
         return attributeNames.toArray(new String[0]);
     }
 
-    private static String[] getObjectParameters(String objName, Enumeration<String> paramNames) {
+    private static String[] getObjectRequestParameters(String prefix, HttpServletRequest req) {
         List<String> objParamNames = new ArrayList<>();
+        Enumeration<String> paramNames = req.getParameterNames();
 
         while (paramNames.hasMoreElements()) {
             String paramName = paramNames.nextElement();
 
-            if (paramName.matches(objName + ".*")) {
+            if (paramName.matches(prefix + ".*")) {
                 objParamNames.add(paramName);
             }
         }
