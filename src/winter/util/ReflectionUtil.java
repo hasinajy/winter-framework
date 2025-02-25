@@ -88,7 +88,9 @@ public class ReflectionUtil extends Utility {
             Class<?> paramType = param.getType();
             Object paramValue = null;
 
-            if (paramType == File.class) {
+            if (paramType == String.class) {
+                paramValue = req.getParameter(requestParamName);
+            } else if (paramType == File.class) {
                 paramValue = new File(req.getPart(requestParamName));
             } else {
                 paramValue = createObjectInstance(paramType, requestParamName, req);
