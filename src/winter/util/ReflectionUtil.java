@@ -110,10 +110,10 @@ public class ReflectionUtil extends Utility {
         }
     }
 
-    private static Object createObjectInstance(Class<?> paramType, String paramName, HttpServletRequest req)
+    private static Object createObjectInstance(Class<?> paramType, String requestParamName, HttpServletRequest req)
             throws ReflectiveOperationException {
         Object paramValue = paramType.getDeclaredConstructor().newInstance();
-        String[] paramNames = getObjectParameters(paramName, req.getParameterNames());
+        String[] paramNames = getObjectParameters(requestParamName, req.getParameterNames());
         String[] attrNames = getAttributeNames(paramNames);
         String[] attrValues = getAttributeValues(paramNames, req);
         setObjectAttributes(paramType, paramValue, attrNames, attrValues);
