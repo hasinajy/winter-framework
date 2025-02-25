@@ -91,7 +91,7 @@ public class ReflectionUtil extends Utility {
             if (paramType == File.class) {
                 paramValue = new File(req.getPart(requestParamName));
             } else {
-                paramValue = createParameterInstance(paramType, requestParamName, req);
+                paramValue = createObjectInstance(paramType, requestParamName, req);
             }
 
             args.add(paramValue);
@@ -110,7 +110,7 @@ public class ReflectionUtil extends Utility {
         }
     }
 
-    private static Object createParameterInstance(Class<?> paramType, String paramName, HttpServletRequest req)
+    private static Object createObjectInstance(Class<?> paramType, String paramName, HttpServletRequest req)
             throws ReflectiveOperationException {
         Object paramValue = paramType.getDeclaredConstructor().newInstance();
         String[] paramNames = getObjectParameters(paramName, req.getParameterNames());
