@@ -81,8 +81,7 @@ public class ReflectionUtil extends Utility {
         List<Object> args = new ArrayList<>();
 
         for (Parameter param : methodParams) {
-            // FIXME: String is handled as object
-            // paramName is mandatory because compiled parameter names are random without
+            // @RequestParam is required as parameter names are positional without
             // additional configurations
             String requestParamName = getRequestParamName(param);
             Class<?> paramType = param.getType();
