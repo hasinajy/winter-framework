@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import winter.annotation.methodlevel.RequestParam;
 import winter.data.File;
+import winter.data.FormData;
 import winter.data.MappingMethod;
 import winter.data.ObjectRequestParameter;
 import winter.data.Session;
@@ -78,7 +79,10 @@ public class ReflectionUtil extends Utility {
 
     private static Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
             throws AnnotationNotFoundException, IOException, ReflectiveOperationException, ServletException {
+
         List<Object> args = new ArrayList<>();
+        FormData formData = new FormData(methodParams);
+        boolean hasError = false;
 
         for (Parameter param : methodParams) {
             // @RequestParam is required as parameter names are positional without
@@ -96,11 +100,16 @@ public class ReflectionUtil extends Utility {
             }
 
             if (paramValue == null && param.getAnnotation(RequestParam.class).required()) {
-                req.setAttribute("hasError", true);
-                req.setAttribute("error." + requestParamName, "Field cannot be empty");
+                hasError = true;
+                formData.setErrorMessage(requestParamName, "Field cannot be empty");
             }
 
             args.add(paramValue);
+        }
+
+        if (hasError) {
+            req.setAttribute("hasError", true);
+            req.setAttribute("formData", formData);
         }
 
         return args.toArray();
