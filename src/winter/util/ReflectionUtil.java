@@ -12,7 +12,6 @@ import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.Part;
 import winter.annotation.methodlevel.RequestParam;
 import winter.data.File;
 import winter.data.MappingMethod;
