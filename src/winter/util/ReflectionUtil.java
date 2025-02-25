@@ -115,24 +115,25 @@ public class ReflectionUtil extends Utility {
         Object objectInstance = objType.getDeclaredConstructor().newInstance();
         ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, requestParamName, req);
         setObjectAttributes(
-                objRequestParameter.getObjType(),
-                objectInstance,
-                objRequestParameter.getAttrNames(),
-                objRequestParameter.getValues());
+                objectInstance, objRequestParameter);
         return objectInstance;
     }
 
-    private static void setObjectAttributes(Class<?> classType, Object instance, String[] attrNames,
-            String[] attrValues)
+    private static void setObjectAttributes(Object instance, ObjectRequestParameter objRequestParameter)
             throws ReflectiveOperationException {
+
+        Class<?> objType = objRequestParameter.getObjType();
+        String[] attrNames = objRequestParameter.getAttrNames();
+        String[] attrValues = objRequestParameter.getValues();
+
         for (int i = 0; i < attrNames.length; i++) {
             String attrName = attrNames[i];
             String attrValue = attrValues[i];
             String setterName = getSetterName(attrName);
 
             try {
-                Class<?> clazz = classType.getDeclaredField(attrName).getType();
-                Method setter = classType.getDeclaredMethod(setterName, clazz);
+                Class<?> clazz = objType.getDeclaredField(attrName).getType();
+                Method setter = objType.getDeclaredMethod(setterName, clazz);
                 Object value = convertAttributeValue(attrValue, clazz);
                 setter.invoke(instance, value);
             } catch (ReflectiveOperationException | NumberFormatException e) {
