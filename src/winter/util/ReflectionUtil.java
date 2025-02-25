@@ -84,14 +84,14 @@ public class ReflectionUtil extends Utility {
             // FIXME: String is handled as object
             // paramName is mandatory because compiled parameter names are random without
             // additional configurations
-            String paramName = getParameterName(param);
+            String requestParamName = getRequestParamName(param);
             Class<?> paramType = param.getType();
             Object paramValue = null;
 
             if (paramType == File.class) {
-                paramValue = new File(req.getPart(paramName));
+                paramValue = new File(req.getPart(requestParamName));
             } else {
-                paramValue = createParameterInstance(paramType, paramName, req);
+                paramValue = createParameterInstance(paramType, requestParamName, req);
             }
 
             args.add(paramValue);
@@ -100,7 +100,7 @@ public class ReflectionUtil extends Utility {
         return args.toArray();
     }
 
-    private static String getParameterName(Parameter param) throws AnnotationNotFoundException {
+    private static String getRequestParamName(Parameter param) throws AnnotationNotFoundException {
         if (param.isAnnotationPresent(RequestParam.class)) {
             return param.getAnnotation(RequestParam.class).name();
         } else {
