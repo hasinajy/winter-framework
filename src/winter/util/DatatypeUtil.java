@@ -9,6 +9,20 @@ import winter.data.enumdata.RequestParamType;
 import winter.exception.InvalidFormDataException;
 
 public class DatatypeUtil extends Utility {
+    public static Object parseObject(Class<?> objType, String value) {
+        if (value == null) {
+            return null;
+        } else if (objType == int.class || objType == Integer.class) {
+            return Integer.parseInt(value);
+        } else if (objType == double.class || objType == Double.class) {
+            return Double.parseDouble(value);
+        } else if (objType == float.class || objType == Float.class) {
+            return Float.parseFloat(value);
+        } else {
+            return value;
+        }
+    }
+
     /* --------------------------- Validation methods --------------------------- */
     public static void validateRequestParamConstraints(Parameter param, String value) throws InvalidFormDataException {
         boolean isEmail = param.getAnnotation(RequestParam.class).type().equals(RequestParamType.EMAIL);
