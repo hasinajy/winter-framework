@@ -103,7 +103,7 @@ public class ReflectionUtil extends Utility {
             } else if (paramType == File.class) {
                 paramValue = new File(req.getPart(requestParamName));
             } else {
-                paramValue = createObjectParameterInstance(paramType, requestParamName, req);
+                paramValue = createObjectParameterInstance(paramType, req, requestParamName);
             }
 
             if (paramValue == null && param.getAnnotation(RequestParam.class).required()) {
@@ -122,11 +122,10 @@ public class ReflectionUtil extends Utility {
         return args.toArray();
     }
 
-    private static Object createObjectParameterInstance(Class<?> objType, String objPrefix,
-            HttpServletRequest req)
+    private static Object createObjectParameterInstance(Class<?> objType, HttpServletRequest req, String objPrefix)
             throws ReflectiveOperationException {
         Object objectInstance = objType.getDeclaredConstructor().newInstance();
-        ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, objPrefix, req);
+        ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, req, objPrefix);
         setObjectAttributes(
                 objectInstance, objRequestParameter);
         return objectInstance;
@@ -136,17 +135,14 @@ public class ReflectionUtil extends Utility {
             throws ReflectiveOperationException {
 
         Class<?> objType = objRequestParameter.getObjType();
-        String[] attrNames = objRequestParameter.getAttrNames();
-        String[] attrValues = objRequestParameter.getValues();
 
-        for (int i = 0; i < attrNames.length; i++) {
-            String attrName = attrNames[i];
-            String attrValue = attrValues[i];
-            String setterName = getSetterName(attrName);
+        for (Field field : objType.getDeclaredFields()) {
+            String attrName = field.getName();
+            String attrValue = objRequestParameter.getValues().get(attrName);
 
             try {
-                Class<?> attrType = objType.getDeclaredField(attrName).getType();
-                Method attrSetterMethod = objType.getDeclaredMethod(setterName, attrType);
+                Method attrSetterMethod = getSetterMethod(objType, attrName);
+                Class<?> attrType = field.getType();
                 Object value = DatatypeUtil.parseObject(attrType, attrValue);
                 attrSetterMethod.invoke(instance, value);
             } catch (ReflectiveOperationException | NumberFormatException e) {
@@ -154,6 +150,14 @@ public class ReflectionUtil extends Utility {
                 throw new ReflectiveOperationException(message, e);
             }
         }
+    }
+
+    private static Method getSetterMethod(Class<?> objType, String attrName)
+            throws NoSuchFieldException, NoSuchMethodException {
+        String setterName = getSetterName(attrName);
+        Field field = objType.getDeclaredField(attrName);
+        Class<?> attrType = field.getType();
+        return objType.getDeclaredMethod(setterName, attrType);
     }
 
     protected static String getSetterName(String attrName) {

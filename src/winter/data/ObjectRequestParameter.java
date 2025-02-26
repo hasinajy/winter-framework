@@ -1,20 +1,18 @@
 package winter.data;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 public class ObjectRequestParameter {
     private Class<?> objType;
-    private String[] attrNames;
-    private String[] values;
+    private Map<String, String> values = new HashMap<>();
 
     /* ------------------------------ Constructors ------------------------------ */
-    public ObjectRequestParameter(Class<?> objType, String prefix, HttpServletRequest req) {
+    public ObjectRequestParameter(Class<?> objType, HttpServletRequest req, String objPrefix) {
         this.setObjType(objType);
-        this.setAttrNames(prefix, req);
+        this.setValues(req, objPrefix);
     }
 
     /* --------------------------- Getters and setters -------------------------- */
@@ -26,34 +24,20 @@ public class ObjectRequestParameter {
         this.objType = objType;
     }
 
-    public String[] getAttrNames() {
-        return attrNames;
-    }
-
-    public void setAttrNames(String[] attrNames) {
-        this.attrNames = attrNames;
-    }
-
-    public void setAttrNames(String prefix, HttpServletRequest req) {
-        List<String> attrNamesList = new ArrayList<>();
-        Enumeration<String> paramNames = req.getParameterNames();
-
-        while (paramNames.hasMoreElements()) {
-            String paramName = paramNames.nextElement();
-
-            if (paramName.matches(prefix + ".*")) {
-                attrNamesList.add(paramName.split("\\.")[1]);
-            }
-        }
-
-        this.setAttrNames(attrNamesList.toArray(new String[0]));
-    }
-
-    public String[] getValues() {
+    public Map<String, String> getValues() {
         return values;
     }
 
-    public void setValues(String[] values) {
+    public void setValues(Map<String, String> values) {
         this.values = values;
+    }
+
+    public void setValues(HttpServletRequest req, String objPrefix) {
+        req.getParameterMap().forEach((key, value) -> {
+            if (key.startsWith(objPrefix)) {
+                key = key.substring(objPrefix.length() + 1);
+                this.getValues().put(key, value[0]);
+            }
+        });
     }
 }
