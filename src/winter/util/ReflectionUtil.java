@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -18,6 +17,7 @@ import winter.data.MappingMethod;
 import winter.data.ObjectRequestParameter;
 import winter.data.Session;
 import winter.exception.AnnotationNotFoundException;
+import winter.exception.InvalidFormDataException;
 
 public class ReflectionUtil extends Utility {
     public static Object invokeControllerMethod(String className, MappingMethod mappingMethod, HttpServletRequest req)
@@ -93,6 +93,13 @@ public class ReflectionUtil extends Utility {
 
             if (paramType == String.class) {
                 paramValue = req.getParameter(requestParamName);
+
+                try {
+                    FormDataValidator.validateRequestParamConstraints(param, (String) paramValue);
+                } catch (InvalidFormDataException e) {
+                    hasError = true;
+                    formData.setErrorMessage(requestParamName, e.getMessage());
+                }
             } else if (paramType == File.class) {
                 paramValue = new File(req.getPart(requestParamName));
             } else {
