@@ -8,7 +8,7 @@ import winter.annotation.methodlevel.RequestParam;
 import winter.data.enumdata.RequestParamType;
 import winter.exception.InvalidFormDataException;
 
-public class DatatypeUtil extends Utility {
+public class DataUtil extends Utility {
     public static Object parseObject(Class<?> objType, String value) {
         if (value == null) {
             return null;

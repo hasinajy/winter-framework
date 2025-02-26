@@ -91,14 +91,14 @@ public class ReflectionUtil extends Utility {
             Class<?> paramType = param.getType();
             Object paramValue = null;
 
-            if (DatatypeUtil.isPrimitive(paramType)) {
+            if (DataUtil.isPrimitive(paramType)) {
                 try {
-                    paramValue = DatatypeUtil.parseObject(paramType, req.getParameter(requestParamName));
-                    DatatypeUtil.validateRequestParamConstraints(param, paramValue.toString());
+                    paramValue = DataUtil.parseObject(paramType, req.getParameter(requestParamName));
+                    DataUtil.validateRequestParamConstraints(param, paramValue.toString());
                 } catch (NumberFormatException | InvalidFormDataException e) {
                     hasError = true;
                     formData.setErrorMessage(requestParamName, e.getMessage());
-                    paramValue = DatatypeUtil.parseObject(paramType, "0");
+                    paramValue = DataUtil.parseObject(paramType, "0");
                 }
             } else if (paramType == File.class) {
                 paramValue = new File(req.getPart(requestParamName));
@@ -107,7 +107,7 @@ public class ReflectionUtil extends Utility {
                     paramValue = createObjectParameterInstance(paramType, req, requestParamName, formData);
                 } catch (Exception e) {
                     hasError = true;
-                    paramValue = DatatypeUtil.parseObject(paramType, null);
+                    paramValue = DataUtil.parseObject(paramType, null);
                 }
             }
 
@@ -152,9 +152,9 @@ public class ReflectionUtil extends Utility {
 
             try {
                 attrSetterMethod = getSetterMethod(objType, attrName);
-                value = DatatypeUtil.parseObject(attrType, attrValue);
+                value = DataUtil.parseObject(attrType, attrValue);
                 objRequestParameter.setValue(attrName, value.toString());
-                DatatypeUtil.validateRequestParamConstraints(field, value.toString());
+                DataUtil.validateRequestParamConstraints(field, value.toString());
                 attrSetterMethod.invoke(instance, value);
             } catch (NumberFormatException | InvalidFormDataException e) {
                 hasError = true;
