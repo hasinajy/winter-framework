@@ -20,6 +20,22 @@ public class DataValidator extends Utility {
         }
     }
 
+    public static boolean isPrimitive(Class<?> clazz) {
+        if (clazz == null) {
+            return false;
+        }
+
+        return clazz.isPrimitive() ||
+                clazz == Boolean.class ||
+                clazz == Character.class ||
+                clazz == Byte.class ||
+                clazz == Short.class ||
+                clazz == Integer.class ||
+                clazz == Long.class ||
+                clazz == Float.class ||
+                clazz == Double.class;
+    }
+
     public static boolean isEmail(String email) {
         if (email == null || email.isEmpty()) {
             return false;
