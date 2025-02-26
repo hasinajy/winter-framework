@@ -103,7 +103,12 @@ public class ReflectionUtil extends Utility {
             } else if (paramType == File.class) {
                 paramValue = new File(req.getPart(requestParamName));
             } else {
-                paramValue = createObjectParameterInstance(paramType, req, requestParamName);
+                try {
+                    paramValue = createObjectParameterInstance(paramType, req, requestParamName, formData);
+                } catch (Exception e) {
+                    hasError = true;
+                    paramValue = DatatypeUtil.parseObject(paramType, null);
+                }
             }
 
             if (paramValue == null && param.getAnnotation(RequestParam.class).required()) {
@@ -122,33 +127,45 @@ public class ReflectionUtil extends Utility {
         return args.toArray();
     }
 
-    private static Object createObjectParameterInstance(Class<?> objType, HttpServletRequest req, String objPrefix)
-            throws ReflectiveOperationException {
+    private static Object createObjectParameterInstance(Class<?> objType, HttpServletRequest req, String objPrefix,
+            FormData formData)
+            throws InvalidFormDataException, ReflectiveOperationException {
         Object objectInstance = objType.getDeclaredConstructor().newInstance();
-        ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, req, objPrefix);
+        ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, req, objPrefix, formData);
         setObjectAttributes(
                 objectInstance, objRequestParameter);
         return objectInstance;
     }
 
     private static void setObjectAttributes(Object instance, ObjectRequestParameter objRequestParameter)
-            throws ReflectiveOperationException {
+            throws InvalidFormDataException, ReflectiveOperationException {
 
         Class<?> objType = objRequestParameter.getObjType();
+        boolean hasError = false;
 
         for (Field field : objType.getDeclaredFields()) {
             String attrName = field.getName();
             String attrValue = objRequestParameter.getValues().get(attrName);
+            Method attrSetterMethod = null;
+            Class<?> attrType = field.getType();
+            Object value = null;
 
             try {
-                Method attrSetterMethod = getSetterMethod(objType, attrName);
-                Class<?> attrType = field.getType();
-                Object value = DatatypeUtil.parseObject(attrType, attrValue);
+                attrSetterMethod = getSetterMethod(objType, attrName);
+                value = DatatypeUtil.parseObject(attrType, attrValue);
+                objRequestParameter.setValue(attrName, value.toString());
+                DatatypeUtil.validateRequestParamConstraints(field, value.toString());
                 attrSetterMethod.invoke(instance, value);
-            } catch (ReflectiveOperationException | NumberFormatException e) {
-                String message = "Error setting attribute: " + attrName;
-                throw new ReflectiveOperationException(message, e);
+            } catch (NumberFormatException | InvalidFormDataException e) {
+                hasError = true;
+                objRequestParameter.setErrorMessage(attrName, e.getMessage());
+            } catch (ReflectiveOperationException e) {
+                throw new ReflectiveOperationException("An error occurred while setting object attributes", e);
             }
+        }
+
+        if (hasError) {
+            throw new InvalidFormDataException();
         }
     }
 
