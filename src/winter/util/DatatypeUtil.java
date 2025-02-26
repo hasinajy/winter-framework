@@ -1,6 +1,6 @@
 package winter.util;
 
-import java.lang.reflect.Parameter;
+import java.lang.reflect.AnnotatedElement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,13 +24,20 @@ public class DatatypeUtil extends Utility {
     }
 
     /* --------------------------- Validation methods --------------------------- */
-    public static void validateRequestParamConstraints(Parameter param, String value) throws InvalidFormDataException {
-        boolean isEmail = param.getAnnotation(RequestParam.class).type().equals(RequestParamType.EMAIL);
-        boolean isNumeric = param.getAnnotation(RequestParam.class).type().equals(RequestParamType.NUMERIC);
+    public static void validateRequestParamConstraints(AnnotatedElement element, String value)
+            throws InvalidFormDataException {
 
-        if (isEmail && !isEmail(value)) {
+        RequestParam requestParam = element.getAnnotation(RequestParam.class);
+
+        if (requestParam == null) {
+            return;
+        }
+
+        RequestParamType type = requestParam.type();
+
+        if (type == RequestParamType.EMAIL && !isEmail(value)) {
             throw new InvalidFormDataException("Invalid email format");
-        } else if (isNumeric && !isNumeric(value)) {
+        } else if (type == RequestParamType.NUMERIC && !isNumeric(value)) {
             throw new InvalidFormDataException("Invalid numeric format");
         }
     }
