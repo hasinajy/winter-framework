@@ -48,7 +48,8 @@ public class DatatypeUtil extends Utility {
                 clazz == Integer.class ||
                 clazz == Long.class ||
                 clazz == Float.class ||
-                clazz == Double.class;
+                clazz == Double.class ||
+                clazz == String.class;
     }
 
     public static boolean isEmail(String email) {
