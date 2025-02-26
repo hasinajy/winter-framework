@@ -95,7 +95,7 @@ public class ReflectionUtil extends Utility {
                 paramValue = req.getParameter(requestParamName);
 
                 try {
-                    FormDataValidator.validateRequestParamConstraints(param, (String) paramValue);
+                    DataValidator.validateRequestParamConstraints(param, (String) paramValue);
                 } catch (InvalidFormDataException e) {
                     hasError = true;
                     formData.setErrorMessage(requestParamName, e.getMessage());

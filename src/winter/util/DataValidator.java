@@ -8,7 +8,7 @@ import winter.annotation.methodlevel.RequestParam;
 import winter.data.enumdata.RequestParamType;
 import winter.exception.InvalidFormDataException;
 
-public class FormDataValidator extends Utility {
+public class DataValidator extends Utility {
     public static void validateRequestParamConstraints(Parameter param, String value) throws InvalidFormDataException {
         boolean isEmail = param.getAnnotation(RequestParam.class).type().equals(RequestParamType.EMAIL);
         boolean isNumeric = param.getAnnotation(RequestParam.class).type().equals(RequestParamType.NUMERIC);
