@@ -91,14 +91,14 @@ public class ReflectionUtil extends Utility {
             Class<?> paramType = param.getType();
             Object paramValue = null;
 
-            if (paramType == String.class) {
-                paramValue = req.getParameter(requestParamName);
-
+            if (DatatypeUtil.isPrimitive(paramType)) {
                 try {
-                    FormDataValidator.validateRequestParamConstraints(param, (String) paramValue);
-                } catch (InvalidFormDataException e) {
+                    paramValue = DatatypeUtil.parseObject(paramType, req.getParameter(requestParamName));
+                    DatatypeUtil.validateRequestParamConstraints(param, paramValue.toString());
+                } catch (NumberFormatException | InvalidFormDataException e) {
                     hasError = true;
                     formData.setErrorMessage(requestParamName, e.getMessage());
+                    paramValue = DatatypeUtil.parseObject(paramType, "0");
                 }
             } else if (paramType == File.class) {
                 paramValue = new File(req.getPart(requestParamName));
@@ -146,26 +146,12 @@ public class ReflectionUtil extends Utility {
             try {
                 Class<?> attrType = objType.getDeclaredField(attrName).getType();
                 Method attrSetterMethod = objType.getDeclaredMethod(setterName, attrType);
-                Object value = convertAttributeValue(attrValue, attrType);
+                Object value = DatatypeUtil.parseObject(attrType, attrValue);
                 attrSetterMethod.invoke(instance, value);
             } catch (ReflectiveOperationException | NumberFormatException e) {
                 String message = "Error setting attribute: " + attrName;
                 throw new ReflectiveOperationException(message, e);
             }
-        }
-    }
-
-    private static Object convertAttributeValue(String attrValue, Class<?> clazz) {
-        if (attrValue == null) {
-            return null;
-        } else if (clazz == int.class || clazz == Integer.class) {
-            return Integer.parseInt(attrValue);
-        } else if (clazz == double.class || clazz == Double.class) {
-            return Double.parseDouble(attrValue);
-        } else if (clazz == float.class || clazz == Float.class) {
-            return Float.parseFloat(attrValue);
-        } else {
-            return attrValue;
         }
     }
 
