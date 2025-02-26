@@ -6,18 +6,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.Part;
 import winter.annotation.methodlevel.RequestParam;
 import winter.data.File;
+import winter.data.FormData;
 import winter.data.MappingMethod;
+import winter.data.ObjectRequestParameter;
 import winter.data.Session;
 import winter.exception.AnnotationNotFoundException;
+import winter.exception.InvalidFormDataException;
 
 public class ReflectionUtil extends Utility {
     public static Object invokeControllerMethod(String className, MappingMethod mappingMethod, HttpServletRequest req)
@@ -79,62 +79,75 @@ public class ReflectionUtil extends Utility {
 
     private static Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
             throws AnnotationNotFoundException, IOException, ReflectiveOperationException, ServletException {
+
         List<Object> args = new ArrayList<>();
+        FormData formData = new FormData(methodParams);
+        boolean hasError = false;
 
         for (Parameter param : methodParams) {
-            // FIXME: String is handled as object
-            // paramName is mandatory because compiled parameter names are random without
+            // @RequestParam is required as parameter names are positional without
             // additional configurations
-            String paramName = getParameterName(param);
+            String requestParamName = param.getAnnotation(RequestParam.class).name();
             Class<?> paramType = param.getType();
             Object paramValue = null;
 
             if (paramType == String.class) {
-                paramValue = req.getParameter(paramName);
+                paramValue = req.getParameter(requestParamName);
+
+                try {
+                    FormDataValidator.validateRequestParamConstraints(param, (String) paramValue);
+                } catch (InvalidFormDataException e) {
+                    hasError = true;
+                    formData.setErrorMessage(requestParamName, e.getMessage());
+                }
             } else if (paramType == File.class) {
-                paramValue = new File(req.getPart(paramName));
+                paramValue = new File(req.getPart(requestParamName));
             } else {
-                paramValue = createParameterInstance(paramType, paramName, req);
+                paramValue = createObjectInstance(paramType, requestParamName, req);
+            }
+
+            if (paramValue == null && param.getAnnotation(RequestParam.class).required()) {
+                hasError = true;
+                formData.setErrorMessage(requestParamName, "Field cannot be empty");
             }
 
             args.add(paramValue);
         }
 
+        if (hasError) {
+            req.setAttribute("hasError", true);
+            req.setAttribute("formData", formData);
+        }
+
         return args.toArray();
     }
 
-    private static String getParameterName(Parameter param) throws AnnotationNotFoundException {
-        if (param.isAnnotationPresent(RequestParam.class)) {
-            return param.getAnnotation(RequestParam.class).name();
-        } else {
-            throw new AnnotationNotFoundException(
-                    "ETU002539: @RequestMapping annotation not found for " + param.getName());
-        }
+    private static Object createObjectInstance(Class<?> objType, String requestParamName, HttpServletRequest req)
+            throws ReflectiveOperationException {
+        Object objectInstance = objType.getDeclaredConstructor().newInstance();
+        ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, requestParamName, req);
+        setObjectAttributes(
+                objectInstance, objRequestParameter);
+        return objectInstance;
     }
 
-    private static Object createParameterInstance(Class<?> paramType, String paramName, HttpServletRequest req)
+    private static void setObjectAttributes(Object instance, ObjectRequestParameter objRequestParameter)
             throws ReflectiveOperationException {
-        Object paramValue = paramType.getDeclaredConstructor().newInstance();
-        String[] paramNames = getObjectParameters(paramName, req.getParameterNames());
-        String[] attrNames = getAttributeNames(paramNames);
-        String[] attrValues = getAttributeValues(paramNames, req);
-        setObjectAttributes(paramType, paramValue, attrNames, attrValues);
-        return paramValue;
-    }
 
-    private static void setObjectAttributes(Class<?> classType, Object instance, String[] attrNames,
-            String[] attrValues)
-            throws ReflectiveOperationException {
+        Class<?> objType = objRequestParameter.getObjType();
+        String[] attrNames = objRequestParameter.getAttrNames();
+        String[] attrValues = objRequestParameter.getValues();
+
         for (int i = 0; i < attrNames.length; i++) {
             String attrName = attrNames[i];
             String attrValue = attrValues[i];
             String setterName = getSetterName(attrName);
 
             try {
-                Class<?> clazz = classType.getDeclaredField(attrName).getType();
-                Method setter = classType.getDeclaredMethod(setterName, clazz);
-                Object value = convertAttributeValue(attrValue, clazz);
-                setter.invoke(instance, value);
+                Class<?> attrType = objType.getDeclaredField(attrName).getType();
+                Method attrSetterMethod = objType.getDeclaredMethod(setterName, attrType);
+                Object value = convertAttributeValue(attrValue, attrType);
+                attrSetterMethod.invoke(instance, value);
             } catch (ReflectiveOperationException | NumberFormatException e) {
                 String message = "Error setting attribute: " + attrName;
                 throw new ReflectiveOperationException(message, e);
@@ -158,39 +171,5 @@ public class ReflectionUtil extends Utility {
 
     protected static String getSetterName(String attrName) {
         return "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
-    }
-
-    private static String[] getAttributeValues(String[] paramNames, HttpServletRequest req) {
-        List<String> attributeValues = new ArrayList<>();
-
-        for (String paramName : paramNames) {
-            attributeValues.add(req.getParameter(paramName));
-        }
-
-        return attributeValues.toArray(new String[0]);
-    }
-
-    private static String[] getAttributeNames(String[] objParamNames) {
-        List<String> attributeNames = new ArrayList<>();
-
-        for (String paramName : objParamNames) {
-            attributeNames.add(paramName.split("\\.")[1]);
-        }
-
-        return attributeNames.toArray(new String[0]);
-    }
-
-    private static String[] getObjectParameters(String objName, Enumeration<String> paramNames) {
-        List<String> objParamNames = new ArrayList<>();
-
-        while (paramNames.hasMoreElements()) {
-            String paramName = paramNames.nextElement();
-
-            if (paramName.matches(objName + ".*")) {
-                objParamNames.add(paramName);
-            }
-        }
-
-        return objParamNames.toArray(new String[0]);
     }
 }

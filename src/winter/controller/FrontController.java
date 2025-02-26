@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import winter.controller.FrontController;
 import winter.data.JsonString;
@@ -158,11 +159,24 @@ public class FrontController extends HttpServlet {
             }
         } else if (result instanceof ModelView modelView) {
             modelView.setRequestAttributes(req);
+            HttpServletRequest dispatchRequest = req;
+            String redirectionUrl = modelView.getJspUrl();
+
+            // Form validation handling
+            if (Boolean.TRUE.equals(req.getAttribute("hasError"))) {
+                dispatchRequest = new HttpServletRequestWrapper(req) {
+                    @Override
+                    public String getMethod() {
+                        return "GET";
+                    }
+                };
+                redirectionUrl = (String) req.getAttribute("errorUrl");
+            }
 
             if (mappingMethod.isRest()) {
                 out.print(modelView.getJsonData());
             } else {
-                req.getRequestDispatcher(modelView.getJspUrl()).forward(req, resp);
+                req.getRequestDispatcher(redirectionUrl).forward(dispatchRequest, resp);
             }
         } else {
             throw new InvalidReturnTypeException("Controller return type should be either String or ModelView");
