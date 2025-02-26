@@ -91,14 +91,14 @@ public class ReflectionUtil extends Utility {
             Class<?> paramType = param.getType();
             Object paramValue = null;
 
-            if (paramType == String.class) {
-                paramValue = req.getParameter(requestParamName);
-
+            if (DatatypeUtil.isPrimitive(paramType)) {
                 try {
-                    DatatypeUtil.validateRequestParamConstraints(param, (String) paramValue);
-                } catch (InvalidFormDataException e) {
+                    paramValue = DatatypeUtil.parseObject(paramType, req.getParameter(requestParamName));
+                    DatatypeUtil.validateRequestParamConstraints(param, paramValue.toString());
+                } catch (NumberFormatException | InvalidFormDataException e) {
                     hasError = true;
                     formData.setErrorMessage(requestParamName, e.getMessage());
+                    paramValue = DatatypeUtil.parseObject(paramType, "0");
                 }
             } else if (paramType == File.class) {
                 paramValue = new File(req.getPart(requestParamName));
