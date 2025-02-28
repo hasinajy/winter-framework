@@ -1,4 +1,4 @@
-package winter.controller;
+package winter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
-import winter.controller.FrontController;
+import winter.FrontController;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
 import winter.data.client.JsonString;
@@ -35,14 +35,10 @@ import winter.util.DataUtil;
 
 @MultipartConfig
 public class FrontController extends HttpServlet {
-    private final Map<String, Mapping> urlMappings = new HashMap<>();
     private static Exception initException = null;
     private static final ExceptionHandler exceptionHandler = new ExceptionHandler();
 
-    // Getters & Setters
-    private Map<String, Mapping> getUrlMappings() {
-        return this.urlMappings;
-    }
+    protected static final Map<String, Mapping> URL_MAPPINGS = new HashMap<>();
 
     private Exception getInitException() {
         return FrontController.initException;
@@ -58,7 +54,7 @@ public class FrontController extends HttpServlet {
         ControllerScanner controllerScanner = new ControllerScanner();
 
         try {
-            controllerScanner.scanControllers(servletContext, this.getUrlMappings());
+            controllerScanner.scanControllers(servletContext, FrontController.URL_MAPPINGS);
         } catch (PackageProviderNotFoundException | InvalidPackageNameException | DuplicateMappingException e) {
             FrontController.setInitException(e);
         } catch (Exception e) {
@@ -134,7 +130,7 @@ public class FrontController extends HttpServlet {
             InvalidReturnTypeException, ServletException,
             IOException, InvalidRequestVerbException {
 
-        Mapping mapping = urlMappings.get(targetMapping);
+        Mapping mapping = FrontController.URL_MAPPINGS.get(targetMapping);
 
         if (mapping == null) {
             throw new MappingNotFoundException("Resource not found for: " + targetMapping);
