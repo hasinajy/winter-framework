@@ -13,9 +13,9 @@ import winter.data.Mapping;
 import winter.data.MappingMethod;
 import winter.data.annotation.Controller;
 import winter.data.annotation.http.UrlMapping;
-import winter.data.exception.DuplicateMappingException;
 import winter.data.exception.InvalidPackageNameException;
 import winter.data.exception.PackageProviderNotFoundException;
+import winter.data.exception.annotation.DuplicateMappingException;
 
 public class AnnotationScanner extends Utility {
     public static Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)

@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import winter.data.enumdata.RequestVerb;
-import winter.data.exception.DuplicateMappingException;
+import winter.data.exception.annotation.DuplicateMappingException;
 
 public class Mapping {
     private String className;
