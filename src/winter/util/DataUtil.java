@@ -15,6 +15,10 @@ import winter.data.exception.client.InvalidFormDataException;
 public class DataUtil extends Utility {
     /* ----------------------------- Parsing methods ---------------------------- */
     public static Object parseObject(Class<?> objType, String value) {
+        if (objType != String.class && value == null) {
+            value = "0";
+        }
+
         if (value == null) {
             return null;
         } else if (objType == int.class || objType == Integer.class) {
@@ -29,7 +33,7 @@ public class DataUtil extends Utility {
     }
 
     /* --------------------------- Validation methods --------------------------- */
-    public static void validateRequestParamConstraints(AnnotatedElement element, String value)
+    public static void validateRequestParamConstraints(AnnotatedElement element, Object value)
             throws InvalidFormDataException {
 
         RequestParam requestParam = element.getAnnotation(RequestParam.class);
@@ -40,9 +44,9 @@ public class DataUtil extends Utility {
 
         RequestParamType type = requestParam.type();
 
-        if (type == RequestParamType.EMAIL && !isEmail(value)) {
+        if (type == RequestParamType.EMAIL && !isEmail((String) value)) {
             throw new InvalidFormDataException("Invalid email format");
-        } else if (type == RequestParamType.NUMERIC && !isNumeric(value)) {
+        } else if (type == RequestParamType.NUMERIC && !isNumeric((String) value)) {
             throw new InvalidFormDataException("Invalid numeric format");
         }
     }
