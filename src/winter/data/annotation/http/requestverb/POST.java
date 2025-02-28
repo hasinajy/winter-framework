@@ -1,4 +1,4 @@
-package winter.data.annotation.verb;
+package winter.data.annotation.http.requestverb;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
