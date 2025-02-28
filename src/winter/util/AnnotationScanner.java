@@ -9,10 +9,10 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import jakarta.servlet.ServletContext;
-import winter.annotation.classlevel.Controller;
-import winter.annotation.methodlevel.UrlMapping;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
+import winter.data.annotation.classlevel.Controller;
+import winter.data.annotation.methodlevel.UrlMapping;
 import winter.exception.DuplicateMappingException;
 import winter.exception.InvalidPackageNameException;
 import winter.exception.PackageProviderNotFoundException;

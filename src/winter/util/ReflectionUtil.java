@@ -10,12 +10,12 @@ import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import winter.annotation.methodlevel.RequestParam;
 import winter.data.File;
 import winter.data.FormData;
 import winter.data.MappingMethod;
 import winter.data.ObjectRequestParameter;
 import winter.data.Session;
+import winter.data.annotation.methodlevel.RequestParam;
 import winter.exception.AnnotationNotFoundException;
 import winter.exception.InvalidFormDataException;
 

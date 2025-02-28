@@ -1,4 +1,4 @@
-package winter.annotation.verb;
+package winter.data.annotation.methodlevel;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -7,5 +7,6 @@ import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface GET {
+public @interface UrlMapping {
+    String value() default "";
 }

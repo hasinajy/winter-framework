@@ -3,9 +3,9 @@ package winter.data;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-import winter.annotation.methodlevel.Rest;
-import winter.annotation.methodlevel.UrlMapping;
-import winter.annotation.verb.POST;
+import winter.data.annotation.methodlevel.Rest;
+import winter.data.annotation.methodlevel.UrlMapping;
+import winter.data.annotation.verb.POST;
 import winter.data.enumdata.RequestVerb;
 
 public class MappingMethod {

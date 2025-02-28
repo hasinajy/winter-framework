@@ -4,7 +4,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import winter.annotation.methodlevel.RequestParam;
+import winter.data.annotation.methodlevel.RequestParam;
 import winter.data.enumdata.RequestParamType;
 import winter.exception.InvalidFormDataException;
 

@@ -1,4 +1,4 @@
-package winter.annotation.methodlevel;
+package winter.data.annotation.classlevel;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -6,7 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface UrlMapping {
-    String value() default "";
+@Target(ElementType.TYPE)
+public @interface Controller {
 }

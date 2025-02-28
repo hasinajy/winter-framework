@@ -4,7 +4,7 @@ import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
-import winter.annotation.methodlevel.RequestParam;
+import winter.data.annotation.methodlevel.RequestParam;
 import winter.exception.AnnotationNotFoundException;
 
 public class FormData {
