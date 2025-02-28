@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 import jakarta.servlet.http.Part;
 import winter.data.exception.internal.FileSaveException;
-import winter.util.FileUtil;
+import winter.util.DataUtil;
 
 public class File {
     private String filename;
@@ -20,7 +20,7 @@ public class File {
 
     public File(Part part) throws IOException {
         this.setFilename(
-                FileUtil.generateTimestampFilename(Paths.get(part.getSubmittedFileName()).getFileName().toString()));
+                DataUtil.generateTimestampFilename(Paths.get(part.getSubmittedFileName()).getFileName().toString()));
 
         try (InputStream fileContent = part.getInputStream();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
