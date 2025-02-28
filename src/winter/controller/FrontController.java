@@ -31,7 +31,7 @@ import winter.data.exception.internal.InvalidReturnTypeException;
 import winter.util.AnnotationScanner;
 import winter.util.ExceptionHandler;
 import winter.util.ReflectionUtil;
-import winter.util.UrlUtil;
+import winter.util.DataUtil;
 
 @MultipartConfig
 public class FrontController extends HttpServlet {
@@ -105,7 +105,7 @@ public class FrontController extends HttpServlet {
             return;
         }
 
-        String targetURL = UrlUtil.extractTargetURL(req);
+        String targetURL = DataUtil.extractURIMapping(req);
         resp.setContentType("text/html");
 
         try (PrintWriter out = resp.getWriter()) {

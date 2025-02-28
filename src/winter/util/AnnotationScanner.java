@@ -27,7 +27,7 @@ public class AnnotationScanner extends Utility {
             throw new PackageProviderNotFoundException("No package provider was found in the configuration file");
         }
 
-        if (!PackageNameValidator.isValidPackageName(controllersPackage)) {
+        if (!DataUtil.isValidPackageName(controllersPackage)) {
             throw new InvalidPackageNameException("Invalid provided package name in the configuration file");
         }
 
