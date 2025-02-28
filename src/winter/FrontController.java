@@ -36,9 +36,12 @@ import winter.util.DataUtil;
 @MultipartConfig
 public class FrontController extends HttpServlet {
     private static Exception initException = null;
+    private static final Map<String, Mapping> URL_MAPPINGS = new HashMap<>();
     private static final ExceptionHandler exceptionHandler = new ExceptionHandler();
 
-    protected static final Map<String, Mapping> URL_MAPPINGS = new HashMap<>();
+    public static Map<String, Mapping> getUrlMappings() {
+        return FrontController.URL_MAPPINGS;
+    }
 
     private Exception getInitException() {
         return FrontController.initException;
@@ -54,7 +57,7 @@ public class FrontController extends HttpServlet {
         ControllerScanner controllerScanner = new ControllerScanner();
 
         try {
-            controllerScanner.scanControllers(servletContext, FrontController.URL_MAPPINGS);
+            controllerScanner.scanControllers(servletContext);
         } catch (PackageProviderNotFoundException | InvalidPackageNameException | DuplicateMappingException e) {
             FrontController.setInitException(e);
         } catch (Exception e) {

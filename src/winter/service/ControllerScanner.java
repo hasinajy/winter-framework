@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.Map;
 
 import jakarta.servlet.ServletContext;
+import winter.FrontController;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
 import winter.data.annotation.Controller;
@@ -20,9 +21,10 @@ import winter.util.DataUtil;
 import winter.util.DirectoryScanner;
 
 public class ControllerScanner {
-    public Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)
+    public void scanControllers(ServletContext servletContext)
             throws PackageProviderNotFoundException, InvalidPackageNameException, URISyntaxException, IOException,
             ClassNotFoundException {
+
         String controllersPackage = servletContext.getInitParameter("ControllersPackage");
 
         if (controllersPackage == null) {
@@ -38,13 +40,11 @@ public class ControllerScanner {
 
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
-            scanControllers(resource, controllersPackage, urlMappings);
+            scanControllers(resource, controllersPackage);
         }
-
-        return urlMappings;
     }
 
-    private void scanControllers(URL directory, String packageName, Map<String, Mapping> urlMappings)
+    private void scanControllers(URL directory, String packageName)
             throws URISyntaxException, IOException, ClassNotFoundException {
         if (!packageName.endsWith(".")) {
             packageName += ".";
@@ -52,27 +52,27 @@ public class ControllerScanner {
 
         for (String fileName : DirectoryScanner.listFiles(directory)) {
             if (fileName.endsWith(".class")) {
-                processClassFile(packageName, fileName, urlMappings);
+                processClassFile(packageName, fileName);
             } else {
-                processSubdirectory(directory, packageName, fileName, urlMappings);
+                processSubdirectory(directory, packageName, fileName);
             }
         }
     }
 
-    private void processClassFile(String packageName, String fileName,
-            Map<String, Mapping> urlMappings)
+    private void processClassFile(String packageName, String fileName)
             throws ClassNotFoundException {
         String className = packageName + fileName.substring(0, fileName.length() - 6);
         Class<?> clazz = Class.forName(className);
 
         if (clazz.isAnnotationPresent(Controller.class)) {
-            processControllerMethods(clazz, urlMappings);
+            processControllerMethods(clazz);
         }
     }
 
-    private void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings)
+    private void processControllerMethods(Class<?> clazz)
             throws DuplicateMappingException {
 
+        Map<String, Mapping> urlMappings = FrontController.getUrlMappings();
         Method[] methods = clazz.getMethods();
 
         for (Method method : methods) {
@@ -93,14 +93,13 @@ public class ControllerScanner {
     }
 
     @SuppressWarnings("deprecation")
-    private void processSubdirectory(URL directory, String packageName, String subdirectoryName,
-            Map<String, Mapping> urlMappings)
+    private void processSubdirectory(URL directory, String packageName, String subdirectoryName)
             throws URISyntaxException, IOException, ClassNotFoundException {
         URL potentialSubDirURL = new URL(directory.toString() + "/" + subdirectoryName);
         URI subDirURI = potentialSubDirURL.toURI();
 
         if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
-            scanControllers(potentialSubDirURL, packageName + subdirectoryName + ".", urlMappings);
+            scanControllers(potentialSubDirURL, packageName + subdirectoryName + ".");
         }
     }
 }
