@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 
 import jakarta.servlet.http.Part;
-import winter.data.exception.FileSaveException;
+import winter.data.exception.internal.FileSaveException;
 import winter.util.FileUtil;
 
 public class File {

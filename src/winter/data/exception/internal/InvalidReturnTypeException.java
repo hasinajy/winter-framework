@@ -1,4 +1,4 @@
-package winter.data.exception;
+package winter.data.exception.internal;
 
 public class InvalidReturnTypeException extends Exception {
     public InvalidReturnTypeException() {
