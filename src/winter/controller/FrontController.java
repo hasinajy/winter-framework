@@ -29,7 +29,7 @@ import winter.data.exception.initialization.InvalidPackageNameException;
 import winter.data.exception.initialization.PackageProviderNotFoundException;
 import winter.data.exception.internal.InvalidReturnTypeException;
 import winter.service.ControllerScanner;
-import winter.util.ExceptionHandler;
+import winter.service.ExceptionHandler;
 import winter.util.ReflectionUtil;
 import winter.util.DataUtil;
 
@@ -37,6 +37,7 @@ import winter.util.DataUtil;
 public class FrontController extends HttpServlet {
     private final Map<String, Mapping> urlMappings = new HashMap<>();
     private static Exception initException = null;
+    private static final ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     // Getters & Setters
     private Map<String, Mapping> getUrlMappings() {
@@ -72,11 +73,11 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp, requestVerb);
         } catch (ServletException e) {
-            ExceptionHandler.handleException(
+            exceptionHandler.handleException(
                     new ServletException("Servlet error occurred while processing GET request", e),
                     Level.SEVERE, resp);
         } catch (IOException e) {
-            ExceptionHandler.handleException(new IOException("I/O error occurred while processing GET request", e),
+            exceptionHandler.handleException(new IOException("I/O error occurred while processing GET request", e),
                     Level.SEVERE, resp);
         }
     }
@@ -88,18 +89,18 @@ public class FrontController extends HttpServlet {
         try {
             processRequest(req, resp, requestVerb);
         } catch (ServletException e) {
-            ExceptionHandler.handleException(
+            exceptionHandler.handleException(
                     new ServletException("Servlet error occurred while processing POST request", e),
                     Level.SEVERE, resp);
         } catch (IOException e) {
-            ExceptionHandler.handleException(new IOException("I/O error occurred while processing POST request", e),
+            exceptionHandler.handleException(new IOException("I/O error occurred while processing POST request", e),
                     Level.SEVERE, resp);
         }
     }
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp, RequestVerb requestVerb)
             throws ServletException, IOException {
-        ExceptionHandler.handleInitException(resp, this.getInitException());
+        exceptionHandler.handleInitException(resp, this.getInitException());
 
         // Stop the method execution if an error occurred during initialization
         if (this.getInitException() != null) {
@@ -113,15 +114,15 @@ public class FrontController extends HttpServlet {
             try {
                 handleRequest(req, resp, targetMapping, out, requestVerb);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
-                ExceptionHandler.handleException(e, Level.WARNING, resp);
+                exceptionHandler.handleException(e, Level.WARNING, resp);
             } catch (InvalidRequestVerbException | AnnotationNotFoundException e) {
-                ExceptionHandler.handleException(e, Level.SEVERE, resp);
+                exceptionHandler.handleException(e, Level.SEVERE, resp);
             } catch (ReflectiveOperationException e) {
-                ExceptionHandler.handleException(
+                exceptionHandler.handleException(
                         new ReflectiveOperationException("An error occurred while processing the requested URL", e),
                         Level.SEVERE, resp);
             } catch (Exception e) {
-                ExceptionHandler.handleException(new Exception("An unexpected error occurred", e), Level.SEVERE, resp);
+                exceptionHandler.handleException(new Exception("An unexpected error occurred", e), Level.SEVERE, resp);
             }
         }
     }

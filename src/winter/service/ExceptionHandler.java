@@ -1,18 +1,17 @@
-package winter.util;
+package winter.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import winter.data.exception.client.MappingNotFoundException;
-import winter.util.ExceptionHandler;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ExceptionHandler extends Utility {
+public class ExceptionHandler {
     private static final Logger logger = Logger.getLogger(ExceptionHandler.class.getName());
 
-    public static void handleException(Exception e, Level level, HttpServletResponse resp) {
+    public void handleException(Exception e, Level level, HttpServletResponse resp) {
         logger.log(level, e.getMessage(), e);
 
         try {
@@ -28,13 +27,13 @@ public class ExceptionHandler extends Utility {
         }
     }
 
-    public static void handleInitException(HttpServletResponse resp, Exception initException) {
+    public void handleInitException(HttpServletResponse resp, Exception initException) {
         if (initException != null) {
             handleException(initException, Level.SEVERE, resp);
         }
     }
 
-    private static void sendError(HttpServletResponse resp, int status, String message) throws IOException {
+    private void sendError(HttpServletResponse resp, int status, String message) throws IOException {
         resp.setContentType("text/html");
         resp.setStatus(status);
 
@@ -63,7 +62,7 @@ public class ExceptionHandler extends Utility {
         }
     }
 
-    private static String getErrorTitle(int status) {
+    private String getErrorTitle(int status) {
         return switch (status) {
             case 404 -> "404 - Page Not Found";
             case 500 -> "500 - Internal Server Error";
@@ -71,7 +70,7 @@ public class ExceptionHandler extends Utility {
         };
     }
 
-    private static String getErrorDetails(int status) {
+    private String getErrorDetails(int status) {
         return switch (status) {
             case 404 ->
                 "<p class=\"text-gray-600\">The page you're looking for might have been removed or is temporarily unavailable.</p>";
