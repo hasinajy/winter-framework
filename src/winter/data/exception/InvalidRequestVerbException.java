@@ -1,4 +1,4 @@
-package winter.exception;
+package winter.data.exception;
 
 /**
  * Custom exception for invalid HTTP request verbs.

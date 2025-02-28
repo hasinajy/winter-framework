@@ -1,4 +1,4 @@
-package winter.exception;
+package winter.data.exception;
 
 public class PackageProviderNotFoundException extends Exception {
     public PackageProviderNotFoundException(String msg) {

@@ -1,4 +1,4 @@
-package winter.exception;
+package winter.data.exception;
 
 public class FileSaveException extends Exception {
     public FileSaveException(String message) {

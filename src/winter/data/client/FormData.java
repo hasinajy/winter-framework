@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import winter.data.annotation.http.RequestParam;
-import winter.exception.AnnotationNotFoundException;
+import winter.data.exception.AnnotationNotFoundException;
 
 public class FormData {
     private Map<String, String> values = new HashMap<>();
