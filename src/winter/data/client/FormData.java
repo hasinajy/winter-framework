@@ -12,6 +12,9 @@ public class FormData {
     private Map<String, String> errorMessages = new HashMap<>();
 
     /* ------------------------------ Constructors ------------------------------ */
+    public FormData() {
+    }
+
     public FormData(Parameter[] requestParams) throws AnnotationNotFoundException {
         for (Parameter param : requestParams) {
             if (!param.isAnnotationPresent(RequestParam.class)) {
