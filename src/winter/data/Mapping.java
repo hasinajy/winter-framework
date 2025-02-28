@@ -7,7 +7,6 @@ import winter.data.enumdata.RequestVerb;
 import winter.exception.DuplicateMappingException;
 
 public class Mapping {
-
     private String className;
     private Set<MappingMethod> mappingMethods;
 
@@ -67,5 +66,4 @@ public class Mapping {
 
         this.getMappingMethods().add(mappingMethod);
     }
-
 }

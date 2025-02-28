@@ -9,7 +9,6 @@ import winter.data.annotation.http.requestverb.POST;
 import winter.data.enumdata.RequestVerb;
 
 public class MappingMethod {
-
     private Method method;
     private RequestVerb verb;
 

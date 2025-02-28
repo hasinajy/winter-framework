@@ -17,6 +17,7 @@ public class FileUtil extends Utility {
                 return "file_" + timestamp + extension;
             }
         }
+
         return "file_" + timestamp + ".bin"; // Default to .bin if no extension
     }
 }

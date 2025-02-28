@@ -27,5 +27,4 @@ public class InvalidRequestVerbException extends Exception {
     public InvalidRequestVerbException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }
