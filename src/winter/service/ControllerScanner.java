@@ -1,4 +1,4 @@
-package winter.util;
+package winter.service;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -16,19 +16,21 @@ import winter.data.annotation.http.UrlMapping;
 import winter.data.exception.annotation.DuplicateMappingException;
 import winter.data.exception.initialization.InvalidPackageNameException;
 import winter.data.exception.initialization.PackageProviderNotFoundException;
+import winter.util.DataUtil;
+import winter.util.DirectoryScanner;
 
-public class AnnotationScanner extends Utility {
-    public static Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)
+public class ControllerScanner {
+    public Map<String, Mapping> scanControllers(ServletContext servletContext, Map<String, Mapping> urlMappings)
             throws PackageProviderNotFoundException, InvalidPackageNameException, URISyntaxException, IOException,
             ClassNotFoundException {
         String controllersPackage = servletContext.getInitParameter("ControllersPackage");
 
         if (controllersPackage == null) {
-            throw new PackageProviderNotFoundException("No package provider was found in the configuration file");
+            throw new PackageProviderNotFoundException("No package provider was found from the configurations");
         }
 
         if (!DataUtil.isValidPackageName(controllersPackage)) {
-            throw new InvalidPackageNameException("Invalid provided package name in the configuration file");
+            throw new InvalidPackageNameException("Invalid package name from the configurations");
         }
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -42,7 +44,7 @@ public class AnnotationScanner extends Utility {
         return urlMappings;
     }
 
-    private static void scanControllers(URL directory, String packageName, Map<String, Mapping> urlMappings)
+    private void scanControllers(URL directory, String packageName, Map<String, Mapping> urlMappings)
             throws URISyntaxException, IOException, ClassNotFoundException {
         if (!packageName.endsWith(".")) {
             packageName += ".";
@@ -57,7 +59,7 @@ public class AnnotationScanner extends Utility {
         }
     }
 
-    private static void processClassFile(String packageName, String fileName,
+    private void processClassFile(String packageName, String fileName,
             Map<String, Mapping> urlMappings)
             throws ClassNotFoundException {
         String className = packageName + fileName.substring(0, fileName.length() - 6);
@@ -68,7 +70,7 @@ public class AnnotationScanner extends Utility {
         }
     }
 
-    private static void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings)
+    private void processControllerMethods(Class<?> clazz, Map<String, Mapping> urlMappings)
             throws DuplicateMappingException {
 
         Method[] methods = clazz.getMethods();
@@ -91,7 +93,7 @@ public class AnnotationScanner extends Utility {
     }
 
     @SuppressWarnings("deprecation")
-    private static void processSubdirectory(URL directory, String packageName, String subdirectoryName,
+    private void processSubdirectory(URL directory, String packageName, String subdirectoryName,
             Map<String, Mapping> urlMappings)
             throws URISyntaxException, IOException, ClassNotFoundException {
         URL potentialSubDirURL = new URL(directory.toString() + "/" + subdirectoryName);

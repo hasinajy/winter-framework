@@ -28,7 +28,7 @@ import winter.data.exception.client.MappingNotFoundException;
 import winter.data.exception.initialization.InvalidPackageNameException;
 import winter.data.exception.initialization.PackageProviderNotFoundException;
 import winter.data.exception.internal.InvalidReturnTypeException;
-import winter.util.AnnotationScanner;
+import winter.service.ControllerScanner;
 import winter.util.ExceptionHandler;
 import winter.util.ReflectionUtil;
 import winter.util.DataUtil;
@@ -54,9 +54,10 @@ public class FrontController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
+        ControllerScanner controllerScanner = new ControllerScanner();
 
         try {
-            AnnotationScanner.scanControllers(servletContext, this.getUrlMappings());
+            controllerScanner.scanControllers(servletContext, this.getUrlMappings());
         } catch (PackageProviderNotFoundException | InvalidPackageNameException | DuplicateMappingException e) {
             FrontController.setInitException(e);
         } catch (Exception e) {
