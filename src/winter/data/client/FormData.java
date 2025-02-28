@@ -1,4 +1,4 @@
-package winter.data;
+package winter.data.client;
 
 import java.lang.reflect.Parameter;
 import java.util.HashMap;

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import winter.data.client.FormData;
 
 public class ObjectRequestParameter {
     private Class<?> objType;

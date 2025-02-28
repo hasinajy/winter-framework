@@ -1,4 +1,4 @@
-package winter.data;
+package winter.data.client;
 
 public class JsonString {
     private String value;
