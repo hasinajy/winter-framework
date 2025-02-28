@@ -1,4 +1,4 @@
-package winter.data;
+package winter.data.servletabstraction;
 
 import jakarta.servlet.http.HttpSession;
 

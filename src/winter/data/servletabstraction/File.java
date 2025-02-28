@@ -1,4 +1,4 @@
-package winter.data;
+package winter.data.servletabstraction;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
