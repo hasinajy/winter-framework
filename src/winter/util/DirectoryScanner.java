@@ -13,7 +13,9 @@ public class DirectoryScanner extends Utility {
 
         try (var in = directory.openStream();
                 var reader = new BufferedReader(new InputStreamReader(in))) {
+
             String line;
+
             while ((line = reader.readLine()) != null) {
                 fileNames.add(line);
             }
