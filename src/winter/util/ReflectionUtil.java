@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import winter.data.MappingMethod;
 import winter.data.ObjectRequestParameter;
-import winter.data.annotation.methodlevel.RequestParam;
+import winter.data.annotation.http.RequestParam;
 import winter.data.client.FormData;
 import winter.data.servletabstraction.File;
 import winter.data.servletabstraction.Session;

@@ -1,4 +1,4 @@
-package winter.data.annotation.methodlevel;
+package winter.data.annotation.http;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
