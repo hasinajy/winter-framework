@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import winter.data.annotation.http.RequestParam;
 import winter.data.enumdata.RequestParamType;
-import winter.data.exception.InvalidFormDataException;
+import winter.data.exception.client.InvalidFormDataException;
 
 public class DataUtil extends Utility {
     public static Object parseObject(Class<?> objType, String value) {

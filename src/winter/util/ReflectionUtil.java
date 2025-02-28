@@ -14,8 +14,8 @@ import winter.data.MappingMethod;
 import winter.data.ObjectRequestParameter;
 import winter.data.annotation.http.RequestParam;
 import winter.data.client.FormData;
-import winter.data.exception.InvalidFormDataException;
 import winter.data.exception.annotation.AnnotationNotFoundException;
+import winter.data.exception.client.InvalidFormDataException;
 import winter.data.servletabstraction.File;
 import winter.data.servletabstraction.Session;
 

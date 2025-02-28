@@ -1,4 +1,4 @@
-package winter.data.exception;
+package winter.data.exception.client;
 
 public class InvalidFormDataException extends Exception {
     public InvalidFormDataException() {

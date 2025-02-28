@@ -1,4 +1,4 @@
-package winter.data.exception;
+package winter.data.exception.client;
 
 public class MappingNotFoundException extends Exception {
     public MappingNotFoundException() {
