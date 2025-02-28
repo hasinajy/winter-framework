@@ -11,7 +11,7 @@ import java.util.Map;
 import jakarta.servlet.ServletContext;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
-import winter.data.annotation.classlevel.Controller;
+import winter.data.annotation.Controller;
 import winter.data.annotation.http.UrlMapping;
 import winter.exception.DuplicateMappingException;
 import winter.exception.InvalidPackageNameException;
