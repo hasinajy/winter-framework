@@ -46,6 +46,7 @@ public class ControllerScanner {
 
     private void scanControllers(URL directory, String packageName)
             throws URISyntaxException, IOException, ClassNotFoundException {
+
         if (!packageName.endsWith(".")) {
             packageName += ".";
         }
@@ -61,6 +62,7 @@ public class ControllerScanner {
 
     private void processClassFile(String packageName, String fileName)
             throws ClassNotFoundException {
+
         String className = packageName + fileName.substring(0, fileName.length() - 6);
         Class<?> clazz = Class.forName(className);
 
@@ -76,8 +78,10 @@ public class ControllerScanner {
         Method[] methods = clazz.getMethods();
 
         for (Method method : methods) {
-            if (method.isAnnotationPresent(UrlMapping.class)) {
-                String url = method.getAnnotation(UrlMapping.class).value();
+            UrlMapping urlMappingAnnotation = method.getAnnotation(UrlMapping.class);
+
+            if (urlMappingAnnotation != null) {
+                String url = urlMappingAnnotation.value();
                 MappingMethod mappingMethod = new MappingMethod(method);
 
                 Mapping mapping = new Mapping();
@@ -95,6 +99,7 @@ public class ControllerScanner {
     @SuppressWarnings("deprecation")
     private void processSubdirectory(URL directory, String packageName, String subdirectoryName)
             throws URISyntaxException, IOException, ClassNotFoundException {
+
         URL potentialSubDirURL = new URL(directory.toString() + "/" + subdirectoryName);
         URI subDirURI = potentialSubDirURL.toURI();
 

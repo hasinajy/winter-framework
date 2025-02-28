@@ -99,6 +99,7 @@ public class FrontController extends HttpServlet {
 
     private void processRequest(HttpServletRequest req, HttpServletResponse resp, RequestVerb requestVerb)
             throws ServletException, IOException {
+
         exceptionHandler.handleInitException(resp, this.getInitException());
 
         // Stop the method execution if an error occurred during initialization
