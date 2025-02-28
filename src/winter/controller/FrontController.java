@@ -105,12 +105,12 @@ public class FrontController extends HttpServlet {
             return;
         }
 
-        String targetURL = DataUtil.extractURIMapping(req);
+        String targetMapping = DataUtil.extractURIMapping(req);
         resp.setContentType("text/html");
 
         try (PrintWriter out = resp.getWriter()) {
             try {
-                handleRequest(req, resp, targetURL, out, requestVerb);
+                handleRequest(req, resp, targetMapping, out, requestVerb);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
                 ExceptionHandler.handleException(e, Level.WARNING, resp);
             } catch (InvalidRequestVerbException | AnnotationNotFoundException e) {
@@ -125,17 +125,17 @@ public class FrontController extends HttpServlet {
         }
     }
 
-    private void handleRequest(HttpServletRequest req, HttpServletResponse resp, String targetURL, PrintWriter out,
+    private void handleRequest(HttpServletRequest req, HttpServletResponse resp, String targetMapping, PrintWriter out,
             RequestVerb requestVerb)
             throws MappingNotFoundException, AnnotationNotFoundException,
             ReflectiveOperationException,
             InvalidReturnTypeException, ServletException,
             IOException, InvalidRequestVerbException {
 
-        Mapping mapping = urlMappings.get(targetURL);
+        Mapping mapping = urlMappings.get(targetMapping);
 
         if (mapping == null) {
-            throw new MappingNotFoundException("Resource not found for URL: " + targetURL);
+            throw new MappingNotFoundException("Resource not found for: " + targetMapping);
         }
 
         MappingMethod mappingMethod = mapping.getMethod(requestVerb);
