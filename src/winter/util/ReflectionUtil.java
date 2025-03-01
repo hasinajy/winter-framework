@@ -93,7 +93,9 @@ public class ReflectionUtil extends Utility {
 
             if (DataUtil.isPrimitive(paramType)) {
                 try {
-                    paramValue = DataUtil.parseObject(paramType, req.getParameter(requestParamName));
+                    String requestParamValue = req.getParameter(requestParamName);
+                    formData.setValue(requestParamName, requestParamValue);
+                    paramValue = DataUtil.parseObject(paramType, requestParamValue);
                     DataUtil.validateRequestParamConstraints(param, paramValue);
                 } catch (NumberFormatException | InvalidFormDataException e) {
                     hasError = true;

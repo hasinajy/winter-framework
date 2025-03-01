@@ -15,8 +15,8 @@ import winter.data.exception.client.InvalidFormDataException;
 public class DataUtil extends Utility {
     /* ----------------------------- Parsing methods ---------------------------- */
     public static Object parseObject(Class<?> objType, String value) {
-        if (objType != String.class && value == null) {
-            value = "0";
+        if (isNumeric(objType) && !isNumeric(value)) {
+            throw new NumberFormatException("Invalid numeric format");
         }
 
         if (value == null) {
@@ -80,6 +80,22 @@ public class DataUtil extends Utility {
 
         return matcher.matches();
 
+    }
+
+    public static boolean isNumeric(Class<?> objType) {
+        if (objType == null) {
+            return false;
+        }
+
+        return objType.isPrimitive() ||
+                objType == Boolean.class ||
+                objType == Character.class ||
+                objType == Byte.class ||
+                objType == Short.class ||
+                objType == Integer.class ||
+                objType == Long.class ||
+                objType == Float.class ||
+                objType == Double.class;
     }
 
     public static boolean isNumeric(String value) {
