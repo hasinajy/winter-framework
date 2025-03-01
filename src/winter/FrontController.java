@@ -30,7 +30,7 @@ import winter.data.exception.initialization.PackageProviderNotFoundException;
 import winter.data.exception.internal.InvalidReturnTypeException;
 import winter.service.ControllerScanner;
 import winter.service.ExceptionHandler;
-import winter.util.ReflectionUtil;
+import winter.service.ControllerHandler;
 import winter.util.DataUtil;
 
 @MultipartConfig
@@ -146,7 +146,7 @@ public class FrontController extends HttpServlet {
             throw new InvalidRequestVerbException("Access denied for the specified URL");
         }
 
-        Object result = ReflectionUtil.invokeControllerMethod(mapping.getClassName(), mappingMethod, req);
+        Object result = new ControllerHandler().invokeControllerMethod(mapping.getClassName(), mappingMethod, req);
         Gson gson = new Gson();
 
         if (mappingMethod.isRest()) {

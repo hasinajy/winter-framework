@@ -1,4 +1,4 @@
-package winter.util;
+package winter.service;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -18,9 +18,12 @@ import winter.data.exception.annotation.AnnotationNotFoundException;
 import winter.data.exception.client.InvalidFormDataException;
 import winter.data.servletabstraction.File;
 import winter.data.servletabstraction.Session;
+import winter.util.DataUtil;
 
-public class ReflectionUtil extends Utility {
-    public static Object invokeControllerMethod(String className, MappingMethod mappingMethod, HttpServletRequest req)
+public class ControllerHandler {
+    private FormData formData = null;
+
+    public Object invokeControllerMethod(String className, MappingMethod mappingMethod, HttpServletRequest req)
             throws AnnotationNotFoundException, IOException, ReflectiveOperationException, ServletException {
 
         String methodName = mappingMethod.getMethod().getName();
@@ -50,7 +53,7 @@ public class ReflectionUtil extends Utility {
         }
     }
 
-    private static void injectSession(Object object, HttpSession httpSession)
+    private void injectSession(Object object, HttpSession httpSession)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IllegalArgumentException,
             SecurityException {
         Class<?> clazz = object.getClass();
@@ -65,7 +68,7 @@ public class ReflectionUtil extends Utility {
         }
     }
 
-    private static String hasSession(Class<?> clazz) {
+    private String hasSession(Class<?> clazz) {
         Field[] attributes = clazz.getDeclaredFields();
 
         for (Field attribute : attributes) {
@@ -77,11 +80,11 @@ public class ReflectionUtil extends Utility {
         return null;
     }
 
-    private static Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
+    private Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
             throws AnnotationNotFoundException, IOException, ReflectiveOperationException, ServletException {
 
         List<Object> args = new ArrayList<>();
-        FormData formData = new FormData(methodParams);
+        this.formData = new FormData(methodParams, req);
         boolean hasError = false;
 
         for (Parameter param : methodParams) {
@@ -93,9 +96,7 @@ public class ReflectionUtil extends Utility {
 
             if (DataUtil.isPrimitive(paramType)) {
                 try {
-                    String requestParamValue = req.getParameter(requestParamName);
-                    formData.setValue(requestParamName, requestParamValue);
-                    paramValue = DataUtil.parseObject(paramType, requestParamValue);
+                    paramValue = DataUtil.parseObject(paramType, formData.getValue(requestParamName, false));
                     DataUtil.validateRequestParamConstraints(param, paramValue);
                 } catch (NumberFormatException | InvalidFormDataException e) {
                     hasError = true;
@@ -106,7 +107,7 @@ public class ReflectionUtil extends Utility {
                 paramValue = new File(req.getPart(requestParamName));
             } else {
                 try {
-                    paramValue = createObjectParameterInstance(paramType, req, requestParamName, formData);
+                    paramValue = createObjectParameterInstance(paramType, req, requestParamName);
                 } catch (Exception e) {
                     hasError = true;
                     paramValue = DataUtil.parseObject(paramType, null);
@@ -129,17 +130,16 @@ public class ReflectionUtil extends Utility {
         return args.toArray();
     }
 
-    private static Object createObjectParameterInstance(Class<?> objType, HttpServletRequest req, String objPrefix,
-            FormData formData)
+    private Object createObjectParameterInstance(Class<?> objType, HttpServletRequest req, String objPrefix)
             throws InvalidFormDataException, ReflectiveOperationException {
         Object objectInstance = objType.getDeclaredConstructor().newInstance();
-        ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, req, objPrefix, formData);
+        ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, req, objPrefix);
         setObjectAttributes(
                 objectInstance, objRequestParameter);
         return objectInstance;
     }
 
-    private static void setObjectAttributes(Object instance, ObjectRequestParameter objRequestParameter)
+    private void setObjectAttributes(Object instance, ObjectRequestParameter objRequestParameter)
             throws InvalidFormDataException, ReflectiveOperationException {
 
         Class<?> objType = objRequestParameter.getObjType();
@@ -154,13 +154,13 @@ public class ReflectionUtil extends Utility {
 
             try {
                 attrSetterMethod = getSetterMethod(objType, attrName);
+                formData.setValue(objRequestParameter.getObjPrefix() + "." + attrName, attrValue);
                 value = DataUtil.parseObject(attrType, attrValue);
-                objRequestParameter.setValue(attrName, value.toString());
                 DataUtil.validateRequestParamConstraints(field, value.toString());
                 attrSetterMethod.invoke(instance, value);
             } catch (NumberFormatException | InvalidFormDataException e) {
                 hasError = true;
-                objRequestParameter.setErrorMessage(attrName, e.getMessage());
+                formData.setErrorMessage(objRequestParameter.getObjPrefix() + "." + attrName, e.getMessage());
             } catch (ReflectiveOperationException e) {
                 throw new ReflectiveOperationException("An error occurred while setting object attributes", e);
             }
@@ -171,7 +171,7 @@ public class ReflectionUtil extends Utility {
         }
     }
 
-    private static Method getSetterMethod(Class<?> objType, String attrName)
+    private Method getSetterMethod(Class<?> objType, String attrName)
             throws NoSuchFieldException, NoSuchMethodException {
         String setterName = getSetterName(attrName);
         Field field = objType.getDeclaredField(attrName);
@@ -179,7 +179,7 @@ public class ReflectionUtil extends Utility {
         return objType.getDeclaredMethod(setterName, attrType);
     }
 
-    protected static String getSetterName(String attrName) {
+    protected String getSetterName(String attrName) {
         return "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
     }
 }

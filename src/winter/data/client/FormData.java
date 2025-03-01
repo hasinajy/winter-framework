@@ -4,6 +4,7 @@ import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletRequest;
 import winter.data.annotation.http.RequestParam;
 import winter.data.exception.annotation.AnnotationNotFoundException;
 
@@ -15,7 +16,7 @@ public class FormData {
     public FormData() {
     }
 
-    public FormData(Parameter[] requestParams) throws AnnotationNotFoundException {
+    public FormData(Parameter[] requestParams, HttpServletRequest req) throws AnnotationNotFoundException {
         for (Parameter param : requestParams) {
             if (!param.isAnnotationPresent(RequestParam.class)) {
                 throw new AnnotationNotFoundException(
@@ -24,7 +25,7 @@ public class FormData {
             }
 
             String key = param.getAnnotation(RequestParam.class).name();
-            this.getValues().put(key, "");
+            this.getValues().put(key, req.getParameter(key));
             this.getErrorMessages().put(key, "");
         }
     }
