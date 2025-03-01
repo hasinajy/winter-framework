@@ -3,13 +3,12 @@ package winter.data;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-import winter.annotation.methodlevel.Rest;
-import winter.annotation.methodlevel.UrlMapping;
-import winter.annotation.verb.POST;
+import winter.data.annotation.Rest;
+import winter.data.annotation.http.UrlMapping;
+import winter.data.annotation.http.requestverb.POST;
 import winter.data.enumdata.RequestVerb;
 
 public class MappingMethod {
-
     private Method method;
     private RequestVerb verb;
 

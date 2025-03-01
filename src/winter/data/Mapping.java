@@ -4,10 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import winter.data.enumdata.RequestVerb;
-import winter.exception.DuplicateMappingException;
+import winter.data.exception.annotation.DuplicateMappingException;
 
 public class Mapping {
-
     private String className;
     private Set<MappingMethod> mappingMethods;
 
@@ -67,5 +66,4 @@ public class Mapping {
 
         this.getMappingMethods().add(mappingMethod);
     }
-
 }

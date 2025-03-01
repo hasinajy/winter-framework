@@ -1,0 +1,11 @@
+package winter.data.exception.initialization;
+
+public class PackageProviderNotFoundException extends Exception {
+    public PackageProviderNotFoundException(String msg) {
+        super(msg);
+    }
+
+    public PackageProviderNotFoundException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+}

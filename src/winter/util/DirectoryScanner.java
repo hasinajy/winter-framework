@@ -13,11 +13,26 @@ public class DirectoryScanner extends Utility {
 
         try (var in = directory.openStream();
                 var reader = new BufferedReader(new InputStreamReader(in))) {
+
             String line;
+
             while ((line = reader.readLine()) != null) {
                 fileNames.add(line);
             }
         }
+
+        fileNames.sort((a, b) -> {
+            boolean aIsFile = !a.endsWith("/");
+            boolean bIsFile = !b.endsWith("/");
+
+            if (aIsFile && !bIsFile) {
+                return -1; // a is a file, b is a directory, so a comes first
+            } else if (!aIsFile && bIsFile) {
+                return 1; // a is a directory, b is a file, so b comes first
+            } else {
+                return a.compareTo(b); // Both are the same type, sort alphabetically
+            }
+        });
 
         return fileNames;
     }

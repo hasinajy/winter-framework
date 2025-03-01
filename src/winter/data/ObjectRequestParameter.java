@@ -9,14 +9,12 @@ public class ObjectRequestParameter {
     private Class<?> objType;
     private String objPrefix;
     private Map<String, String> values = new HashMap<>();
-    private FormData formData;
 
     /* ------------------------------ Constructors ------------------------------ */
-    public ObjectRequestParameter(Class<?> objType, HttpServletRequest req, String objPrefix, FormData formData) {
+    public ObjectRequestParameter(Class<?> objType, HttpServletRequest req, String objPrefix) {
         this.setObjType(objType);
         this.setObjPrefix(objPrefix);
         this.setValues(req, this.getObjPrefix());
-        this.setFormData(formData);
     }
 
     /* --------------------------- Getters and setters -------------------------- */
@@ -51,21 +49,5 @@ public class ObjectRequestParameter {
                 this.getValues().put(key, value[0]);
             }
         });
-    }
-
-    public FormData getFormData() {
-        return formData;
-    }
-
-    public void setFormData(FormData formData) {
-        this.formData = formData;
-    }
-
-    public void setValue(String attrName, String value) {
-        this.getFormData().setValue(this.getObjPrefix() + "." + attrName, value);
-    }
-
-    public void setErrorMessage(String attrName, String value) {
-        this.getFormData().setErrorMessage(this.getObjPrefix() + "." + attrName, value);
     }
 }
