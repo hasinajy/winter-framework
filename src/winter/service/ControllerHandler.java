@@ -60,7 +60,7 @@ public class ControllerHandler {
         String attrName = hasSession(clazz);
 
         if (attrName != null) {
-            Method sessionSetterMethod = clazz.getDeclaredMethod(getSetterName(attrName), Session.class);
+            Method sessionSetterMethod = clazz.getDeclaredMethod(DataUtil.getSetterName(attrName), Session.class);
 
             // Creates the framework session abstraction object
             Session winterSession = new Session(httpSession);
@@ -153,7 +153,7 @@ public class ControllerHandler {
             Object value = null;
 
             try {
-                attrSetterMethod = getSetterMethod(objType, attrName);
+                attrSetterMethod = DataUtil.getSetterMethod(objType, attrName);
                 formData.setValue(objRequestParameter.getObjPrefix() + "." + attrName, attrValue);
                 value = DataUtil.parseObject(attrType, attrValue);
                 DataUtil.validateRequestParamConstraints(field, value.toString());
@@ -169,17 +169,5 @@ public class ControllerHandler {
         if (hasError) {
             throw new InvalidFormDataException();
         }
-    }
-
-    private Method getSetterMethod(Class<?> objType, String attrName)
-            throws NoSuchFieldException, NoSuchMethodException {
-        String setterName = getSetterName(attrName);
-        Field field = objType.getDeclaredField(attrName);
-        Class<?> attrType = field.getType();
-        return objType.getDeclaredMethod(setterName, attrType);
-    }
-
-    protected String getSetterName(String attrName) {
-        return "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
     }
 }

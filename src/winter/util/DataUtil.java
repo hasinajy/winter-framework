@@ -1,6 +1,8 @@
 package winter.util;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -135,6 +137,18 @@ public class DataUtil extends Utility {
         }
 
         return "file_" + timestamp + ".bin"; // Default to .bin if no extension
+    }
+
+    public static Method getSetterMethod(Class<?> objType, String attrName)
+            throws NoSuchFieldException, NoSuchMethodException {
+        String setterName = getSetterName(attrName);
+        Field field = objType.getDeclaredField(attrName);
+        Class<?> attrType = field.getType();
+        return objType.getDeclaredMethod(setterName, attrType);
+    }
+
+    public static String getSetterName(String attrName) {
+        return "set" + Character.toUpperCase(attrName.charAt(0)) + attrName.substring(1);
     }
 
     /* --------------------------- Extraction methods --------------------------- */
