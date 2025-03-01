@@ -106,8 +106,17 @@ public class ControllerScanner {
         URI subDirURI = potentialSubDirURL.toURI();
 
         if (subDirURI.getScheme() != null && subDirURI.getPath() != null) {
-            packageName += subdirectoryName;
+            // Save the current package name
+            String originalPackageName = packageName;
+
+            // Append subdirectory name
+            packageName += subdirectoryName + ".";
+
+            // Scan the subdirectory
             scanControllers(potentialSubDirURL);
+
+            // Restore the original package name
+            packageName = originalPackageName;
         }
     }
 }
