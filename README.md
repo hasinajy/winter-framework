@@ -17,6 +17,19 @@ Winter is a work-in-progress clone of the Spring MVC framework written in Java, 
 
 ## Installation
 
+Winter v1.0.0 is available as a pre-built JAR file, `winter.jar`, for easy integration. Alternatively, you can build it manually from source if customization is needed. Choose one of the following options:
+
+### Option 1: Use the Released JAR
+
+1. **Download the JAR**:
+   - Obtain `winter.jar` from the [Release v1.0.0](https://github.com/hasinajy/winter-framework/releases/tag/v1.0.0) assets on GitHub.
+
+2. **Add to Your Project**:
+   - Copy `winter.jar` to your web application’s library directory (e.g., `WEB-INF/lib`).
+   - Ensure Jakarta EE 10 libraries (e.g., `jakarta.servlet-api`) are included in your project’s classpath.
+
+### Option 2: Build Manually from Source
+
 Winter does not yet include a pre-configured build system (e.g., Maven, Gradle). Follow these steps to build and install manually:
 
 1. **Compile the Source Code**:
@@ -24,22 +37,23 @@ Winter does not yet include a pre-configured build system (e.g., Maven, Gradle).
    - Compile all `.java` files using a Java compiler (e.g., `javac`).
      - **VS Code Users**: Compilation output defaults to the `bin` directory.
      - **Other IDEs**: Adjust the output directory as needed.
-
-   Example command (Linux/macOS):
-   ```bash
-   javac -d bin src/winter/**/*.java
-   ```
+   - Example command (Linux/macOS):
+     ```bash
+     javac -d bin src/winter/**/*.java
+     ```
 
 2. **Package into a JAR**:
    - Use the provided scripts in the `packaging/` directory:
      - **Linux/macOS**: Run `./packaging/package.sh`
      - **Windows**: Double-click `packaging/package.bat`
-   - The script generates `winter.jar` in a 'lib/' directory.
+   - The script generates `winter.jar` in a `lib/` directory.
    - Adjust the script if your compilation directory differs from `bin`.
 
 3. **Add to Your Project**:
    - Copy `winter.jar` to your web application’s library directory (e.g., `WEB-INF/lib`).
-   - Ensure Jakarta EE 10 libraries are included in your project.
+   - Ensure Jakarta EE 10 libraries are included in your project’s classpath.
+
+**Note**: For most use cases, Option 1 is recommended for simplicity. Use Option 2 if you need to modify the source code (see [Contributing](#contributing) for details).
 
 ## Configuration
 
