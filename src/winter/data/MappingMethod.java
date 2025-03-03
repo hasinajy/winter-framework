@@ -91,8 +91,16 @@ public class MappingMethod {
         this.getAuth().add(authString);
     }
 
+    public boolean requiresAuth() {
+        return !this.getAuth().isEmpty();
+    }
+
     public boolean hasAuth(String authString) {
-        return (authString == null || authString.isEmpty()) ? true : this.getAuth().contains(authString);
+        if (!this.requiresAuth()) {
+            return true;
+        }
+
+        return this.getAuth().contains(authString);
     }
 
     @Override
