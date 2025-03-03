@@ -85,6 +85,7 @@ public class ControllerScanner {
             if (urlMappingAnnotation != null) {
                 String url = urlMappingAnnotation.value();
                 MappingMethod mappingMethod = new MappingMethod(method);
+                mappingMethod.setAuth(clazz);
 
                 Mapping mapping = new Mapping();
                 mapping.setClassName(clazz.getName());

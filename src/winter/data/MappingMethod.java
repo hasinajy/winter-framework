@@ -68,6 +68,16 @@ public class MappingMethod {
         this.auth = auth;
     }
 
+    public void setAuth(Class<?> clazz) {
+        if (clazz.isAnnotationPresent(Auth.class)) {
+            String[] roles = clazz.getAnnotation(Auth.class).roles().split(", ");
+
+            for (String role : roles) {
+                this.addAuth(role);
+            }
+        }
+    }
+
     public void setAuth(Method method) {
         if (method.isAnnotationPresent(Auth.class)) {
             String[] roles = method.getAnnotation(Auth.class).roles().split(", ");
@@ -88,7 +98,9 @@ public class MappingMethod {
     }
 
     public void addAuth(String authString) {
-        this.getAuth().add(authString);
+        if (authString != null && !authString.isEmpty()) {
+            this.getAuth().add(authString);
+        }
     }
 
     public boolean requiresAuth() {
