@@ -114,7 +114,7 @@ public class DataUtil extends Utility {
     }
 
     public static boolean isValidPackageName(String packageName) {
-        String packageNameRegex = "^(\\w+)(\\.(\\w+))*$";
+        String packageNameRegex = "^(\\w+)(\\.(\\w++))*+$";
         Pattern pattern = Pattern.compile(packageNameRegex);
 
         if (packageName == null || packageName.isEmpty()) {
