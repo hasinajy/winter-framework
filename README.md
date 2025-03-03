@@ -183,13 +183,13 @@ public class ApiController {
     @GET
     @UrlMapping("/data")
     public String getData() {
-        return "{\"key\": \"value\"}";
+        return "Hello there!";
     }
 }
 ```
 
 - **URL**: `/api/data`
-- **Result**: Returns `{"value": "{\"key\": \"value\"}"}` as JSON.
+- **Result**: Returns `Hello there!` as JSON.
 
 ### Form Data with Validation
 
@@ -218,6 +218,82 @@ public class FormController {
 
 - **URL**: `/submit` (POST)
 - **Result**: Validates `email` parameter; forwards to `result.jsp` or sets error attributes if invalid.
+
+### Session Management
+
+```java
+package com.controller.session;
+
+import winter.data.annotation.Controller;
+import winter.data.annotation.http.UrlMapping;
+import winter.data.servletabstraction.Session;
+
+@Controller
+public class SessionSetController {
+    private Session session;
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    @UrlMapping("/set-session")
+    public String setSessionValue() {
+        session.add("session", "Hasina");
+        session.add("auth", "manager");
+        return "Session has been set";
+    }
+}
+```
+
+- **URL**: `/set-session`
+- **Result**: Adds `"session"` and `"auth"` attributes to the session with values `"Hasina"` and `"manager"`, respectively, and returns a confirmation string. The `Session` object is automatically injected by `ControllerHandler`. The setter method needs to be present.
+
+### Form Data with Object Mapping
+
+```java
+package com.controller;
+
+import com.models.Person;
+
+import winter.data.annotation.Controller;
+import winter.data.annotation.http.RequestParam;
+import winter.data.annotation.http.UrlMapping;
+import winter.data.annotation.http.requestverb.POST;
+import winter.data.client.FormData;
+import winter.data.client.ModelView;
+
+@Controller
+public class FormController {
+
+    @UrlMapping("/person-form")
+    public ModelView displayPersonForm() {
+        ModelView modelView = new ModelView("WEB-INF/jsp/person-form.jsp");
+        modelView.addObject("formData", new FormData());
+        return modelView;
+    }
+
+    @POST
+    @UrlMapping("/person-form")
+    public ModelView processPersonForm(@RequestParam(value = "person") Person person) {
+        ModelView modelView = new ModelView("WEB-INF/jsp/person-details.jsp");
+        modelView.addObject("errorUrl", "WEB-INF/jsp/person-form.jsp");
+
+        if (person != null) {
+            modelView.addObject("name", person.getName());
+            modelView.addObject("age", person.getAge());
+        }
+
+        return modelView;
+    }
+}
+```
+
+- **URL**: 
+  - GET `/person-form`: Displays the form.
+  - POST `/person-form`: Processes form submission.
+- **Result**: 
+  - The GET method renders `person-form.jsp` with an empty `FormData` object for initial form display.
+  - The POST method maps form data to a `Person` object using `@RequestParam`, expecting fields like `person.name` and `person.age`. It renders `person-details.jsp` with the extracted data or redirects to `person-form.jsp` on validation errors (via `errorUrl`).
 
 ## API Reference
 
