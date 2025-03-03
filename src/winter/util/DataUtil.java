@@ -3,6 +3,7 @@ package winter.util;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.Annotation;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
 
 import jakarta.servlet.http.HttpServletRequest;
 import winter.data.annotation.http.RequestParam;
+import winter.data.annotation.http.UrlMapping;
 import winter.data.enumdata.RequestParamType;
 import winter.data.exception.client.InvalidFormDataException;
 
@@ -137,6 +139,22 @@ public class DataUtil extends Utility {
         }
 
         return "file_" + timestamp + ".bin"; // Default to .bin if no extension
+    }
+
+    public static String getUrlMapping(Class<?> clazz, Method method) {
+        String urlString = "";
+        UrlMapping classAnnotation = clazz.getAnnotation(UrlMapping.class);
+        UrlMapping methodAnnotation = method.getAnnotation(UrlMapping.class);
+
+        if (classAnnotation != null) {
+            urlString += classAnnotation.value();
+        }
+
+        if (methodAnnotation != null) {
+            urlString += methodAnnotation.value();
+        }
+
+        return urlString;
     }
 
     public static Method getSetterMethod(Class<?> objType, String attrName)
