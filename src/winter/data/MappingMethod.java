@@ -70,7 +70,7 @@ public class MappingMethod {
 
     public void setAuth(Class<?> clazz) {
         if (clazz.isAnnotationPresent(Auth.class)) {
-            String[] roles = clazz.getAnnotation(Auth.class).roles().split(", ");
+            String[] roles = clazz.getAnnotation(Auth.class).roles();
 
             for (String role : roles) {
                 this.addAuth(role);
@@ -80,7 +80,7 @@ public class MappingMethod {
 
     public void setAuth(Method method) {
         if (method.isAnnotationPresent(Auth.class)) {
-            String[] roles = method.getAnnotation(Auth.class).roles().split(", ");
+            String[] roles = method.getAnnotation(Auth.class).roles();
 
             for (String role : roles) {
                 this.addAuth(role);
