@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import winter.data.annotation.Rest;
+import winter.data.annotation.http.Auth;
 import winter.data.annotation.http.UrlMapping;
 import winter.data.annotation.http.requestverb.POST;
 import winter.data.enumdata.RequestVerb;
@@ -39,6 +40,7 @@ public class MappingMethod {
 
     public void setMethod(Method method) {
         this.method = method;
+        this.setAuth(method);
     }
 
     public RequestVerb getVerb() {
@@ -64,6 +66,16 @@ public class MappingMethod {
 
     public void setAuth(Set<String> auth) {
         this.auth = auth;
+    }
+
+    public void setAuth(Method method) {
+        if (method.isAnnotationPresent(Auth.class)) {
+            String[] roles = method.getAnnotation(Auth.class).roles().split(", ");
+
+            for (String role : roles) {
+                this.addAuth(role);
+            }
+        }
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
