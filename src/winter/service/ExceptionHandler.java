@@ -9,9 +9,42 @@ import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Service class for handling and responding to exceptions in the Winter
+ * framework.
+ * <p>
+ * This class logs exceptions using a {@link Logger} and sends formatted HTML
+ * error responses
+ * to the client via {@link HttpServletResponse}. It maps specific exceptions to
+ * appropriate
+ * HTTP status codes and provides user-friendly error pages styled with Tailwind
+ * CSS.
+ * </p>
+ *
+ * @author Hasina JY
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class ExceptionHandler {
+
+    /** Logger instance for recording exception details. */
     private static final Logger logger = Logger.getLogger(ExceptionHandler.class.getName());
 
+    /**
+     * Handles an exception by logging it and sending an error response to the
+     * client.
+     * <p>
+     * Logs the exception at the specified {@link Level} and, if the response is not
+     * yet committed,
+     * sends an HTML error page with a status code and message based on the
+     * exception type.
+     * </p>
+     *
+     * @param e     the exception to handle
+     * @param level the logging level (e.g., {@link Level#SEVERE})
+     * @param resp  the HTTP response to send the error to
+     * @throws IOException if an error occurs while writing the response
+     */
     public void handleException(Exception e, Level level, HttpServletResponse resp) {
         logger.log(level, e.getMessage(), e);
 
@@ -32,12 +65,36 @@ public class ExceptionHandler {
         }
     }
 
+    /**
+     * Handles initialization exceptions by delegating to the general exception
+     * handler.
+     * <p>
+     * If an initialization exception is provided, it is logged and processed as a
+     * severe error.
+     * </p>
+     *
+     * @param resp          the HTTP response to send the error to
+     * @param initException the initialization exception to handle, or null if none
+     */
     public void handleInitException(HttpServletResponse resp, Exception initException) {
         if (initException != null) {
             handleException(initException, Level.SEVERE, resp);
         }
     }
 
+    /**
+     * Sends an HTML error response with a specific status code and message.
+     * <p>
+     * Constructs a styled HTML error page using Tailwind CSS, including a title and
+     * details
+     * based on the status code, and writes it to the response.
+     * </p>
+     *
+     * @param resp    the HTTP response to send the error to
+     * @param status  the HTTP status code (e.g., 404, 500)
+     * @param message the error message to display
+     * @throws IOException if an error occurs while writing the response
+     */
     private void sendError(HttpServletResponse resp, int status, String message) throws IOException {
         resp.setContentType("text/html");
         resp.setStatus(status);
@@ -67,6 +124,12 @@ public class ExceptionHandler {
         }
     }
 
+    /**
+     * Returns a user-friendly title for the given HTTP status code.
+     *
+     * @param status the HTTP status code
+     * @return a descriptive title (e.g., "404 - Page Not Found")
+     */
     private String getErrorTitle(int status) {
         return switch (status) {
             case 404 -> "404 - Page Not Found";
@@ -77,6 +140,12 @@ public class ExceptionHandler {
         };
     }
 
+    /**
+     * Returns additional details for the given HTTP status code.
+     *
+     * @param status the HTTP status code
+     * @return a descriptive message, or an empty string if no details are defined
+     */
     private String getErrorDetails(int status) {
         return switch (status) {
             case 404 ->

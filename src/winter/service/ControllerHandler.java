@@ -20,9 +20,52 @@ import winter.data.servletabstraction.File;
 import winter.data.servletabstraction.Session;
 import winter.util.DataUtil;
 
+/**
+ * Service class for handling controller method invocation in the Winter
+ * framework.
+ * <p>
+ * This class manages the execution of controller methods, including
+ * authentication checks,
+ * session injection, and parameter initialization from HTTP requests. It
+ * processes primitive
+ * types, files, and complex objects, handling validation and errors
+ * appropriately.
+ * </p>
+ *
+ * @author Hasina JY
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class ControllerHandler {
+
+    /**
+     * The form data extracted from the request for validation and error reporting.
+     */
     private FormData formData = null;
 
+    /**
+     * Invokes a controller method with arguments derived from an HTTP request.
+     * <p>
+     * Loads the specified class, checks authentication, injects the session if
+     * required,
+     * initializes method arguments, and invokes the method. Errors are wrapped in
+     * appropriate
+     * exceptions for upstream handling.
+     * </p>
+     *
+     * @param className     the fully qualified name of the controller class
+     * @param mappingMethod the mapping method containing the method to invoke
+     * @param req           the HTTP request providing parameters and session data
+     * @return the result of the controller method invocation
+     * @throws AnnotationNotFoundException  if a required annotation is missing
+     * @throws IOException                  if an I/O error occurs (e.g., file
+     *                                      handling)
+     * @throws ReflectiveOperationException if reflection-related errors occur
+     *                                      (e.g., class or method not found)
+     * @throws ServletException             if a servlet-related error occurs
+     * @throws IllegalAccessException       if authentication fails or access is
+     *                                      denied
+     */
     public Object invokeControllerMethod(String className, MappingMethod mappingMethod, HttpServletRequest req)
             throws AnnotationNotFoundException, IOException, ReflectiveOperationException, ServletException {
 
@@ -61,6 +104,22 @@ public class ControllerHandler {
         }
     }
 
+    /**
+     * Injects a Winter {@link Session} into an object if a matching field exists.
+     * <p>
+     * Checks the object’s class for a {@link Session} field and invokes its setter
+     * with a wrapped {@link HttpSession}.
+     * </p>
+     *
+     * @param object      the object to inject the session into
+     * @param httpSession the HTTP session to wrap
+     * @throws NoSuchMethodException     if the setter method for the session field
+     *                                   is not found
+     * @throws IllegalAccessException    if the setter method is inaccessible
+     * @throws InvocationTargetException if the setter invocation fails
+     * @throws IllegalArgumentException  if the session type is incompatible
+     * @throws SecurityException         if a security manager prevents access
+     */
     private void injectSession(Object object, HttpSession httpSession)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IllegalArgumentException,
             SecurityException {
@@ -76,6 +135,12 @@ public class ControllerHandler {
         }
     }
 
+    /**
+     * Checks if a class has a {@link Session} field.
+     *
+     * @param clazz the class to inspect
+     * @return the name of the session field if found, null otherwise
+     */
     private String hasSession(Class<?> clazz) {
         Field[] attributes = clazz.getDeclaredFields();
 
@@ -88,6 +153,27 @@ public class ControllerHandler {
         return null;
     }
 
+    /**
+     * Initializes method arguments from an HTTP request.
+     * <p>
+     * Processes method parameters annotated with {@link RequestParam}, handling
+     * primitive types,
+     * {@link File} objects, and complex objects. Sets error attributes on the
+     * request if validation fails.
+     * </p>
+     *
+     * @param methodParams the parameters of the method to initialize
+     * @param req          the HTTP request providing parameter values
+     * @return an array of initialized argument objects
+     * @throws AnnotationNotFoundException  if a required {@link RequestParam}
+     *                                      annotation is missing
+     * @throws IOException                  if an I/O error occurs (e.g., file part
+     *                                      reading)
+     * @throws ReflectiveOperationException if reflection fails during object
+     *                                      creation
+     * @throws ServletException             if a servlet-related error occurs (e.g.,
+     *                                      part retrieval)
+     */
     private Object[] initializeMethodArguments(Parameter[] methodParams, HttpServletRequest req)
             throws AnnotationNotFoundException, IOException, ReflectiveOperationException, ServletException {
 
@@ -138,15 +224,42 @@ public class ControllerHandler {
         return args.toArray();
     }
 
+    /**
+     * Creates an instance of a complex object parameter from request data.
+     * <p>
+     * Instantiates the object and sets its attributes based on request parameters
+     * prefixed with the given name.
+     * </p>
+     *
+     * @param objType   the class type of the object to create
+     * @param req       the HTTP request providing parameter values
+     * @param objPrefix the prefix for parameter names (e.g., "user" for
+     *                  "user.name")
+     * @return the populated object instance
+     * @throws InvalidFormDataException     if validation of object attributes fails
+     * @throws ReflectiveOperationException if instantiation or attribute setting
+     *                                      fails
+     */
     private Object createObjectParameterInstance(Class<?> objType, HttpServletRequest req, String objPrefix)
             throws InvalidFormDataException, ReflectiveOperationException {
         Object objectInstance = objType.getDeclaredConstructor().newInstance();
         ObjectRequestParameter objRequestParameter = new ObjectRequestParameter(objType, req, objPrefix);
-        setObjectAttributes(
-                objectInstance, objRequestParameter);
+        setObjectAttributes(objectInstance, objRequestParameter);
         return objectInstance;
     }
 
+    /**
+     * Sets attributes of an object based on request parameter values.
+     * <p>
+     * Uses reflection to invoke setters for each field, validating the values and
+     * updating the form data with errors if validation fails.
+     * </p>
+     *
+     * @param instance            the object instance to populate
+     * @param objRequestParameter the request parameter data for the object
+     * @throws InvalidFormDataException     if any attribute validation fails
+     * @throws ReflectiveOperationException if setter invocation fails
+     */
     private void setObjectAttributes(Object instance, ObjectRequestParameter objRequestParameter)
             throws InvalidFormDataException, ReflectiveOperationException {
 
