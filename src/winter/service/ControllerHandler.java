@@ -29,6 +29,12 @@ public class ControllerHandler {
         String methodName = mappingMethod.getMethod().getName();
 
         try {
+            Object authSession = req.getSession().getAttribute("auth");
+
+            if (!mappingMethod.hasAuth((String) authSession)) {
+                throw new IllegalAccessException();
+            }
+
             Class<?> clazz = Class.forName(className);
             Method method = mappingMethod.getMethod();
             Object[] args = initializeMethodArguments(method.getParameters(), req);
@@ -47,6 +53,8 @@ public class ControllerHandler {
             throw new ReflectiveOperationException(message, e);
         } catch (AnnotationNotFoundException e) {
             throw e;
+        } catch (IllegalAccessException e) {
+            throw new IllegalAccessException("Permission denied");
         } catch (ReflectiveOperationException | NumberFormatException e) {
             String message = "Error invoking method: " + methodName;
             throw new ReflectiveOperationException(message, e);

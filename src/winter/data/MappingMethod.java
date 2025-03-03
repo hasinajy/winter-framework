@@ -92,7 +92,7 @@ public class MappingMethod {
     }
 
     public boolean hasAuth(String authString) {
-        return this.getAuth().contains(authString);
+        return (authString == null || authString.isEmpty()) ? true : this.getAuth().contains(authString);
     }
 
     @Override
