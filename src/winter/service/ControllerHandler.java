@@ -98,7 +98,7 @@ public class ControllerHandler {
         for (Parameter param : methodParams) {
             // @RequestParam is required as parameter names are positional without
             // additional configurations
-            String requestParamName = param.getAnnotation(RequestParam.class).name();
+            String requestParamName = param.getAnnotation(RequestParam.class).value();
             Class<?> paramType = param.getType();
             Object paramValue = null;
 

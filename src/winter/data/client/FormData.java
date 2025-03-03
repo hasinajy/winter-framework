@@ -24,7 +24,7 @@ public class FormData {
                                 + param.getName());
             }
 
-            String key = param.getAnnotation(RequestParam.class).name();
+            String key = param.getAnnotation(RequestParam.class).value();
             this.getValues().put(key, req.getParameter(key));
             this.getErrorMessages().put(key, "");
         }

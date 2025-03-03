@@ -11,7 +11,7 @@ import java.lang.annotation.ElementType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 public @interface RequestParam {
-    String name() default "";
+    String value() default "";
 
     RequestParamType type() default RequestParamType.TEXT;
 
