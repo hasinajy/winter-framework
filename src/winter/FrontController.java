@@ -115,7 +115,7 @@ public class FrontController extends HttpServlet {
                 handleRequest(req, resp, targetMapping, out, requestVerb);
             } catch (MappingNotFoundException | InvalidReturnTypeException e) {
                 exceptionHandler.handleException(e, Level.WARNING, resp);
-            } catch (InvalidRequestVerbException | AnnotationNotFoundException e) {
+            } catch (IllegalAccessException | InvalidRequestVerbException | AnnotationNotFoundException e) {
                 exceptionHandler.handleException(e, Level.SEVERE, resp);
             } catch (ReflectiveOperationException e) {
                 exceptionHandler.handleException(
