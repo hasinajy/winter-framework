@@ -15,7 +15,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
-import winter.FrontController;
 import winter.data.Mapping;
 import winter.data.MappingMethod;
 import winter.data.client.JsonString;
@@ -33,24 +32,75 @@ import winter.service.ExceptionHandler;
 import winter.service.ControllerHandler;
 import winter.util.DataUtil;
 
+/**
+ * The central servlet managing HTTP requests and responses in the Winter
+ * framework.
+ * <p>
+ * This servlet acts as the front controller, initializing controller mappings,
+ * processing incoming GET and POST requests, and dispatching them to
+ * appropriate
+ * controller methods. It handles multipart requests, supports RESTful
+ * responses,
+ * and manages errors via {@link ExceptionHandler}. It uses
+ * {@link ControllerScanner}
+ * for initialization and {@link ControllerHandler} for method invocation.
+ * </p>
+ *
+ * @author Hasina JY
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 @MultipartConfig
 public class FrontController extends HttpServlet {
+
+    /** Stores any exception that occurs during servlet initialization. */
     private static Exception initException = null;
+
+    /** The map of URL paths to their corresponding {@link Mapping} objects. */
     private static final Map<String, Mapping> URL_MAPPINGS = new HashMap<>();
+
+    /** The handler for processing and logging exceptions. */
     private static final ExceptionHandler exceptionHandler = new ExceptionHandler();
 
+    /**
+     * Provides access to the URL mappings registered during initialization.
+     *
+     * @return the map of URL paths to {@link Mapping} objects
+     */
     public static Map<String, Mapping> getUrlMappings() {
         return FrontController.URL_MAPPINGS;
     }
 
+    /**
+     * Gets the exception that occurred during servlet initialization, if any.
+     *
+     * @return the initialization exception, or null if none occurred
+     */
     private Exception getInitException() {
         return FrontController.initException;
     }
 
+    /**
+     * Sets the exception that occurred during servlet initialization.
+     *
+     * @param e the exception to store
+     */
     private static void setInitException(Exception e) {
         FrontController.initException = e;
     }
 
+    /**
+     * Initializes the servlet by scanning for controllers and registering their
+     * mappings.
+     * <p>
+     * Uses {@link ControllerScanner} to scan the servlet context for controllers
+     * and populate
+     * {@link #URL_MAPPINGS}. Any initialization errors are stored in
+     * {@link #initException}.
+     * </p>
+     *
+     * @throws ServletException if an unrecoverable initialization error occurs
+     */
     @Override
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
@@ -65,6 +115,14 @@ public class FrontController extends HttpServlet {
         }
     }
 
+    /**
+     * Handles HTTP GET requests by processing them with the GET verb.
+     *
+     * @param req  the HTTP request
+     * @param resp the HTTP response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs during response writing
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestVerb requestVerb = RequestVerb.GET;
@@ -81,6 +139,14 @@ public class FrontController extends HttpServlet {
         }
     }
 
+    /**
+     * Handles HTTP POST requests by processing them with the POST verb.
+     *
+     * @param req  the HTTP request
+     * @param resp the HTTP response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs during response writing
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestVerb requestVerb = RequestVerb.POST;
@@ -97,6 +163,21 @@ public class FrontController extends HttpServlet {
         }
     }
 
+    /**
+     * Processes an HTTP request by delegating to the appropriate controller method.
+     * <p>
+     * Checks for initialization errors, extracts the target URL mapping, and
+     * handles the request
+     * using {@link #handleRequest}. Exceptions are caught and delegated to
+     * {@link #exceptionHandler}.
+     * </p>
+     *
+     * @param req         the HTTP request
+     * @param resp        the HTTP response
+     * @param requestVerb the HTTP verb (e.g., GET, POST)
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs during response writing
+     */
     private void processRequest(HttpServletRequest req, HttpServletResponse resp, RequestVerb requestVerb)
             throws ServletException, IOException {
 
@@ -127,6 +208,34 @@ public class FrontController extends HttpServlet {
         }
     }
 
+    /**
+     * Handles the core request logic by invoking the mapped controller method and
+     * processing its result.
+     * <p>
+     * Retrieves the {@link Mapping} for the target URL, validates the verb, invokes
+     * the method via
+     * {@link ControllerHandler}, and processes the result (e.g., rendering JSP or
+     * returning JSON).
+     * Supports RESTful responses and form validation error handling.
+     * </p>
+     *
+     * @param req           the HTTP request
+     * @param resp          the HTTP response
+     * @param targetMapping the extracted URL mapping path
+     * @param out           the response writer
+     * @param requestVerb   the HTTP verb (e.g., GET, POST)
+     * @throws MappingNotFoundException     if no mapping exists for the target URL
+     * @throws AnnotationNotFoundException  if a required annotation is missing
+     * @throws ReflectiveOperationException if reflection fails during method
+     *                                      invocation
+     * @throws InvalidReturnTypeException   if the method returns an unsupported
+     *                                      type
+     * @throws ServletException             if a servlet-specific error occurs
+     * @throws IOException                  if an I/O error occurs during response
+     *                                      writing
+     * @throws InvalidRequestVerbException  if the verb is not supported for the
+     *                                      mapping
+     */
     private void handleRequest(HttpServletRequest req, HttpServletResponse resp, String targetMapping, PrintWriter out,
             RequestVerb requestVerb)
             throws MappingNotFoundException, AnnotationNotFoundException,
