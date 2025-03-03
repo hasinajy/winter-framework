@@ -83,7 +83,7 @@ public class ControllerScanner {
             UrlMapping urlMappingAnnotation = method.getAnnotation(UrlMapping.class);
 
             if (urlMappingAnnotation != null) {
-                String url = urlMappingAnnotation.value();
+                String url = DataUtil.getUrlMapping(clazz, method);
                 MappingMethod mappingMethod = new MappingMethod(method);
                 mappingMethod.setAuth(clazz);
 
