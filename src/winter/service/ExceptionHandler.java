@@ -1,6 +1,7 @@
 package winter.service;
 
 import jakarta.servlet.http.HttpServletResponse;
+import winter.data.exception.client.InvalidRequestVerbException;
 import winter.data.exception.client.MappingNotFoundException;
 
 import java.io.IOException;
@@ -18,6 +19,10 @@ public class ExceptionHandler {
             if (!resp.isCommitted()) {
                 if (e instanceof MappingNotFoundException) {
                     sendError(resp, HttpServletResponse.SC_NOT_FOUND, e.getMessage());
+                } else if (e instanceof InvalidRequestVerbException) {
+                    sendError(resp, HttpServletResponse.SC_METHOD_NOT_ALLOWED, e.getMessage());
+                } else if (e instanceof IllegalAccessException) {
+                    sendError(resp, HttpServletResponse.SC_FORBIDDEN, e.getMessage());
                 } else {
                     sendError(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
                 }
@@ -65,6 +70,8 @@ public class ExceptionHandler {
     private String getErrorTitle(int status) {
         return switch (status) {
             case 404 -> "404 - Page Not Found";
+            case 405 -> "405 - Method Not Allowed";
+            case 403 -> "403 - Forbidden";
             case 500 -> "500 - Internal Server Error";
             default -> status + " - Error";
         };
@@ -74,6 +81,10 @@ public class ExceptionHandler {
         return switch (status) {
             case 404 ->
                 "<p class=\"text-gray-600\">The page you're looking for might have been removed or is temporarily unavailable.</p>";
+            case 405 ->
+                "<p class=\"text-gray-600\">The requested method is not allowed for this resource.</p>";
+            case 403 ->
+                "<p class=\"text-gray-600\">You don't have permission to access this resource.</p>";
             case 500 ->
                 "<p class=\"text-gray-600\">An unexpected error occurred on our server. We're working on it!</p>";
             default -> "";
